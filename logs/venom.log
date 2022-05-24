@@ -1,0 +1,153 @@
+[24-May-22 09:33:51 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:51 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:52 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:52 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:53 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:54 - WARNING] - pyrogram.connection.connection - Connection failed! Trying again...
+[24-May-22 09:33:54 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:54 - WARNING] - pyrogram.connection.connection - Connection failed! Trying again...
+[24-May-22 09:33:54 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:55 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:55 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:56 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:56 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:57 - WARNING] - pyrogram.connection.connection - Connection failed! Trying again...
+[24-May-22 09:33:57 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:57 - WARNING] - pyrogram.connection.connection - Connection failed! Trying again...
+[24-May-22 09:33:57 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:58 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:58 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:59 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:33:59 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:34:00 - WARNING] - pyrogram.connection.connection - Connection failed! Trying again...
+[24-May-22 09:34:00 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:34:00 - WARNING] - pyrogram.connection.connection - Connection failed! Trying again...
+[24-May-22 09:34:00 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:34:01 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:34:01 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:34:02 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:34:02 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10065] A socket operation was attempted to an unreachable host
+[24-May-22 09:34:03 - WARNING] - pyrogram.connection.connection - Connection failed! Trying again...
+[24-May-22 09:34:03 - WARNING] - pyrogram.connection.connection - Unable to connect due to network issues: [WinError 10051] A socket operation was attempted to an unreachable network
+[24-May-22 09:34:03 - WARNING] - pyrogram.connection.connection - Connection failed! Trying again...
+[24-May-22 09:46:15 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[24-May-22 09:46:16 - INFO] - venom.core.client - ### Stopping bot ###
+[24-May-22 09:50:25 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 09:50:25 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 09:50:25 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 09:50:36 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 09:50:39 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 09:50:40 - INFO] - venom.plugins - The plugins' list: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 10:48:07 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[24-May-22 10:48:07 - INFO] - venom.core.client - ### Stopping bot ###
+[24-May-22 10:48:12 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 10:48:13 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 10:48:13 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 10:48:22 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 10:48:26 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 10:48:27 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 10:50:04 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[24-May-22 10:50:05 - INFO] - venom.core.client - ### Stopping bot ###
+[24-May-22 10:50:24 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 10:50:25 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 10:50:25 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 10:50:28 - ERROR] - asyncio - Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "D:\Apps\Python\Python310\lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "D:\Apps\Python\Python310\lib\asyncio\proactor_events.py", line 162, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+[24-May-22 10:51:38 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 10:51:38 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 10:51:38 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 10:51:53 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 10:51:56 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 10:51:56 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 10:53:21 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[24-May-22 10:53:22 - INFO] - venom.core.client - ### Stopping bot ###
+[24-May-22 10:53:25 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 10:53:26 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 10:53:26 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 10:53:37 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 10:53:42 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 10:53:42 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 10:54:01 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[24-May-22 10:54:02 - INFO] - venom.core.client - ### Stopping bot ###
+[24-May-22 10:55:46 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 10:55:46 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 10:55:46 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 10:55:56 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 10:55:59 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 10:55:59 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 10:56:17 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[24-May-22 10:56:17 - INFO] - venom.core.client - ### Stopping bot ###
+[24-May-22 11:34:15 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 11:35:05 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 11:35:05 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 11:35:05 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 11:42:31 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 11:42:31 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 11:42:31 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 11:42:41 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 11:42:45 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 11:42:45 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 11:45:35 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[24-May-22 11:45:36 - INFO] - venom.core.client - ### Stopping bot ###
+[24-May-22 11:45:42 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 11:45:42 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 11:45:42 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 11:45:53 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 11:45:56 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 11:45:56 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 11:58:37 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[24-May-22 11:58:37 - INFO] - venom.core.client - ### Stopping bot ###
+[24-May-22 12:02:48 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 12:02:48 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 12:02:48 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 12:03:00 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:03:03 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:03:03 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 12:10:01 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 12:10:01 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 12:10:01 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 12:10:12 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:10:17 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:10:17 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 12:17:48 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 12:17:48 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 12:17:48 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 12:17:59 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:18:04 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:18:05 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 12:19:05 - ERROR] - pyrogram.dispatcher - InlineQuery.answer() got an unexpected keyword argument 'show_alert'
+Traceback (most recent call last):
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "D:\USERGE-X\VenomX\venom\helpers\decorators.py", line 63, in wrapper
+    return await iq.answer(f"Only my owner can access this...!\nPlease deploy your own VenomX bot, thank you.", show_alert=True)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\sync.py", line 53, in async_to_sync_wrap
+    coroutine = function(*args, **kwargs)
+TypeError: InlineQuery.answer() got an unexpected keyword argument 'show_alert'
+[24-May-22 12:25:56 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 12:29:47 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 12:29:47 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 12:29:47 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 12:29:58 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:30:03 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:30:03 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 12:35:36 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 12:35:36 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 12:35:36 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 12:35:48 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:35:52 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:35:53 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[24-May-22 12:36:14 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[24-May-22 12:36:15 - INFO] - venom.core.client - ### Stopping bot ###
+[24-May-22 12:36:31 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[24-May-22 12:36:31 - INFO] - root - ### Processing: Venom client ###
+[24-May-22 12:36:31 - INFO] - venom.core.client - ### Starting bot ###
+[24-May-22 12:36:41 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:36:45 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[24-May-22 12:36:45 - INFO] - venom.plugins - The plugins' list [11]: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']

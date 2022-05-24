@@ -1,0 +1,243 @@
+[23-May-22 13:27:23 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:27:23 - INFO] - venom.plugins - The plugins' list: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'inline_queries', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[23-May-22 13:27:35 - ERROR] - pyrogram.dispatcher - 'NoneType' object has no attribute 'write'
+Traceback (most recent call last):
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "D:\USERGE-X\VenomX\venom\plugins\fun\alive.py", line 151, in alive_media_inline
+    await i_q.answer(results=results, cache_time=1)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\types\inline_mode\inline_query.py", line 172, in answer
+    return await self._client.answer_inline_query(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\methods\bots\answer_inline_query.py", line 97, in answer_inline_query
+    return await self.invoke(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\methods\advanced\invoke.py", line 77, in invoke
+    r = await self.session.invoke(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\session.py", line 360, in invoke
+    return await self.send(query, timeout=timeout)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\session.py", line 291, in send
+    message = self.msg_factory(data)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\internals\msg_factory.py", line 37, in __call__
+    len(body)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\tl_object.py", line 79, in __len__
+    return len(self.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\functions\messages\set_inline_bot_results.py", line 98, in write
+    b.write(Vector(self.results))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\input_bot_inline_result.py", line 117, in write
+    b.write(self.send_message.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\input_bot_inline_message_media_auto.py", line 84, in write
+    b.write(self.reply_markup.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\reply_inline_markup.py", line 66, in write
+    b.write(Vector(self.rows))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\keyboard_button_row.py", line 66, in write
+    b.write(Vector(self.buttons))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+AttributeError: 'NoneType' object has no attribute 'write'
+[23-May-22 13:27:42 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[23-May-22 13:27:42 - INFO] - venom.core.client - ### Stopping bot ###
+[23-May-22 13:30:48 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[23-May-22 13:30:48 - INFO] - root - ### Processing: Venom client ###
+[23-May-22 13:30:48 - INFO] - venom.core.client - ### Starting bot ###
+[23-May-22 13:30:56 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:30:58 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:30:58 - INFO] - venom.plugins - The plugins' list: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'inline_queries', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[23-May-22 13:31:12 - ERROR] - pyrogram.dispatcher - 'NoneType' object has no attribute 'write'
+Traceback (most recent call last):
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "D:\USERGE-X\VenomX\venom\plugins\fun\alive.py", line 151, in alive_media_inline
+    await i_q.answer(results=results, cache_time=1)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\types\inline_mode\inline_query.py", line 172, in answer
+    return await self._client.answer_inline_query(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\methods\bots\answer_inline_query.py", line 97, in answer_inline_query
+    return await self.invoke(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\methods\advanced\invoke.py", line 77, in invoke
+    r = await self.session.invoke(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\session.py", line 360, in invoke
+    return await self.send(query, timeout=timeout)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\session.py", line 291, in send
+    message = self.msg_factory(data)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\internals\msg_factory.py", line 37, in __call__
+    len(body)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\tl_object.py", line 79, in __len__
+    return len(self.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\functions\messages\set_inline_bot_results.py", line 98, in write
+    b.write(Vector(self.results))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\input_bot_inline_result.py", line 117, in write
+    b.write(self.send_message.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\input_bot_inline_message_media_auto.py", line 84, in write
+    b.write(self.reply_markup.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\reply_inline_markup.py", line 66, in write
+    b.write(Vector(self.rows))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\keyboard_button_row.py", line 66, in write
+    b.write(Vector(self.buttons))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+AttributeError: 'NoneType' object has no attribute 'write'
+[23-May-22 13:31:17 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[23-May-22 13:31:17 - INFO] - venom.core.client - ### Stopping bot ###
+[23-May-22 13:34:05 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[23-May-22 13:34:05 - INFO] - root - ### Processing: Venom client ###
+[23-May-22 13:34:05 - INFO] - venom.core.client - ### Starting bot ###
+[23-May-22 13:34:13 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:34:15 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:34:15 - INFO] - venom.plugins - The plugins' list: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'inline_queries', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[23-May-22 13:34:32 - ERROR] - pyrogram.dispatcher - 'type' object is not subscriptable
+Traceback (most recent call last):
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "D:\USERGE-X\VenomX\venom\plugins\fun\alive.py", line 116, in alive_media_inline
+    btn_ = alive_buttons()
+  File "D:\USERGE-X\VenomX\venom\plugins\fun\alive.py", line 102, in alive_buttons
+    btn_ = InlineKeyboardMarkup[
+TypeError: 'type' object is not subscriptable
+[23-May-22 13:34:49 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[23-May-22 13:34:50 - INFO] - venom.core.client - ### Stopping bot ###
+[23-May-22 13:35:27 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[23-May-22 13:35:27 - INFO] - root - ### Processing: Venom client ###
+[23-May-22 13:35:27 - INFO] - venom.core.client - ### Starting bot ###
+[23-May-22 13:35:35 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:35:37 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:35:38 - INFO] - venom.plugins - The plugins' list: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'inline_queries', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[23-May-22 13:35:58 - ERROR] - pyrogram.dispatcher - 'type' object is not subscriptable
+Traceback (most recent call last):
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "D:\USERGE-X\VenomX\venom\plugins\fun\alive.py", line 117, in alive_media_inline
+    btn_ = alive_buttons()
+  File "D:\USERGE-X\VenomX\venom\plugins\fun\alive.py", line 103, in alive_buttons
+    btn_ = InlineKeyboardMarkup[
+TypeError: 'type' object is not subscriptable
+[23-May-22 13:37:51 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[23-May-22 13:37:51 - INFO] - venom.core.client - ### Stopping bot ###
+[23-May-22 13:38:01 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[23-May-22 13:38:01 - INFO] - root - ### Processing: Venom client ###
+[23-May-22 13:38:01 - INFO] - venom.core.client - ### Starting bot ###
+[23-May-22 13:38:09 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:38:11 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:38:11 - INFO] - venom.plugins - The plugins' list: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'inline_queries', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[23-May-22 13:38:19 - ERROR] - pyrogram.dispatcher - 'NoneType' object has no attribute 'write'
+Traceback (most recent call last):
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "D:\USERGE-X\VenomX\venom\plugins\fun\alive.py", line 150, in alive_media_inline
+    await i_q.answer(results=results, cache_time=1)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\types\inline_mode\inline_query.py", line 172, in answer
+    return await self._client.answer_inline_query(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\methods\bots\answer_inline_query.py", line 97, in answer_inline_query
+    return await self.invoke(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\methods\advanced\invoke.py", line 77, in invoke
+    r = await self.session.invoke(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\session.py", line 360, in invoke
+    return await self.send(query, timeout=timeout)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\session.py", line 291, in send
+    message = self.msg_factory(data)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\internals\msg_factory.py", line 37, in __call__
+    len(body)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\tl_object.py", line 79, in __len__
+    return len(self.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\functions\messages\set_inline_bot_results.py", line 98, in write
+    b.write(Vector(self.results))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\input_bot_inline_result.py", line 117, in write
+    b.write(self.send_message.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\input_bot_inline_message_media_auto.py", line 84, in write
+    b.write(self.reply_markup.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\reply_inline_markup.py", line 66, in write
+    b.write(Vector(self.rows))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\keyboard_button_row.py", line 66, in write
+    b.write(Vector(self.buttons))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+AttributeError: 'NoneType' object has no attribute 'write'
+[23-May-22 13:38:25 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[23-May-22 13:38:25 - INFO] - venom.core.client - ### Stopping bot ###
+[23-May-22 13:39:04 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[23-May-22 13:39:04 - INFO] - root - ### Processing: Venom client ###
+[23-May-22 13:39:04 - INFO] - venom.core.client - ### Starting bot ###
+[23-May-22 13:39:21 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[23-May-22 13:39:21 - INFO] - root - ### Processing: Venom client ###
+[23-May-22 13:39:21 - INFO] - venom.core.client - ### Starting bot ###
+[23-May-22 13:39:29 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:39:31 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:39:31 - INFO] - venom.plugins - The plugins' list: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'inline_queries', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
+[23-May-22 13:39:49 - ERROR] - pyrogram.dispatcher - 'NoneType' object has no attribute 'write'
+Traceback (most recent call last):
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "D:\USERGE-X\VenomX\venom\plugins\fun\alive.py", line 149, in alive_media_inline
+    await i_q.answer(results=results, cache_time=1)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\types\inline_mode\inline_query.py", line 172, in answer
+    return await self._client.answer_inline_query(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\methods\bots\answer_inline_query.py", line 97, in answer_inline_query
+    return await self.invoke(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\methods\advanced\invoke.py", line 77, in invoke
+    r = await self.session.invoke(
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\session.py", line 360, in invoke
+    return await self.send(query, timeout=timeout)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\session.py", line 291, in send
+    message = self.msg_factory(data)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\session\internals\msg_factory.py", line 37, in __call__
+    len(body)
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\tl_object.py", line 79, in __len__
+    return len(self.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\functions\messages\set_inline_bot_results.py", line 98, in write
+    b.write(Vector(self.results))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\input_bot_inline_result.py", line 117, in write
+    b.write(self.send_message.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\input_bot_inline_message_media_auto.py", line 84, in write
+    b.write(self.reply_markup.write())
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\reply_inline_markup.py", line 66, in write
+    b.write(Vector(self.rows))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\types\keyboard_button_row.py", line 66, in write
+    b.write(Vector(self.buttons))
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in __new__
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+  File "D:\Apps\Python\Python310\lib\site-packages\pyrogram\raw\core\primitives\vector.py", line 58, in <listcomp>
+    + [cast(bytes, t(i)) if t else i.write() for i in value]
+AttributeError: 'NoneType' object has no attribute 'write'
+[23-May-22 13:40:10 - INFO] - root - Stop signal received (SIGINT). Exiting...
+[23-May-22 13:40:10 - INFO] - venom.core.client - ### Stopping bot ###
+[23-May-22 13:40:32 - INFO] - venom.core.database - ### VenomX Database Not Found => Creating New Database... ###
+[23-May-22 13:40:32 - INFO] - root - ### Processing: Venom client ###
+[23-May-22 13:40:32 - INFO] - venom.core.client - ### Starting bot ###
+[23-May-22 13:40:40 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:40:42 - WARNING] - pyrogram.client - [VenomX] No plugin loaded from "venom"
+[23-May-22 13:40:42 - INFO] - venom.plugins - The plugins' list: ['essents.mark_read', 'essents.telegraph', 'fun.alive', 'help', 'inline_queries', 'test.test', 'tools.executor', 'tools.json', 'tools.logs', 'tools.ping', 'tools.startup', 'tools.sudo']
