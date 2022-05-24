@@ -130,7 +130,7 @@ class AliveInfo:
 {DOT_} <b>User {':':>12}</b> `{user_}`
 {DOT_} <b>Python {':':>7}</b> `{python_ver}`
 {DOT_} <b>Pyro {':':>12}</b> `{ver}`
-{DOT_} <b>Owner {':':>8}</b> [Kakashi](https://t.me/Kakashi_HTK)
+{DOT_} <b>Dev {':':>8}</b> [Kakashi](https://t.me/Kakashi_HTK)
 
 <b>Support:</b> [VenomX Support](https://t.me/AntiVenom_X)
 """
