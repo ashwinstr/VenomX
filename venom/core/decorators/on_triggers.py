@@ -15,9 +15,11 @@ from pyromod import listen
 from venom import Config
 from venom.core.types.message import MyMessage
 from .. import filter
+from ..command_manager import manager
 
 _FUNC = Callable[['Message'], Any]
 
+CURRENT_MODULE = ""
 
 def owner_filter(cmd: str) -> Filter:
     " owner filters "
@@ -42,8 +44,16 @@ class MyDecorator(Client):
     _PYROFUNC = Callable[[_FUNC], _FUNC]
 
     def my_decorator(self, flt: 'filter.Filter', filters_=Filter, group: int = 0, **kwargs) -> 'MyDecorator._PYROFUNC':
-        
+
         def inner(func: _FUNC) -> _FUNC:
+
+            # preparing plugins and commands list
+            global CURRENT_MODULE
+            if func.__module__ != CURRENT_MODULE:
+                manager.plugins.append(func.__module__)
+            manager.commands.append(f"{func.__module__}.{flt.cmd}")
+            CURRENT_MODULE = func.__module__
+
             filtered = filters_\
                 and owner_filter(flt.cmd) | sudo_filter(flt.cmd)
 

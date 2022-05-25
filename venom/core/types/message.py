@@ -6,7 +6,7 @@ import json
 
 from pyrogram.types import Message
 from pyrogram.enums import ParseMode
-from pyrogram.errors import MessageAuthorRequired, MessageTooLong
+from pyrogram.errors import MessageAuthorRequired, MessageTooLong, MessageIdInvalid
 
 from pyromod import listen
 
@@ -124,7 +124,7 @@ class MyMessage(Message):
                 parse_mode=parse_mode,
                 disable_web_page_preview=dis_preview
             )
-        except MessageAuthorRequired:
+        except (MessageAuthorRequired, MessageIdInvalid):
             if sudo:
                 reply_ = await self.msg._client.send_message(chat_id=self.msg.chat.id,
                                                                 text=text,

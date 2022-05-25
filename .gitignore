@@ -1,1 +1,15 @@
+
+# config file
 config.env
+
+# cache files
+__pycache__
+
+# vscode folder
+.vscode
+
+# local temp folders
+logs
+downloads
+venom/xcache
+venom/plugins/temp

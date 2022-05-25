@@ -2,6 +2,7 @@
 
 from .on_triggers import MyDecorator
 from .. import filter
+from ..command_manager import Manager
 
 
 class OnCmd:

@@ -8,8 +8,6 @@ from pyrogram.types import (
     InlineQuery,
     InlineQueryResultArticle,
     InputTextMessageContent,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup
 )
 from pyrogram.enums import ChatType
 from pyrogram.errors import FloodWait
@@ -26,9 +24,10 @@ class VenomDecorators:
                 if owner:
                     "owner check"
                     user_id = c_q.from_user.id
-                    if not user_id == Config.OWNER_ID\
+                    if not Config.SUDO\
+                        or (not user_id == Config.OWNER_ID\
                         and not user_id in Config.SUDO_USERS\
-                        and not user_id in Config.TRUSTED_SUDO_USERS:
+                        and not user_id in Config.TRUSTED_SUDO_USERS):
                         " if not owner "
                         return await c_q.answer(f"Only my owner can access this...!\nPlease deploy your own VenomX bot, thank you.", show_alert=True)
                 try:
@@ -63,9 +62,10 @@ class VenomDecorators:
                 if owner:
                     "owner check"
                     user_id = iq.from_user.id
-                    if not user_id == Config.OWNER_ID\
+                    if not Config.SUDO\
+                        or (not user_id == Config.OWNER_ID\
                         and not user_id in Config.SUDO_USERS\
-                        and not user_id in Config.TRUSTED_SUDO_USERS:
+                        and not user_id in Config.TRUSTED_SUDO_USERS):
                         " if not owner "
                         results = []
                         results.append(

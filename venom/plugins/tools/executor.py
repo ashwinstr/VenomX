@@ -15,6 +15,7 @@ from pyrogram.enums import ParseMode
 
 from venom import venom, Config, MyMessage
 from venom.helpers import post_tg, plugin_name
+from ..security.hide_vars import secure_config
 
 
 help_ = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
@@ -38,6 +39,9 @@ help_['commands'].append(
 @venom.trigger('eval')
 async def evaluate(_, message: MyMessage):
     " evaluate your code "
+    secure_ = await secure_config(message)
+    if not secure_:
+        return
     cmd = await init_func(message)
     mono_ = True if "-m" not in message.flags else False
     tele_ = True if "-tg" in message.flags else False
@@ -51,7 +55,9 @@ async def evaluate(_, message: MyMessage):
     ret_val, stdout, stderr, exc = None, None, None, None
 
     async def aexec(code):
-        head = "async def __aexec(venom, message):\n "
+        head = (
+            "async def __aexec(_, message):\n "
+        )
         if "\n" in code:
             rest_code = "\n ".join(iter(code.split("\n")))
         elif (
