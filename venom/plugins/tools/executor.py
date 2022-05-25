@@ -51,9 +51,7 @@ async def evaluate(_, message: MyMessage):
     ret_val, stdout, stderr, exc = None, None, None, None
 
     async def aexec(code):
-        head = (
-            "async def __aexec(_, message):\n "
-        )
+        head = "async def __aexec(venom, message):\n "
         if "\n" in code:
             rest_code = "\n ".join(iter(code.split("\n")))
         elif (
