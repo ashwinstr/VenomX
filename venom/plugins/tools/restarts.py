@@ -29,7 +29,8 @@ async def rest_art(_, message: MyMessage):
     " restart the bot "
     if '-h' in message.flags:
         await message.edit("`Restart the bot [HARD] ...`")
-        Config.HEROKU_APP.restart()
-        return time.sleep(20)
+        if Config.HEROKU_APP:
+            Config.HEROKU_APP.restart()
+            return time.sleep(20)
     await message.edit("`Restarting the bot...`")
     await venom.restart()
