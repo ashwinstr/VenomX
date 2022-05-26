@@ -32,5 +32,6 @@ async def rest_art(_, message: MyMessage):
         if Config.HEROKU_APP:
             Config.HEROKU_APP.restart()
             return time.sleep(20)
-    await message.edit("`Restarting the bot...`")
+        await message.edit("`HEROKU_APP not found...`")
+    await message.edit("`Restarting the bot normally...`")
     await venom.restart()

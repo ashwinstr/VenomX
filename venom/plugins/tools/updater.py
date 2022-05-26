@@ -31,7 +31,7 @@ async def _init() -> None:
             f"git remote rm upstream && git remote add upstream {Config.UPSTREAM_REPO}"
         )
     else:
-        _LOG.info(_LOG_STR, "Remote upstream exists")
+        _LOG.info(_LOG_STR, "Remote upstream exists, using same")
 
 
 ########################################################################################################################################################################

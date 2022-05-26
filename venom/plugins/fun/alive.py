@@ -207,12 +207,12 @@ async def alive_media_inline(_, i_q: InlineQuery):
 @VenomDecorators.callback_checker()
 async def bot_info(_, cq: CallbackQuery):
     info_ = f"""
-### Information about VenomX ###
+### 𝐈𝐧𝐟𝐨𝐫𝐦𝐚𝐭𝐢𝐨𝐧 𝐚𝐛𝐨𝐮𝐭 𝐕𝐞𝐧𝐨𝐦𝐗 ###
 
-{DOT_} Owner: Kakashi
-{DOT_} Based on:
+{DOT_} 𝗢𝘄𝗻𝗲𝗿: Kakashi
+{DOT_} 𝗕𝗮𝘀𝗲𝗱 𝗼𝗻:
     USERGE/USERGE-X
     (for understanding core parts)
-{DOT_} Release date: NO ETA
+{DOT_} 𝗥𝗲𝗹𝗲𝗮𝘀𝗲 𝗱𝗮𝘁𝗲: NO ETA
 """
     await cq.answer(info_, show_alert=True)
