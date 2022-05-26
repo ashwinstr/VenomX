@@ -28,7 +28,7 @@ class Config:
     HELP: Dict[str, dict] = {}
     HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY")
     HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME")
-    HEROKU_ENV = bool(int(os.environ.get("HEROKU_ENV", "0")))
+    HEROKU_ENV = bool(int(os.environ.get("DYNO", 0)))
     HEROKU_APP = (
         heroku3.from_key(HEROKU_API_KEY).apps()[HEROKU_APP_NAME]
         if HEROKU_ENV and HEROKU_API_KEY and HEROKU_APP_NAME
