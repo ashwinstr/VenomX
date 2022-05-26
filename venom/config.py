@@ -1,7 +1,7 @@
 # config.py
 
 import os
-# import heroku3
+import heroku3
 import asyncio
 from typing import Any, Dict, List
 from dotenv import load_dotenv
@@ -26,20 +26,20 @@ class Config:
     DB_URI = os.environ.get("DATABASE_URL")
     DOWN_PATH = "downloads"
     HELP: Dict[str, dict] = {}
-#    HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY")
-#    HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME")
-#    HEROKU_ENV = bool(int(os.environ.get("HEROKU_ENV", "0")))
-#    HEROKU_APP = (
-#        heroku3.from_key(HEROKU_API_KEY).apps()[HEROKU_APP_NAME]
-#        if HEROKU_ENV and HEROKU_API_KEY and HEROKU_APP_NAME
-#        else None
-#    )
+    HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY")
+    HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME")
+    HEROKU_ENV = bool(int(os.environ.get("HEROKU_ENV", "0")))
+    HEROKU_APP = (
+        heroku3.from_key(HEROKU_API_KEY).apps()[HEROKU_APP_NAME]
+        if HEROKU_ENV and HEROKU_API_KEY and HEROKU_APP_NAME
+        else None
+    )
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID"))
     OWNER_ID = int(os.environ.get("OWNER_ID"))
     STRING_SESSION = os.environ.get("STRING_SESSION")
     TEMP_PATH = "venom/plugins/temp/"
     THUMB_PATH = DOWN_PATH + "thumb_image.jpg"
-    UPSTREAM_REMOTE = os.environ.get("UPSTREAM_REMOTE")
+    UPSTREAM_REMOTE = os.environ.get("UPSTREAM_REMOTE", 'upstream')
     UPSTREAM_REPO = os.environ.get("UPSTREAM_REPO")
 
     ##### characters #####

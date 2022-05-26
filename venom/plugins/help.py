@@ -13,7 +13,7 @@ from venom.helpers import plugin_name, post_tg, VenomDecorators
 help_ = Config.HELP[plugin_name(__name__)] = {'type': 'help', 'commands': []}
 dot_ = Config.BULLET_DOT
 
-TRIG = Config.LEFT_ARROW if Config.CMD_TRIGGER == "<" else Config.RIGHT_ARROW if Config.CMD_TRIGGER == ">" else Config.CMD_TRIGGER
+TRIG = Config.CMD_TRIGGER
 
 
 ############################################################################################################################################

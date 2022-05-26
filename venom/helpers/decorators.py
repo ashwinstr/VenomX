@@ -58,7 +58,6 @@ class VenomDecorators:
         def function(func):
             async def wrapper(venom, iq: InlineQuery):
                 " inline query owner and tb checker "
-                " callback query owner and tb checker "
                 if owner:
                     "owner check"
                     user_id = iq.from_user.id

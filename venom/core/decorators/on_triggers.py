@@ -35,7 +35,7 @@ def sudo_filter(cmd: str) -> Filter:
     filters_ = filters.regex(fr"^{Config.SUDO_TRIGGER}{cmd}(\s(.|\n)*?)?$")\
         & filters.create(
             lambda _, __, m:
-            (m.from_user\
+            (bool(Config.SUDO) and m.from_user\
                 and ((m.from_user.id in Config.TRUSTED_SUDO_USERS) or (m.from_user.id in Config.SUDO_USERS and cmd in Config.SUDO_CMD_LIST)))
         )
     return filters_

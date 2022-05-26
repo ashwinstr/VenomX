@@ -1,5 +1,7 @@
 # client.py
 
+import os
+import sys
 import time
 import importlib
 import logging
@@ -106,7 +108,6 @@ class Venom(Client):
         return formatted_
 
     async def start(self):
-        START_ = time.time()
         if self.bot is not None:
             _LOG.info("### %s ###", "Starting bot")
             await self.bot.start()
@@ -123,7 +124,5 @@ class Venom(Client):
         _close_db()
 
     async def restart(self):
-        await super().restart()
-
-    async def sleep(self, msg):
-        await msg.reply("`Sleeping for (10) Seconds.`")
+        _LOG.info("### %s ###", "Restarting VenomX")
+        os.execl(sys.executable, sys.executable, '-m', 'venom')
