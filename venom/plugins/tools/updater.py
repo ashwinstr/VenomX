@@ -18,16 +18,16 @@ _LOG_STR = "### %s ###"
 
 async def _init() -> None:
     exists_ = os.popen("git config --get remote.upstream.url").read()
-    upstrm = Config.UPSTREAM_REPO
+    upstrm = f"https://{Config.GH_TOKEN}@{Config.UPSTREAM_REPO.lstrip('https://')}"
     if not exists_:
         _LOG.info(_LOG_STR, "Adding remote upstream")
         os.system(
-            f"git remote add upstream https://{Config.GH_TOKEN}@{Config.UPSTREAM_REPO.lstrip('https://')}"
+            f"git remote add upstream {upstrm}"
         )
     elif str(exists_).strip() != upstrm:
         _LOG.info(_LOG_STR, "Updating remote upstream")
         os.system(
-            f"git remote rm upstream && git remote add upstream https://{Config.GH_TOKEN}@{Config.UPSTREAM_REPO.lstrip('https://')}"
+            f"git remote rm upstream && git remote add upstream {upstrm}"
         )
     else:
         _LOG.info(_LOG_STR, "Remote upstream exists, using same")
@@ -89,7 +89,7 @@ async def update_r(_, message: MyMessage):
         "<b>VenomX update process started.</b>\n"
         "`Now restarting... Wait for a while.`"
     )
-    await venom.restart()
+    asyncio.get_event_loop().create_task(venom.restart(True))
 
     
 

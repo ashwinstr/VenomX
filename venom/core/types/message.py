@@ -3,6 +3,7 @@
 import re
 import os
 import json
+from typing import List
 
 from pyrogram.types import Message
 from pyrogram.enums import ParseMode
@@ -11,6 +12,8 @@ from pyrogram.errors import MessageAuthorRequired, MessageTooLong, MessageIdInva
 from pyromod import listen
 
 from venom import Config
+
+_CANCEL_PROCESS: List[int] = []
 
 
 class MyMessage(Message):
@@ -83,8 +86,17 @@ class MyMessage(Message):
             filtered += f"\n{new_line}"
         return filtered.strip()
 
-    def toJson(self):
-        return json.dumps(self, default=lambda o: o.__dict__, indent=4)
+    @property
+    def process_is_cancelled(self) -> bool:
+        " check if process is cancelled "
+        if self.msg.id in _CANCEL_PROCESS:
+            _CANCEL_PROCESS.remove(self.msg.id)
+            return True
+        return False
+
+    def cancel_process(self) -> None:
+        " cancel process "
+        _CANCEL_PROCESS.append(self.msg.id)
 
     async def send_as_file(self,
                             text: str,

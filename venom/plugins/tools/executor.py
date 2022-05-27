@@ -15,7 +15,7 @@ from pyrogram.enums import ParseMode
 
 from venom import venom, Config, MyMessage
 from venom.helpers import post_tg, plugin_name
-from ..security.hide_vars import secure_config
+from ..security.hide_vars import secure_cmd
 
 
 help_ = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
@@ -39,7 +39,7 @@ help_['commands'].append(
 @venom.trigger('eval')
 async def evaluate(_, message: MyMessage):
     " evaluate your code "
-    secure_ = await secure_config(message)
+    secure_ = await secure_cmd(message)
     if not secure_:
         return
     cmd = await init_func(message)
@@ -85,6 +85,7 @@ async def evaluate(_, message: MyMessage):
     evaluation = exc or stderr or stdout or ret_val
     output = f"**>** ```{cmd}```\n\n"
     if evaluation is not None:
+        evaluation = evaluation.replace(Config.GH_TOKEN, "|gh_token|")
         if mono_:
             output += f"**>>** ```{evaluation}```"
             parse_ = ParseMode.MARKDOWN
@@ -135,10 +136,9 @@ async def term_(_, message: MyMessage):
     count = 0
     while not t_obj.finished:
         count += 1
-        if count >= 19:
+        if message.process_is_cancelled:
             t_obj.cancel()
-            await message.reply("`process canceled!`")
-            return
+            return await message.reply("`Process cancelled!`")
         await asyncio.sleep(0.5)
         if count >= Config.EDIT_SLEEP_TIMEOUT * 2:
             count = 0

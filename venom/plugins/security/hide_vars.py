@@ -14,10 +14,10 @@ _DANG = DANGEROUS_CONFIG = ['API_HASH',
                             'TOKEN']
 
 
-async def secure_config(msg: MyMessage) -> bool:
+async def secure_cmd(msg: MyMessage) -> bool:
     " secure the dangerous configs from becoming public "
     input_ = msg.filtered_input
-    if any(a in input_ for a in _DANG) or bool(re.search(r"Config.(\w.*)?TOKEN(\w.*)?", input_)):
+    if any(one in input_ for one in _DANG) or bool(re.search(r"(Config.)?(\w.*)?(TOKEN|API)(\w.*)?", input_)):
         await msg.edit("`SECURED VAR FOUND IN MESSAGE, PROCESS TERMINATED !!!`")
         return False
     return True

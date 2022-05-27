@@ -1,6 +1,5 @@
 # command_manager.py
-\
-import pathlib
+
 from typing import List, Callable
 
 from venom import Config

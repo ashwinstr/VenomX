@@ -46,5 +46,5 @@ async def tg_text(_, message: MyMessage):
     if not replied and not replied.text:
         return await message.edit("`Reply to text to post into telegraph.`")
     await message.edit("`Posting to telegraph...`")
-    link_ =  post_tg(replied.text)
+    link_ =  post_tg("VenomX telagraph...", replied.text)
     await message.edit("[<b>Posted to telegra.ph</b>]({})".format(link_), dis_preview=True)
