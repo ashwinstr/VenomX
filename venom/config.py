@@ -26,14 +26,6 @@ class Config:
     DB_URI = os.environ.get("DATABASE_URL")
     DOWN_PATH = "downloads"
     HELP: Dict[str, dict] = {}
-    HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY")
-    HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME")
-    HEROKU_ENV = bool(os.environ.get("DYNO", 0))
-    HEROKU_APP = (
-        heroku3.from_key(HEROKU_API_KEY).apps()[HEROKU_APP_NAME]
-        if HEROKU_ENV and HEROKU_API_KEY and HEROKU_APP_NAME
-        else None
-    )
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID"))
     OWNER_ID = int(os.environ.get("OWNER_ID"))
     STRING_SESSION = os.environ.get("STRING_SESSION")
@@ -49,6 +41,16 @@ class Config:
     ##### constants #####
     EDIT_SLEEP_TIMEOUT = 10
 
+    ##### heroku configs #####
+    HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY")
+    HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME")
+    HEROKU_ENV = bool(os.environ.get("DYNO", 0))
+    HEROKU_APP = (
+        heroku3.from_key(HEROKU_API_KEY).apps()[HEROKU_APP_NAME]
+        if HEROKU_ENV and HEROKU_API_KEY and HEROKU_APP_NAME
+        else None
+    )
+
     ##### plugins #####
         # alive
     ALIVE_PIC = ""
@@ -61,3 +63,7 @@ class Config:
     SUDO_USERS: List[int] = []
     TRUSTED_SUDO_USERS: List[int] = []
     SUDO_CMD_LIST: List[str] = []
+
+    ##### tokens #####
+        # github token
+    GH_TOKEN = os.environ.get("GH_TOKEN")

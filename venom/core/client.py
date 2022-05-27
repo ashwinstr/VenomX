@@ -35,8 +35,8 @@ async def _init_tasks():
         list_.append(init_func())
     try:
         await asyncio.gather(*list_)
-    except ConnectionError:
-        pass
+    except Exception as e:
+        print(e)
     list_.clear()
 
 
@@ -78,20 +78,10 @@ class Venom(Client):
             value_ = getattr(client, attr_)
             self.__setattr__(attr_, value_)
         super().__init__(**kwargs)
-#        self.executor.shutdown()
-#        self.executor = _EXECUTOR
 
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         return super().__setattr__(__name, __value)
-    
-#    @property
-#    def bot(self) ->  Union['Venom', 'VenomBot']:
-#        if self._bot is None:
-#            if Config.BOT_TOKEN:
-#                return self
-#            raise
-#        return self._bot
 
     def getCLogger(self, name: str) -> 'Message':
         logged = ChannelLogger(self, name)
@@ -120,8 +110,8 @@ class Venom(Client):
         if self.bot:
             _LOG.info("### %s ###", "Stopping bot")
             await self.bot.stop()
-        await super().stop()
         _close_db()
+        await super().stop()
 
     async def restart(self):
         _LOG.info("### %s ###", "Restarting VenomX")

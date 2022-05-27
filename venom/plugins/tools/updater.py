@@ -25,7 +25,6 @@ async def _init() -> None:
             f"git remote add upstream {Config.UPSTREAM_REPO}"
         )
     elif str(exists_).strip() != upstrm:
-        print(exists_)
         _LOG.info(_LOG_STR, "Updating remote upstream")
         os.system(
             f"git remote rm upstream && git remote add upstream {Config.UPSTREAM_REPO}"

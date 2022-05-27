@@ -17,5 +17,6 @@ class Collection:
     # alive
     ALIVE_MEDIA = get_collection("ALIVE_MEDIA")
 
-    # restart
-    RESTART_MSG = get_collection("RESTART_MSG")
+    # restart/update
+    RESTART = get_collection("RESTART")
+    UPDATE = get_collection("UPDATE")

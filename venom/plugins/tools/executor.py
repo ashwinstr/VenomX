@@ -46,7 +46,7 @@ async def evaluate(_, message: MyMessage):
     mono_ = True if "-m" not in message.flags else False
     tele_ = True if "-tg" in message.flags else False
     if not cmd:
-        return await message.edit("`Input not found...`")
+        return
     await message.edit("`Executing eval...`")
     old_stderr = sys.stderr
     old_stdout = sys.stdout
@@ -153,11 +153,11 @@ async def term_(_, message: MyMessage):
 async def init_func(message: MyMessage):
     cmd = message.filtered_input
     if not cmd:
-        await message.edit("No Command Found!")
-        return None
+        await message.edit("`Input not found...`")
+        return False
     if "config.env" in cmd:
-        await message.edit("That's a dangerous operation! Not Permitted!")
-        return None
+        await message.edit("`That's a dangerous operation! Not Permitted!`")
+        return False
     return cmd
 
 

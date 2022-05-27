@@ -1,4 +1,5 @@
 # on_cmd.py
+# idea taken from USERGE-X
 
 from .on_triggers import MyDecorator
 from .. import filter
