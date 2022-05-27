@@ -22,12 +22,12 @@ async def _init() -> None:
     if not exists_:
         _LOG.info(_LOG_STR, "Adding remote upstream")
         os.system(
-            f"git remote add upstream {Config.UPSTREAM_REPO}"
+            f"git remote add upstream https://{Config.GH_TOKEN}@{Config.UPSTREAM_REPO.lstrip('https://')}"
         )
     elif str(exists_).strip() != upstrm:
         _LOG.info(_LOG_STR, "Updating remote upstream")
         os.system(
-            f"git remote rm upstream && git remote add upstream {Config.UPSTREAM_REPO}"
+            f"git remote rm upstream && git remote add upstream https://{Config.GH_TOKEN}@{Config.UPSTREAM_REPO.lstrip('https://')}"
         )
     else:
         _LOG.info(_LOG_STR, "Remote upstream exists, using same")
