@@ -86,10 +86,10 @@ async def update_r(_, message: MyMessage):
         return await message.edit(f"<b>ERROR:</b> `{e}`")
     await asyncio.sleep(1)
     await message.edit(
-        "**USERGE-X update process started!**\n"
-        "`Now restarting... Wait for a while!`"
+        "<b>VenomX update process started.</b>\n"
+        "`Now restarting... Wait for a while.`"
     )
-    asyncio.get_event_loop().create_task(venom.restart(True))
+    await venom.restart()
 
     
 

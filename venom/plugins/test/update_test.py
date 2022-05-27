@@ -12,7 +12,7 @@ async def up_test(_, message: MyMessage):
     repo = Repo()
     branch = "main"
     os.system(
-        f"git remote rm upstream && git remote add upstream https://github.com/VenomXuserbot/VenomX_team.git"
+        f"git remote rm upstream && git remote add upstream https://anonymousx97:{Config.GH_TOKEN}@github.com/VenomXuserbot/VenomX_team.git"
     )
     repo.remote(Config.UPSTREAM_REMOTE).pull(branch, force=True)
     print("DONE!")
