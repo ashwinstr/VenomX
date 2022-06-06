@@ -1,8 +1,11 @@
+#!/bin/sh
+
+declare -r cmd='.'
 
 start() {
-    bash echo "Installing requirments..."
-    bash pip3 install -r requirements.txt
-    bash python3 -m venom
+    echo "Installing requirments..."
+    pip3 install -r requirements.txt
+    python3 -m venom
 }
 
-run "$@"
+start

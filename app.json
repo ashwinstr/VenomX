@@ -1,0 +1,33 @@
+{
+    "env": {
+        "API_HASH": {
+            "description": "Enter your api_hash, get it from my.telegram.org"
+        },
+        "API_ID": {
+            "description": "Enter your api_id, get it from my.telegram.org"
+        },
+        "BOT_TOKEN": {
+            "description": "Enter your bot_token, get it from @botfather bot in telegram"
+        },
+        "CMD_TRIGGER": {
+            "description": "Enter your preferred command trigger, default is '.'",
+            "required": false
+        },
+        "DATABASE_URL": {
+            "description": "Enter your database_url, get it from cloud.mongodb.com"
+        },
+        "LOG_CHANNEL_ID": {
+            "description": "Enter your log channel id, it should be a private channel preferrably"
+        },
+        "OWNER_ID": {
+            "description": "Enter your own user id"
+        },
+        "STRING_SESSION": {
+            "description": "Enter your session string, use @UX_session_bot for it"
+        },
+        "UPSTREAM_REPO": {
+            "description": "Enter upstream repo link",
+            "required": false
+        }
+    }
+}
