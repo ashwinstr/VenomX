@@ -3,7 +3,7 @@
 ## DISCLAIMER: This userbot is based on USERGE-X which is a fork of Userge userbot.
 
 ## OWNER
-### [Kakashi](t.me/Kakashi_HTK)
+### [Kakashi](https://telegram.dog/Kakashi_HTK)
 
 ## Deploy from here.
 
