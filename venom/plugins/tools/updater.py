@@ -54,7 +54,7 @@ async def update_r(_, message: MyMessage):
     pull_ = False
     if "-now" in message.flags:
         pull_ = True
-    repo = Repo("./")
+    repo = Repo()
     branch = "master"
     await message.edit("`Checking...`")
     try:
