@@ -55,7 +55,7 @@ async def update_r(_, message: MyMessage):
     if "-now" in message.flags:
         pull_ = True
     repo = Repo()
-    branch = "master"
+    branch = "main"
     await message.edit("`Checking...`")
     try:
         fetch_, total_ = get_update_list(repo, branch)
