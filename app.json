@@ -29,7 +29,7 @@
             "description": "Enter upstream repo link",
             "required": false
         }
-    }
+    },
     "buildpacks": [
 	{ "url": "heroku/python" }
     ]
