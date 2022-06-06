@@ -3,12 +3,13 @@
 
 
 import os
+import time
 import asyncio
 
 from git import Repo
 from git.exc import GitCommandError
 
-from venom import venom, MyMessage, Config, logging
+from venom import venom, MyMessage, Config, logging, Collection
 from venom.helpers import plugin_name
 
 HELP = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
@@ -51,6 +52,7 @@ HELP['commands'].append(
 @venom.trigger('update')
 async def update_r(_, message: MyMessage):
     " bot updater "
+    START_ = time.time()
     pull_ = False
     if "-now" in message.flags:
         pull_ = True
@@ -88,6 +90,14 @@ async def update_r(_, message: MyMessage):
     await message.edit(
         "<b>VenomX update process started.</b>\n"
         "`Now restarting... Wait for a while.`"
+    )
+    await Collection.UPDATE.insert_one(
+        {
+            '_id': 'UPDATE',
+            'chat_id': message.chat.id,
+            'msg_id': message.id,
+            'start': START_
+        }
     )
     asyncio.get_event_loop().create_task(venom.restart())
 
