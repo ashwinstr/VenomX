@@ -89,7 +89,7 @@ async def update_r(_, message: MyMessage):
         "<b>VenomX update process started.</b>\n"
         "`Now restarting... Wait for a while.`"
     )
-    asyncio.get_event_loop().create_task(venom.restart(True))
+    asyncio.get_event_loop().create_task(venom.restart())
 
     
 
