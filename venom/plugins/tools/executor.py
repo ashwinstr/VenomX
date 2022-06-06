@@ -85,7 +85,7 @@ async def evaluate(_, message: MyMessage):
     evaluation = exc or stderr or stdout or ret_val
     output = f"**>** ```{cmd}```\n\n"
     if evaluation is not None:
-        if isinstance(evaluation, str):
+        if isinstance(evaluation, str) and Config.GH_TOKEN:
             evaluation = str(evaluation).replace(Config.GH_TOKEN, "|gh_token|")
         if mono_:
             output += f"**>>** ```{evaluation}```"
