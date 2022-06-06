@@ -18,7 +18,7 @@ _LOG_STR = "### %s ###"
 
 async def _init() -> None:
     exists_ = os.popen("git config --get remote.upstream.url").read()
-    upstrm = f"https://{Config.GH_TOKEN}@{Config.UPSTREAM_REPO.lstrip('https://')}"
+    upstrm = Config.UPSTREAM_REPO
     if not exists_:
         _LOG.info(_LOG_STR, "Adding remote upstream")
         os.system(
