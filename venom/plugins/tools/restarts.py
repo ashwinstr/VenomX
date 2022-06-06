@@ -1,6 +1,8 @@
 # restarts.py
 
 import time
+import os
+import shutil
 
 from venom import venom, Config, MyMessage, Collection
 from venom.helpers import plugin_name
@@ -18,6 +20,8 @@ HELP['commands'].append(
         'command': 'restart',
         'flags': {
             '-h': 'hard restart',
+            '-t': 'clear temp',
+            '-d': 'clear downloads'
         },
         'about': 'restart the bot',
         'syntax': '{tr}restart [optional flag]',
@@ -28,6 +32,7 @@ HELP['commands'].append(
 @venom.trigger('restart')
 async def rest_art(_, message: MyMessage):
     " restart the bot "
+    action = "normally"
     await RESTART.drop()
     if '-h' in message.flags:
         msg = await message.edit("`Restart the bot [HARD] ...`")
@@ -37,19 +42,27 @@ async def rest_art(_, message: MyMessage):
                     '_id': 'RESTART',
                     'chat_id': msg.chat.id,
                     'msg_id': msg.id,
-                    'start': time.time()
+                    'start': time.time(),
                 }
             )
             Config.HEROKU_APP.restart()
             return
         await msg.edit("`HEROKU_APP not found...`")
-    msg = await message.edit("`Restarting the bot normally...`")
+        action = "normally"
+    elif '-t' in message.flags:
+        shutil.rmtree(Config.TEMP_PATH, ignore_errors=True)
+        action = "and deleting temp path"
+        await Collection.TEMP_LOADED.drop()
+    elif '-d' in message.flags:
+        shutil.rmtree(Config.DOWN_PATH, ignore_errors=True)
+        action = "and emptying downloads path"
+    msg = await message.edit(f"`Restarting the bot {action}...`")
     await RESTART.insert_one(
         {
             '_id': 'RESTART',
             'chat_id': msg.chat.id,
             'msg_id': msg.id,
-            'start': time.time()
+            'start': time.time(),
         }
     )
     await venom.restart()

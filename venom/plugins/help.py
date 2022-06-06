@@ -21,18 +21,55 @@ TRIG = Config.CMD_TRIGGER
 help_['commands'].append(
     {
         'command': 'help',
-        'flags': {
-            '-tg': 'show help in telegraph'
-        },
-        'about': 'check plugin list',
+        'flags': None,
+        'about': 'check help',
         'syntax': '{tr}help',
         'sudo': True
     }
 )
 
-
 @venom.trigger('help')
 async def help_me(_, message: MyMessage):
+    " check help "
+    help__ = f"""
+Hello there, **{message.from_user.first_name}**, this is VenomX help.
+
+**To check list of plugins...**
+`{TRIG}plugins`
+
+**To check inside a plugin...**
+`{TRIG}plugin [plugin name]`
+
+**To check about a command...**
+`{TRIG}cmd [command name]`
+
+**To search for plugin or command...**
+`{TRIG}s [query]`
+
+For anything else, ask for help in @UX_xplugin_support.
+**THANK YOU.**
+    """
+
+    await message.edit(help__, parse_mode=ParseMode.MARKDOWN)
+
+
+############################################################################################################################################
+
+help_['commands'].append(
+    {
+        'command': 'plugins',
+        'flags': {
+            '-tg': 'show plugins in telegraph'
+        },
+        'about': 'check plugin list',
+        'syntax': '{tr}plugins',
+        'sudo': True
+    }
+)
+
+
+@venom.trigger('plugins')
+async def plugin_s(_, message: MyMessage):
     " check plugin list "
     out_ = "<b>Available plugins:</b> [<b>{}</b>]<br><br>"
     total_ = 0
@@ -60,7 +97,7 @@ help_['commands'].append(
 )
 
 @venom.trigger('plugin')
-async def plug_ins(_, message: MyMessage):
+async def plug_in(_, message: MyMessage):
     " check command list in plugin "
     input_ = message.input_str
     if not input_:

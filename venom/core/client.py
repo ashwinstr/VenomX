@@ -14,8 +14,8 @@ from pyrogram import Client, idle
 from pyrogram.types import Message
 
 from venom import Config, logging
-from .decorators.on_cmd import OnCmd
-from .channel import ChannelLogger
+from .methods import Methods
+from .methods.channels.channel import GetCLogger
 from ..plugins import all_plugins
 from .database import _close_db
 from venom.helpers import time_format
@@ -40,7 +40,10 @@ async def _init_tasks():
     list_.clear()
 
 
-class VenomBot(Client):
+class CustomVenom(Methods, Client):
+    """ testing """
+
+class VenomBot(CustomVenom):
 
     def __init__(self, bot: Optional['VenomBot'] = None, **kwargs) -> None:
         self.bot = bot
@@ -52,7 +55,7 @@ class VenomBot(Client):
         return self.bot
 
 
-class Venom(Client):
+class Venom(CustomVenom):
     logging.info("### Processing: %s ###", "Venom client")
     
     def __init__(self, client: Client):
@@ -83,13 +86,9 @@ class Venom(Client):
     def __setattr__(self, __name: str, __value: Any) -> None:
         return super().__setattr__(__name, __value)
 
-    def getCLogger(self, name: str) -> 'Message':
-        logged = ChannelLogger(self, name)
-        return logged
-
-    def trigger(self, cmd: str, group: int = 0):
-        group = self.rnd_id()
-        return OnCmd.on_cmd(self=self, cmd=cmd, group=group)
+#    def getCLogger(self, name: str) -> 'Message':
+#        logged = ChannelLogger(self, name)
+#        return logged
 
     @property
     def uptime(self):

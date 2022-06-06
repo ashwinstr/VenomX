@@ -17,7 +17,7 @@ class SendMessage(RClient):
                             text: str, 
                             del_in: int = -1,
                             dis_preview: bool = False,
-                            parsemode: ParseMode = ParseMode.DEFAULT,
+                            parse_mode: ParseMode = ParseMode.DEFAULT,
                             reply_to_message_id: Optional[int] = None,
                             reply_markup: InlineKeyboardMarkup = None):
 
@@ -26,7 +26,7 @@ class SendMessage(RClient):
         msg = await super().send_message(chat_id=chat_id,
                                     text=text,
                                     disable_web_page_preview=dis_preview,
-                                    parse_mode=parsemode,
+                                    parse_mode=parse_mode,
                                     reply_to_message_id=reply_to_message_id,
                                     reply_markup=reply_markup)
         

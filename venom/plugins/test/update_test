@@ -1,4 +1,4 @@
-# update_test.py
+# update_test
 
 import os
 from git import Repo

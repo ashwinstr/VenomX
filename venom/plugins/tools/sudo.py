@@ -99,7 +99,7 @@ async def add_sudo(_, message: MyMessage):
         else:
             action_ = "added to"
         Config.TRUSTED_SUDO_USERS.append(user_.id)
-        await Collection.TRUSTED_SUDO_USERS.insert_one({'_id': user_.id, 'username': user_.username})
+        await Collection.TRUSTED_SUDO_USERS.insert_one({'_id': user_.id, 'username': user_.username, 'name': user_.first_name})
         return await message.edit(f"User `{user_.id}` {action_} **Trusted sudo user** list.")
     if tsudo:
         Config.TRUSTED_SUDO_USERS.remove(user_.id)
@@ -110,7 +110,7 @@ async def add_sudo(_, message: MyMessage):
     else:
         action_ = "added to"
     Config.SUDO_USERS.append(user_.id)
-    await Collection.SUDO_USERS.insert_one({'_id': user_.id, 'username': user_.username})
+    await Collection.SUDO_USERS.insert_one({'_id': user_.id, 'username': user_.username, 'name': user_.first_name})
     await message.edit(f"User `{user_.id}` {action_} **Sudo user** list.")
 
 
@@ -177,14 +177,16 @@ async def view_sudo(_, message: MyMessage):
     t_total = 0
     dot_ = Config.BULLET_DOT
     async for one in Collection.TRUSTED_SUDO_USERS.find():
-        list_ += f"{dot_} `{one['_id']}` - **@{one['username']}**\n"
+        name_ = one['name'] if 'name' in one.keys() else one['username']
+        list_ += f"{dot_} `{one['_id']}` - **{name_}**\n"
         t_total += 1
     if t_total == 0:
         list_ += "`EMPTY LIST!`\n"
     list_ += "\n**Normal sudo user list:** [**{}**]\n\n"
     n_total = 0
     async for one in Collection.SUDO_USERS.find():
-        list_ += f"{dot_} `{one['_id']}` - **@{one['username']}**\n"
+        name_ = one['name'] if 'name' in one.keys() else one['username']
+        list_ += f"{dot_} `{one['_id']}` - **{name_}**\n"
         n_total += 1
     if n_total == 0:
         list_ += "`EMPTY LIST!`"

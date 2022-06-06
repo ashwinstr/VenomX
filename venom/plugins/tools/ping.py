@@ -2,6 +2,8 @@
 
 from datetime import datetime
 
+from pyrogram.enums import ParseMode
+
 from venom import venom, MyMessage, Config
 from venom.helpers import plugin_name
 
@@ -25,5 +27,9 @@ help_['commands'].append(
 async def pinger(_, message: MyMessage):
     " check ping "
     start_ = datetime.now()
+    out_ = (
+        "{dot} <b>PING</b> ---> <i>{ping} ms</i>\n"
+        "{dot} <b>UPTIME</b> ---> <i>{uptime}</i>"
+    )
     await message.edit("`Checking ping ...`")
-    await message.edit("{} <b>PING</b> ---> <i>{} ms</i>".format(DOT_, (datetime.now() - start_).microseconds/1000))
+    await message.edit(out_.format(dot=DOT_, ping=(datetime.now() - start_).microseconds/1000, uptime=venom.uptime), parse_mode=ParseMode.HTML)

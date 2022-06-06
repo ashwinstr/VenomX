@@ -26,7 +26,7 @@ class Config:
     DB_URI = os.environ.get("DATABASE_URL")
     DOWN_PATH = "downloads"
     HELP: Dict[str, dict] = {}
-    LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID"))
+    LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
     OWNER_ID = int(os.environ.get("OWNER_ID"))
     STRING_SESSION = os.environ.get("STRING_SESSION")
     TEMP_PATH = "venom/plugins/temp/"

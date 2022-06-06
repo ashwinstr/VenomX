@@ -81,15 +81,13 @@ def get_owner() -> dict:
     return user
 
 def time_format(time: float) -> dict:
-    " time formatter\n"
+    " time formatter"
     days_ = time / 60 / 60 / 24
     hour_ = (days_ - int(days_)) * 24
     min_ = (hour_ - int(hour_)) * 60
     sec_ = (min_ - int(min_)) * 60
-    ms_ = (sec_ - int(sec_)) * 1000
     out_ = f"<b>{int(days_)}</b> D," if int(days_) else ""
     out_ += f" <b>{int(hour_)}</b> H," if int(hour_) else ""
     out_ += f" <b>{int(min_)}</b> M," if int(min_) else ""
-    out_ += f" <b>{int(sec_)}</b> S," if int(sec_) else ""
-    out_ += f" <b>{int(ms_)}</b> MS"
+    out_ += f" <b>{int(sec_)}</b> S"
     return out_.strip()
