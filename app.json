@@ -30,4 +30,7 @@
             "required": false
         }
     }
+    "buildpacks": [
+		{ "url": "heroku/python" }
+	]
 }
