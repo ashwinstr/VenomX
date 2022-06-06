@@ -71,7 +71,7 @@ async def update_r(_, message: MyMessage):
         if fetch_:
             out_ = (
                 "<b>VenomX update found.</b>\n\n"
-                f"<b>Changelog:</b> [<b>{total_}</b>]\n"
+                f"<b>Changelog:</b> [<b>{total_}</b>]\n\n"
                 + fetch_
             )
             await message.edit_or_send_as_file(out_, file_name='update.txt', caption='<b>VenomX update found.</b>', dis_preview=True)
@@ -103,7 +103,7 @@ def get_update_list(repo: Repo, branch: str) -> str:
     total_ = 0
     for i in repo.iter_commits(f"HEAD..{Config.UPSTREAM_REMOTE}/{branch}"):
         total_ += 1
-        out += f"🔨 **#{i.count()}** : [{i.summary}]({upst}/commit/{i}) 👤 __{i.author}__\n\n"
+        out += f"🔨 **#{i.count()}** : [{i.summary}]({upst}/commit/{i}) 👤 __{i.author}__\n"
         if total_ == limit_:
             return out, total_
     return out, total_
