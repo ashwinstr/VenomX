@@ -1,1 +1,1 @@
-worker: python3 -m venom
+worker: bash run
