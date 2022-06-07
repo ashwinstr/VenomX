@@ -109,6 +109,7 @@ def get_update_list(repo: Repo, branch: str) -> str:
     repo.remote(Config.UPSTREAM_REMOTE).fetch(branch)
     upst = Config.UPSTREAM_REPO.rstrip("/")
     out = ""
+    upst = Config.UPSTREAM_REPO.rstrip("/")
     limit_ = 100
     total_ = 0
     for i in repo.iter_commits(f"HEAD..{Config.UPSTREAM_REMOTE}/{branch}"):
