@@ -202,7 +202,11 @@ dangerous_cmds = [
     'sudo',
     'addsudo',
     'delsudo',
-    'markr'
+    'markr',
+    'addscmd',
+    'delscmd',
+    'spot_auth',
+    'load'
 ]
 
 help_['commands'].append(
