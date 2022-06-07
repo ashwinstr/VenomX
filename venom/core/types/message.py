@@ -111,7 +111,7 @@ class MyMessage(Message):
         " send text as file "
         file_ = os.path.join(Config.TEMP_PATH, file_name)
         with open(file_, "w+", encoding='utf-8') as fn:
-            fn.write(text)
+            fn.write(str(text))
         if delete_message:
             await self.msg.delete()
         if reply_to:
