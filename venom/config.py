@@ -67,3 +67,4 @@ class Config:
     ##### tokens #####
         # github token
     GH_TOKEN = os.environ.get("GH_TOKEN")
+    SPOTIFY_TOKEN = os.environ.get("SPOTIFY_TOKEN")
