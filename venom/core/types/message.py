@@ -180,8 +180,8 @@ class MyMessage(Message):
 
     async def edit_or_send_as_file(self,
                                     text: str,
-                                    file_name: str,
-                                    caption: str,
+                                    file_name: str = "File.txt",
+                                    caption: str = None,
                                     del_in: int = -1,
                                     parse_mode: ParseMode = ParseMode.DEFAULT,
                                     dis_preview: bool = False) -> 'MyMessage':
