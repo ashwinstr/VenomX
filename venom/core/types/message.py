@@ -193,7 +193,7 @@ class MyMessage(Message):
             return await self.send_as_file(text=text,
                                             file_name=file_name,
                                             caption=caption,
-                                            reply_to_message_id=reply_to)
+                                            reply_to=reply_to)
     
     async def ask(self, text: str, timeout: int = 15) -> 'MyMessage':
         " monkey patching to MyMessage using pyromod "
