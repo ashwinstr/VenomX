@@ -4,6 +4,7 @@ futures==2.2.0
 gitpython>=3.1.11
 heroku3
 motor>=2.3.0
+Pillow
 pymongo
 git+https://github.com/ashwinstr/pyrogram-2.git@master
 pyromod
