@@ -58,7 +58,7 @@ async def update_r(_, message: MyMessage):
         pull_ = True
     repo = Repo()
     branch = "main"
-    await message.edit("`Checking...`")
+    message = await message.edit("`Checking...`")
     try:
         fetch_, total_ = get_update_list(repo, branch)
     except GitCommandError as g_e:

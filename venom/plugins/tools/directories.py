@@ -32,6 +32,7 @@ async def direct_ories(_, message: MyMessage):
     if not exists(path_):
         return await message.edit(f"Path `{path_}` does not exist.", del_in=3)
     path = Path(path_)
+    out = f"<b>PATH:</b> `{path}`\n\n"
     if path.is_dir():
         folders = ""
         files = ""
@@ -49,6 +50,7 @@ async def direct_ories(_, message: MyMessage):
                 files += f" `{one_path.name}` <i>({humanbytes(size)})\n"
             else:
                 folders += f"📁 <code>{one_path.name}</code>\n"
+        out += (folders + files) or "<code>empty path!</code>"
     else:
         size = os.stat(str(path)).st_size
         out += f"📄 <code>{path.name}</code> <i>({humanbytes(size)})</i>\n"
