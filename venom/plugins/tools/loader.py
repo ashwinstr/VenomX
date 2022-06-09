@@ -28,6 +28,7 @@ async def load_er(_, message: MyMessage):
     reply_ = message.replied
     if not reply_ or not reply_.document or not reply_.document.file_name.endswith(".py"):
         return await message.edit("`Reply to python plugin...`")
+    await message.edit("`Trying to load...`")
     f_name = reply_.document.file_name
     plug_path = os.path.join(Config.TEMP_PATH, f_name)
     import_path = plug_path.replace("/", ".")[:-3]
