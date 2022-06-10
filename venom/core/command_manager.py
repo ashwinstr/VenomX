@@ -44,7 +44,7 @@ class Manager():
             parent = cmd_loc.split("/")[-1]
         return parent
     
-    def gh_link(self, cmd_name: str, branch: str = 'master') -> str:
+    def gh_link(self, cmd_name: str, branch: str = 'main') -> str:
         link_ = f"{Config.UPSTREAM_REPO}/tree/{branch}"
         cmd_loc = self.cmd_plugin_loc(cmd_name)
         return f"{link_}/{cmd_loc}.py"
