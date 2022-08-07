@@ -97,8 +97,18 @@ HELP['commands'].append(
 )
 
 @venom.trigger('alive')
-async def bot_alive(_, message: MyMessage):
-    " check bot info in fancy way "
+async def alive_or_not(_, message: MyMessage):
+    if venom.isuser:
+        await inline_alive(message)
+    elif venom.isbot:
+        await normal_alive(message)
+
+async def normal_alive(message: MyMessage):
+    " check bot info in fancy way with tg bot "
+    await message.reply_photo(Config.ALIVE_PIC, AliveInfo.alive_info((await venom.bot.get_me()).first_name), reply_markup=AliveInfo.alive_buttons)
+
+async def inline_alive(message: MyMessage):
+    " check bot info in fancy way with inline "
     bot_ = (await venom.bot.get_me()).username
     reply_to_id = message.replied.id if message.replied else None
     results = await venom.get_inline_bot_results(

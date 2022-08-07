@@ -3,7 +3,7 @@
 import os
 import heroku3
 import asyncio
-from typing import Any, Dict, List
+from typing import Dict, List
 from dotenv import load_dotenv
 
 from pyrogram.enums import MessageMediaType
@@ -41,6 +41,9 @@ class Config:
     ##### constants #####
     EDIT_SLEEP_TIMEOUT = 10
 
+    ##### fban configs #####
+    FBAN_LOG_CHANNEL = int(os.environ.get("FBAN_LOG_CHANNEL", 0))
+
     ##### heroku configs #####
     HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY")
     HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME")
@@ -56,6 +59,10 @@ class Config:
     ALIVE_PIC = ""
     DEFAULT_ALIVE_PIC = "https://telegra.ph/file/34c891bbd8d21c0564cbc.jpg"
     ALIVE_PIC_TYPE: MessageMediaType = MessageMediaType.PHOTO
+        # pm_log
+    LAST_CHAT: int = 0
+    PM_LOG_CHANNEL = int(os.environ.get("PM_LOG_CHANNEL", 0))
+    PM_TOG = False
     
     ##### sudo configs #####
     SUDO: bool = False

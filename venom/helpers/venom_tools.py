@@ -1,12 +1,21 @@
 # venom tools
 
 import json
+import re
 import os
 from telegraph import Telegraph, upload_file
 
 from os.path import isfile, relpath
 from typing import Union, List
 from glob import glob
+
+from pyrogram.raw.types import (
+    InputPeerUserFromMessage,
+    InputReportReasonPornography,
+    InputReportReasonSpam,
+)
+from pyrogram.raw.functions.account import ReportPeer
+from pyrogram.errors import UserIdInvalid
 
 from venom import logging, Config
 from venom.core.types.message import MyMessage
@@ -91,3 +100,38 @@ def time_format(time: float) -> dict:
     out_ += f" <b>{int(min_)}</b> M," if int(min_) else ""
     out_ += f" <b>{int(sec_)}</b> S"
     return out_.strip()
+
+def extract_id(mention):
+    if str(mention).isdigit():
+        raise UserIdInvalid
+    elif mention.startswith("@"):
+        raise UserIdInvalid
+    try:
+        men = mention.html
+    except:
+        raise UserIdInvalid
+    filter = re.search(r"\d+", men)
+    if filter: 
+        return filter.group(0)
+    raise UserIdInvalid
+
+def report_user(chat: int, user_id: int, msg: dict, msg_id: int, reason: str):
+    if ("nsfw" or "NSFW" or "porn") in reason:
+        reason_ = InputReportReasonPornography()
+        for_ = "pornographic message"
+    else:
+        reason_ = InputReportReasonSpam()
+        for_ = "spam message"
+    peer_ = (
+        InputPeerUserFromMessage(
+            peer=chat,
+            msg_id=msg_id,
+            user_id=user_id,
+        ),
+    )
+    ReportPeer(
+        peer=peer_,
+        reason=reason_,
+        message=msg,
+    )
+    return for_

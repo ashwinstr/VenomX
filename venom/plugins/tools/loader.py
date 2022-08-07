@@ -36,10 +36,11 @@ async def load_er(_, message: MyMessage):
     if os.path.exists(plug_path):
         os.remove(plug_path)
         reload_ = True
-    await reply_.download(plug_path)
+    down_ = await reply_.download(plug_path)
     try:
         importlib.import_module(import_path)
     except (SyntaxError, ImportError, NameError) as e:
+        os.remove(down_)
         return await message.edit(f"`{e}`")
     msg = await message.edit("<b>Loaded</b> {},\nRestarting now.".format(f_name))
     if reload_:

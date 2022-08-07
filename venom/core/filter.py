@@ -1,13 +1,16 @@
 # command.py
 
+import time
 import bisect
 
+from pyrogram import Client, filters
+from pyrogram.handlers import EditedMessageHandler
 from pyrogram.filters import Filter
 
 from venom import Config
 
 
-class Filter:
+class Filtered:
 
     def __init__(self, group: int, cmd: str, filters: Filter) -> None:
         self.group = group

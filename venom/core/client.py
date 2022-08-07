@@ -6,16 +6,12 @@ import time
 import importlib
 import logging
 import asyncio
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
-from motor.frameworks.asyncio import _EXECUTOR
-
-from pyrogram import Client, idle
-from pyrogram.types import Message
+from pyrogram import Client
 
 from venom import Config, logging
 from .methods import Methods
-from .methods.channels.channel import GetCLogger
 from ..plugins import all_plugins
 from .database import _close_db
 from venom.helpers import time_format
@@ -74,7 +70,7 @@ class Venom(CustomVenom):
         if Config.STRING_SESSION:
             kwargs['session_string'] = Config.STRING_SESSION
         else:
-            kwargs['in_memory'] = True
+            self.bot = VenomBot(bot=self, **kwargs)
         
         self.client = client
         for attr_ in dir(client):
@@ -95,6 +91,41 @@ class Venom(CustomVenom):
         time_ = (time.time() - START_)
         formatted_ = time_format(time_)
         return formatted_
+
+    @property
+    def hasbot(self):
+        if Config.BOT_TOKEN:
+            return True
+        return False
+    
+    @property
+    def isuser(self):
+        if Config.STRING_SESSION:
+            return True
+        return False
+    
+    @property
+    def isbot(self):
+        if Config.BOT_TOKEN and not Config.STRING_SESSION:
+            return True
+        return False
+    
+    @property
+    def info(self):
+        if self.isuser and self.hasbot:
+            user_ = True
+            bot_ = True
+            mode_ = "DUAL"
+        elif self.isbot:
+            user_ = False
+            bot_ = True
+            mode_ = "BotMode"
+        dict_ = {
+            'user': user_,
+            'bot': bot_,
+            'mode': mode_
+        }
+        return dict_
 
     async def start(self):
         if self.bot is not None:

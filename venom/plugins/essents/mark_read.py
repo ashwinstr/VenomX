@@ -43,8 +43,9 @@ async def mark_read(_, message: MyMessage):
         print(r)
         total_ += 1
     if not total_:
-        out_ = f"{list_}<code>None.</code>"
+        out_ = f"`No unread messages to mark read...`"
+        del_in = 3
     else:
         out_ = list_.format(total_)
-    await message.edit(out_)
-        
+        del_in = -1
+    await message.edit(out_, del_in=del_in)

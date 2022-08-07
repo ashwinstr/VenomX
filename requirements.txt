@@ -2,12 +2,13 @@ aiofiles
 dnspython>=2.0.0
 futures==2.2.0
 gitpython>=3.1.11
+googletrans==3.1.0a0
 heroku3
 motor>=2.3.0
 Pillow
 pymongo
 git+https://github.com/ashwinstr/pyrogram-2.git@master
-pyromod
+git+https://github.com/ashwinstr/pyromod.git@master
 python-dotenv>=0.15.0
 requests>=2.25.0
 setuptools>=60.0.4

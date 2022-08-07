@@ -2,9 +2,9 @@
 
 import re
 import os
-import asyncio
 from typing import List
 
+from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup
 from pyrogram.enums import ParseMode
 from pyrogram.errors import MessageAuthorRequired, MessageTooLong, MessageIdInvalid
@@ -39,10 +39,6 @@ class MyMessage(Message):
     @property
     def replied(self) -> 'MyMessage':
         return self.msg.reply_to_message
-
-    @property
-    def user(self):
-        return self.msg.from_user
 
     @property
     def input_str(self) -> str:
@@ -168,7 +164,7 @@ class MyMessage(Message):
                     quote: bool = True) -> 'MyMessage':
         " reply message "
 
-        reply_to_id = self.msg.reply_to_message.id if quote else None
+        reply_to_id = self.msg.reply_to_message.id if quote and self.msg.reply_to_message else None
 
         return await self.msg._client.send_message(chat_id=self.msg.chat.id,
                                                     text=text,
@@ -195,6 +191,6 @@ class MyMessage(Message):
                                             caption=caption,
                                             reply_to=reply_to)
     
-    async def ask(self, text: str, timeout: int = 15) -> 'MyMessage':
+    async def ask(self, text: str, timeout: int = 15, filters: filters.Filter = None) -> 'MyMessage':
         " monkey patching to MyMessage using pyromod "
-        return await self._client.ask(self.chat.id, text, timeout=timeout)
+        return await self.msg._client.ask(self.chat.id, text, timeout=timeout, filters=filters)
