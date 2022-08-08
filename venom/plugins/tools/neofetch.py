@@ -29,16 +29,16 @@ HELP["commands"].append(
 
 @venom.trigger("neofetch")
 async def neofetch_(_, message: MyMessage):
-    await message.edit("Getting System Info ...")
+    msg_ = await message.edit("Getting System Info ...")
     reply = message.reply_to_message
     reply_id = reply.message_id if reply else None
     if "-img" in message.text.split():
-        await message.delete()
+        await msg_.delete()
         await venom.send_photo(
             message.chat.id, await neo_image(), reply_to_message_id=reply_id
         )
     else:
-        await message.edit(
+        await msg_.edit(
             "<code>{}</code>".format(
                 subprocess.run(
                     "neofetch --stdout", shell=True, capture_output=True
