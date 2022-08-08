@@ -8,9 +8,6 @@ __pycache__
 # vscode folder
 .vscode
 
-# cache
-.cache
-
 # local temp folders
 logs
 downloads

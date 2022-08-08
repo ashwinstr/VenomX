@@ -137,7 +137,7 @@ class MyMessage(Message):
                 text=text,
                 del_in=del_in,
                 parse_mode=parse_mode,
-                dis_preview=dis_preview,
+                disable_web_page_preview=dis_preview,
                 reply_markup=reply_markup
             )
         except (MessageAuthorRequired, MessageIdInvalid):
@@ -169,7 +169,7 @@ class MyMessage(Message):
         return await self.msg._client.send_message(chat_id=self.msg.chat.id,
                                                     text=text,
                                                     del_in=del_in,
-                                                    dis_preview=dis_preview,
+                                                    disable_web_page_preview=dis_preview,
                                                     parse_mode=parse_mode,
                                                     reply_to_message_id=reply_to_id,
                                                     reply_markup=reply_markup)

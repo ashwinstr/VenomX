@@ -4,7 +4,7 @@ import asyncio
 from typing import Union
 
 from pyrogram import Client as RClient
-from pyrogram.types import InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardMarkup, MessageEntity
 from pyrogram.enums import ParseMode
 
 from ... import types
@@ -16,7 +16,8 @@ class EditMessageText(RClient):
                                 message_id: int,
                                 text: str,
                                 del_in: int = -1,
-                                dis_preview: bool = False,
+                                disable_web_page_preview: bool = False,
+                                entities: MessageEntity = None,
                                 parse_mode: ParseMode = ParseMode.DEFAULT,
                                 reply_markup: InlineKeyboardMarkup = None):
 
@@ -25,7 +26,8 @@ class EditMessageText(RClient):
         msg = await super().edit_message_text(chat_id=chat_id,
                                                 message_id=message_id,
                                                 text=text,
-                                                disable_web_page_preview=dis_preview,
+                                                disable_web_page_preview=disable_web_page_preview,
+                                                entities=entities,
                                                 parse_mode=parse_mode,
                                                 reply_markup=reply_markup)
 

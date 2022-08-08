@@ -147,8 +147,8 @@ async def delfed_(_, message: MyMessage):
         except TimeoutError:
             return await message.edit("`Reply not found... Aborting.`", del_in=5)
         return await asyncio.gather(
-            FED_LIST.drop()
-            CHANNEL.log("<b>Deleted all groups from FED_LIST.</b>")
+            FED_LIST.drop(),
+            CHANNEL.log("<b>Deleted all groups from FED_LIST.</b>"),
             ask_.edit("<b>FED_LIST cleared.</b>")
         )
     try:
