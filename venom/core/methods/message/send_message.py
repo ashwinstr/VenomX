@@ -1,7 +1,6 @@
 # send_message.py
 
 import asyncio
-from html import entities
 from typing import Optional, List, Union
 
 from pyrogram import Client as RClient

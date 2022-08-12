@@ -139,7 +139,7 @@ class MyMessage(Message):
                 text=text,
                 del_in=del_in,
                 parse_mode=parse_mode,
-                disable_web_page_preview=dis_preview,
+                dis_preview=dis_preview,
                 reply_markup=reply_markup
             )
         except (MessageAuthorRequired, MessageIdInvalid):
