@@ -2,10 +2,9 @@
 
 import asyncio
 from asyncio.exceptions import TimeoutError
-from re import IGNORECASE
-from urllib import response
 
 from pyrogram import filters
+from pyrogram.enums import ChatType
 from pyrogram.errors import FloodWait, PeerIdInvalid, UserBannedInChannel, UsernameInvalid
 
 from venom import venom, MyMessage, Config, Collection
@@ -339,7 +338,7 @@ async def fban_p(_, message: MyMessage):
             f"`The FBAN_LOG_CHANNEL ID provided ('{Config.FBAN_LOG_CHANNEL}') is invalid, enter correct one.`",
             del_in=5,
         )
-    if channel_.username is None or channel_.type != "channel":
+    if channel_.username is None or channel_.type != ChatType.CHANNEL:
         return await message.edit(
             "Proof channel should be a <b>channel</b> and should be <b>public</b> for this command to work...",
             del_in=5,

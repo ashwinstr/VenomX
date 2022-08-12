@@ -5,7 +5,6 @@ from typing import Union
 
 from pyrogram import Client as RClient
 from pyrogram.types import InlineKeyboardMarkup, MessageEntity
-from pyrogram.enums import ParseMode
 
 from ... import types
 
@@ -16,19 +15,19 @@ class EditMessageText(RClient):
                                 message_id: int,
                                 text: str,
                                 del_in: int = -1,
-                                disable_web_page_preview: bool = False,
+                                dis_preview: bool = None,
                                 entities: MessageEntity = None,
-                                parse_mode: ParseMode = ParseMode.DEFAULT,
-                                reply_markup: InlineKeyboardMarkup = None):
+                                reply_markup: InlineKeyboardMarkup = None) -> 'types.message.MyMessage':
 
         " custom edit_message_text method for VenomX "
+
+        disable_web_page_preview = True if dis_preview else None
 
         msg = await super().edit_message_text(chat_id=chat_id,
                                                 message_id=message_id,
                                                 text=text,
                                                 disable_web_page_preview=disable_web_page_preview,
                                                 entities=entities,
-                                                parse_mode=parse_mode,
                                                 reply_markup=reply_markup)
 
         if del_in >= 0:

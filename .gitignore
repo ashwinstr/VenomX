@@ -4,6 +4,18 @@ config.env
 
 # cache files
 __pycache__
+.cache
+
+# configs files
+*.xml
+*.iml
+*.cfg
+*.pth
+*.typed
+.idea/*
+
+# venv files
+venv/*
 
 # vscode folder
 .vscode

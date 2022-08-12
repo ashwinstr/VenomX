@@ -38,7 +38,7 @@ class MyMessage(Message):
 
     @property
     def replied(self) -> 'MyMessage':
-        return self.msg.reply_to_message
+        return self.reply_to_message
 
     @property
     def input_str(self) -> str:
@@ -55,36 +55,38 @@ class MyMessage(Message):
         if not input_:
             return []
         flags_ = []
-        first_line = input_.splitlines()
-        for string in first_line:
-            str_ = string.split()
-            for one in str_:
-                match = re.search(r"^(-[a-z]+)(\d.*)?$", one)
-                if not hasattr(match, 'group'):
-                    break
-                if match.group(2):
-                    flags_.append({
-                        str(match.group(1)): int(match.group(2))
-                    })
-                elif match.group(1):
-                    flags_.append(str(match.group(1)))
+        line_num = 0
+        while True:
+            first_line = input_.splitlines()[line_num]
+            if first_line:
+                break
+            else:
+                line_num += 1
+        str_ = first_line.split()
+        for one in str_:
+            match = re.search(r"^(-[a-z]+)(\d.*)?$", one)
+            if not hasattr(match, 'group'):
+                break
+            if match.group(2):
+                flags_.append({
+                    str(match.group(1)): int(match.group(2))
+                })
+            elif match.group(1):
+                flags_.append(str(match.group(1)))
         return flags_
 
     @property
     def filtered_input(self):
         input_ = self.input_str
-        filtered = ""
         if not input_:
-            return filtered
-        for lines in input_.splitlines():
-            new_line = ""
-            for word in lines.split(" "):
-                if word.startswith("-"):
-                    continue
-                else:
-                    new_line += f"{word} "
-            filtered += f"\n{new_line}"
-        return filtered.strip()
+            return ""
+        flags = self.flags
+        for one in flags:
+            if isinstance(one, dict):
+                key_ = one.keys()[0]
+                one = f"{key_}{one[key_]}"
+            input_ = input_.lstrip(one)
+        return input_
 
     @property
     def process_is_cancelled(self) -> bool:
@@ -169,7 +171,7 @@ class MyMessage(Message):
         return await self.msg._client.send_message(chat_id=self.msg.chat.id,
                                                     text=text,
                                                     del_in=del_in,
-                                                    disable_web_page_preview=dis_preview,
+                                                    dis_preview=dis_preview,
                                                     parse_mode=parse_mode,
                                                     reply_to_message_id=reply_to_id,
                                                     reply_markup=reply_markup)

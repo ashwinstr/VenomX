@@ -6,6 +6,7 @@ import time
 import importlib
 import logging
 import asyncio
+import traceback
 from typing import Any, Optional
 
 from pyrogram import Client
@@ -31,8 +32,8 @@ async def _init_tasks():
         list_.append(init_func())
     try:
         await asyncio.gather(*list_)
-    except Exception as e:
-        print(e)
+    except Exception:
+        print(traceback.format_exc())
     list_.clear()
 
 
