@@ -16,6 +16,7 @@ help_ = Config.HELP[plugin_name(__name__)] = {'type': 'help', 'commands': []}
 
 help_['commands'].append(
     {
+        "command":"repo",
         "about": "get repo link and details",
         "flags": {
             "-d": " Disables Link preview ",
