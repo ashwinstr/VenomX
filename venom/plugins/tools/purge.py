@@ -13,11 +13,11 @@ help_ = Config.HELP[plugin_name(__name__)] = {'type': 'help', 'commands': []}
 
 help_['commands'].append(
     {
-        "command":"purge\n",
-        "about": "purge messages\n",
+        "command":"purge",
+        "about": "purge messages",
         "flags": {
             "-u": "get user_id from replied message",
-            "-l": "message limit : max 100\n",
+            "-l": "message limit : max 100",
         },
         "syntax": "\n   reply {tr}purge to the start message to purge.\n"
             "\n   use {tr}purge [user_id | user_name] to purge messages from that user or use flags\n"
