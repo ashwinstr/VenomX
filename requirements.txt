@@ -5,6 +5,7 @@ gitpython>=3.1.11
 googletrans==3.1.0a0
 heroku3
 motor>=2.3.0
+pastypy
 Pillow
 pymediainfo
 pymongo
