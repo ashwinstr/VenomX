@@ -15,7 +15,6 @@ class Config:
     """ Configs """
 
     ##### basic configs #####
-
     _INIT: List[asyncio.Task] = []
     API_HASH = os.environ.get("API_HASH")
     API_ID = int(os.environ.get("API_ID", 0))
@@ -27,6 +26,7 @@ class Config:
     DOWN_PATH = "downloads"
     HELP: Dict[str, dict] = {}
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
+    ME: dict = {}
     OWNER_ID = int(os.environ.get("OWNER_ID"))
     STRING_SESSION = os.environ.get("STRING_SESSION")
     TEMP_PATH = "venom/plugins/temp/"
@@ -54,12 +54,20 @@ class Config:
         else None
     )
 
-    ##### plugins #####
-        # alive
+    ##### plugins specific #####
+        ### alive
     ALIVE_PIC = ""
     DEFAULT_ALIVE_PIC = "https://telegra.ph/file/34c891bbd8d21c0564cbc.jpg"
     ALIVE_PIC_TYPE: MessageMediaType = MessageMediaType.PHOTO
-        # pm_log
+        ### kangs
+    CUSTOM_PACK_NAME = os.environ.get("CUSTOM_PACK_NAME", "")
+        ### pmguard
+    ALLOWED_TO_PM: List[int] = []
+    DISALLOWED_PM_COUNT: Dict[int, int] = {}
+    PM_BLOCK_PIC = ""
+    PM_GUARD = False
+    PM_WELCOME_PIC = "https://telegra.ph/file/fd58d751f35be55b88073.jpg"
+        ### pm_log
     LAST_CHAT: int = 0
     PM_LOG_CHANNEL = int(os.environ.get("PM_LOG_CHANNEL", 0))
     PM_TOG = False
@@ -72,6 +80,7 @@ class Config:
     SUDO_CMD_LIST: List[str] = []
 
     ##### tokens #####
-        # github token
+        ### github token
     GH_TOKEN = os.environ.get("GH_TOKEN")
+        ### spotify token
     SPOTIFY_TOKEN = os.environ.get("SPOTIFY_TOKEN")

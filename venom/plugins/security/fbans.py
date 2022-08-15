@@ -188,7 +188,7 @@ async def fban_(_, message: MyMessage):
     """Bans a user from connected Feds."""
     fban_arg = ["❯", "❯❯", "❯❯❯", "❯❯❯ <b>FBanned {}</b>"]
     PROOF_CHANNEL = Config.FBAN_LOG_CHANNEL if Config.FBAN_LOG_CHANNEL else Config.LOG_CHANNEL_ID
-    input = message.filtered_input
+    input_ = message.filtered_input
     await message.edit(fban_arg[0])
     sudo_ = False
     if (
@@ -197,7 +197,7 @@ async def fban_(_, message: MyMessage):
     ):
         sudo_ = True
     if not message.reply_to_message:
-        split_ = input.split(" ", 1)
+        split_ = input_.split(" ", 1)
         user = split_[0]
         if not user.isdigit() and not user.startswith("@"):
             user = extract_id(message.text)
@@ -207,7 +207,7 @@ async def fban_(_, message: MyMessage):
             reason = "not specified"
     else:
         user = message.reply_to_message.from_user.id
-        reason = input
+        reason = input_
     if user is None:
         return await message.edit("Provide a user ID or reply to a user...", del_in=5)
     try:
@@ -221,11 +221,11 @@ async def fban_(_, message: MyMessage):
         or user == Config.OWNER_ID
         or user == (await venom.get_me()).id
     ):
-        if not input:
+        if not input_:
             await message.edit("Can't fban replied user, give user ID...", del_in=7)
             return
-        user = input.split()[0]
-        reason = input.split()[1:]
+        user = input_.split()[0]
+        reason = input_.split()[1:]
         reason = " ".join(reason)
         try:
             user_ = await venom.get_users(user)
@@ -381,7 +381,7 @@ async def fban_p(_, message: MyMessage):
                 "`Provide a proper spam message link to report...`", del_in=5
             )
             return
-        input = ""
+        input_ = ""
     else:
         reply = message.reply_to_message
         if not reply:
@@ -389,8 +389,8 @@ async def fban_p(_, message: MyMessage):
             return
         chat_id = message.chat.id
         user = reply.from_user.id
-        input = message.filtered_input
-        reason = input
+        input_ = message.filtered_input
+        reason = input_
         msg_en = reply
         proof = msg_en.id
     fps = True
@@ -401,13 +401,13 @@ async def fban_p(_, message: MyMessage):
         or user == (await venom.get_me()).id
     ):
         fps = False
-        if not input:
+        if not input_:
             await message.err(
                 "Can't fban replied/specified user because of them being SUDO_USER or OWNER, give user ID...",
                 del_in=5,
             )
             return
-        split_ = input.split(" ", 1)
+        split_ = input_.split(" ", 1)
         user = split_[0]
         if not user.isdigit() and not user.startswith("@"):
             user = extract_id(message.text)
@@ -530,12 +530,12 @@ async def unfban_(_, message: MyMessage):
     user = (message.extract_user_and_text)[0]
     fban_arg = ["❯", "❯❯", "❯❯❯", "❯❯❯ <b>Un-FBanned {}</b>"]
     await message.edit(fban_arg[0])
-    input = message.input_str
+    input_ = message.input_str
     if message.reply_to_message:
-        reason = input
+        reason = input_
     else:
         try:
-            reason = input.split(" ", 1)[1]
+            reason = input_.split(" ", 1)[1]
         except BaseException:
             reason = "not specified, maybe they solved it out"
     PROOF_CHANNEL = Config.FBAN_LOG_CHANNEL if Config.FBAN_LOG_CHANNEL else Config.LOG_CHANNEL_ID

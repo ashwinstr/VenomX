@@ -13,9 +13,10 @@ __pycache__
 *.pth
 *.typed
 .idea/*
+sync*
 
 # venv files
-venv/*
+venv
 
 # vscode folder
 .vscode

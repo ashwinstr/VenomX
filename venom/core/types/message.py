@@ -2,11 +2,11 @@
 
 import re
 import os
-from typing import List
+from typing import List, Union
 
 from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup
-from pyrogram.enums import ParseMode
+from pyrogram.enums import ParseMode, ChatType
 from pyrogram.errors import MessageAuthorRequired, MessageTooLong, MessageIdInvalid
 
 from pyromod import listen
@@ -18,7 +18,7 @@ _CANCEL_PROCESS: List[int] = []
 
 class MyMessage(Message):
 
-    def __init__(self, message: Message) -> None:
+    def __init__(self, message: Union[Message, 'MyMessage']) -> None:
         " testing "
         self.msg = message
         self.msg._flags = {}
@@ -28,7 +28,10 @@ class MyMessage(Message):
                 continue
             if not one.startswith("__"):
                 attr_ = getattr(message, one)
-                setattr(self, one, attr_)
+                try:
+                    setattr(self, one, attr_)
+                except:
+                    pass
 #        self.__dict__ = message.__dict__.copy()
 #        super().__init__()
 
@@ -139,7 +142,7 @@ class MyMessage(Message):
                 text=text,
                 del_in=del_in,
                 parse_mode=parse_mode,
-                disable_web_page_preview=dis_preview,
+                dis_preview=dis_preview,
                 reply_markup=reply_markup
             )
         except (MessageAuthorRequired, MessageIdInvalid):
@@ -166,15 +169,16 @@ class MyMessage(Message):
                     quote: bool = True) -> 'MyMessage':
         " reply message "
 
-        reply_to_id = self.msg.reply_to_message.id if quote and self.msg.reply_to_message else None
+        reply_to_id = self.msg.reply_to_message.id if (quote and self.msg.reply_to_message) else None
 
-        return await self.msg._client.send_message(chat_id=self.msg.chat.id,
+        reply_ = await self.msg._client.send_message(chat_id=self.msg.chat.id,
                                                     text=text,
                                                     del_in=del_in,
                                                     dis_preview=dis_preview,
                                                     parse_mode=parse_mode,
                                                     reply_to_message_id=reply_to_id,
                                                     reply_markup=reply_markup)
+        return reply_ if self.chat.type != ChatType.PRIVATE else self.parse(reply_)
 
     async def edit_or_send_as_file(self,
                                     text: str,
@@ -194,5 +198,9 @@ class MyMessage(Message):
                                             reply_to=reply_to)
     
     async def ask(self, text: str, timeout: int = 15, filters: filters.Filter = None) -> 'MyMessage':
-        " monkey patching to MyMessage using pyromod "
+        " monkey patching to MyMessage using pyromod.ask "
         return await self.msg._client.ask(self.chat.id, text, timeout=timeout, filters=filters)
+
+    async def wait(self, timeout: int = 15, filters: filters.Filter = None) -> 'MyMessage':
+        " monkey patching to MyMessage using pyromod.listen "
+        return await self.msg._client.listen(self.chat.id, timeout=timeout, filters=filters)

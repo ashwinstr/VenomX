@@ -9,6 +9,7 @@ import pyrogram
 from pyrogram import filters, Client
 from pyrogram.filters import Filter as RFilter
 from pyrogram.types import Message
+from pyrogram.errors import MessageTooLong
 
 from pyromod import listen
 
@@ -63,12 +64,24 @@ class MyDecorator(Client):
                 try:
                     await func(rc, new_message)
                 except Exception as e:
-                    await self.send_message(chat_id=Config.LOG_CHANNEL_ID,
+                    error_ = traceback.format_exc().strip()
+                    try:
+                        await self.send_message(chat_id=Config.LOG_CHANNEL_ID,
                                             text=f"### **TRACEBACK** ###\n\n"
                                                  f"**PLUGIN:** `{func.__module__}`\n"
                                                  f"**FUNCTIONS:** `{func.__name__}`\n"
                                                  f"**ERROR:** `{e or None}`\n\n"
-                                                 f"```{traceback.format_exc().strip()}```")
+                                                 f"```{error_}```")
+                    except MessageTooLong:
+                        with open("traceback.txt", "w+") as tb:
+                            tb.write(error_)
+                        await self.send_document(chat_id=Config.LOG_CHANNEL_ID,
+                                                document="traceback.txt",
+                                                caption=f"### **TRACEBACK** ###\n\n"
+                                                 f"**PLUGIN:** `{func.__module__}`\n"
+                                                 f"**FUNCTIONS:** `{func.__name__}`\n"
+                                                 f"**ERROR:** `{e or None}`\n\n")
+                        os.remove("traceback.txt")
 
             self.add_handler(pyrogram.handlers.MessageHandler(template, filtered), group)
             self.add_handler(pyrogram.handlers.EditedMessageHandler(template, filtered), group)

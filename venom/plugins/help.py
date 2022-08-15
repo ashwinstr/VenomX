@@ -14,6 +14,7 @@ help_ = Config.HELP[plugin_name(__name__)] = {'type': 'help', 'commands': []}
 dot_ = Config.BULLET_DOT
 
 TRIG = Config.CMD_TRIGGER
+S_TRIG = Config.SUDO_TRIGGER
 
 
 ############################################################################################################################################
@@ -170,7 +171,8 @@ async def com_mand(_, message: MyMessage):
         )
     else:
         out_ = "`Not documented.`"
-    await message.edit(out_.replace("{tr}", TRIG), parse_mode=ParseMode.MARKDOWN, dis_preview=True)
+    TRIGG = TRIG if message.from_user.id == Config.OWNER_ID else S_TRIG
+    await message.edit(out_.replace("{tr}", TRIGG), parse_mode=ParseMode.MARKDOWN, dis_preview=True)
 
 
 #####################################################################################################################################################

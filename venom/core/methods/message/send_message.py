@@ -1,7 +1,6 @@
 # send_message.py
 
 import asyncio
-from html import entities
 from typing import Optional, List, Union
 
 from pyrogram import Client as RClient
@@ -21,7 +20,7 @@ class SendMessage(RClient):
                             entities: List[MessageEntity] = None,
                             parse_mode: Union[str, ParseMode] = ParseMode.DEFAULT,
                             protect_content: Optional[bool] = False,
-                            reply_to_id: Optional[int] = None,
+                            reply_to_message_id: Optional[int] = None,
                             reply_markup: Union[
                                 ReplyKeyboardRemove,
                                 ReplyKeyboardMarkup,
@@ -31,7 +30,6 @@ class SendMessage(RClient):
         " custom method for VenomX "
 
         disable_web_page_preview = True if dis_preview else None
-        reply_to_message_id = reply_to_id if reply_to_id else None
 
         msg = await super().send_message(chat_id=chat_id,
                                             text=text,

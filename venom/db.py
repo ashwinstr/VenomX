@@ -10,7 +10,7 @@ class Collection:
     ALIVE_MEDIA = get_collection("ALIVE_MEDIA")
 
     # basic collections
-    TOGGLES = get_collection("TOGGLES") # has SUDO, PM_TOG, F_DEL, FBAN_TAG
+    TOGGLES = get_collection("TOGGLES") # SUDO, PM_TOG, F_DEL, FBAN_TAG, KANGLOG, PM_GUARD
 
     # fbans
     FED_LIST = get_collection("FED_LIST")
@@ -18,6 +18,10 @@ class Collection:
     # loader
     TEMP_LOADED = get_collection("TEMP_LOADED")
 
+    # pm guard
+    ALLOWED_TO_PM = get_collection("ALLOWED_TO_PM")
+    DISALLOWED_PM_COUNT = get_collection("DISALLOWED_PM_COUNT")
+    
     # pm logger
     MSG_LIST = get_collection("MSG_LIST")
 

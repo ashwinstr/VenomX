@@ -5,6 +5,8 @@ import re
 import os
 from telegraph import Telegraph, upload_file
 
+from pymediainfo import MediaInfo
+
 from os.path import isfile, relpath
 from typing import Union, List
 from glob import glob
@@ -135,3 +137,41 @@ def report_user(chat: int, user_id: int, msg: dict, msg_id: int, reason: str):
         message=msg,
     )
     return for_
+
+class Media_Info:
+    def data(media: str) -> dict:
+        "Get downloaded media's information"
+        found = False
+        media_info = MediaInfo.parse(media)
+        for track in media_info.tracks:
+            if track.track_type == "Video":
+                found = True
+                type_ = track.track_type
+                format_ = track.format
+                duration_1 = track.duration
+                other_duration_ = track.other_duration
+                duration_2 = f"{other_duration_[0]} - ({other_duration_[3]})" if other_duration_ else None
+                pixel_ratio_ = [track.width, track.height]
+                aspect_ratio_1 = track.display_aspect_ratio
+                other_aspect_ratio_ = track.other_display_aspect_ratio
+                aspect_ratio_2 = other_aspect_ratio_[0] if other_aspect_ratio_ else None
+                fps_ = track.frame_rate
+                fc_ = track.frame_count
+                media_size_1 = track.stream_size
+                other_media_size_ = track.other_stream_size
+                media_size_2 = [other_media_size_[1], other_media_size_[2], other_media_size_[3], other_media_size_[4]] if other_media_size_ else None
+
+        dict_ = {
+            "media_type": type_,
+            "format": format_,
+            "duration_in_ms": duration_1,
+            "duration": duration_2,
+            "pixel_sizes": pixel_ratio_,
+            "aspect_ratio_in_fraction": aspect_ratio_1,
+            "aspect_ratio": aspect_ratio_2,
+            "frame_rate": fps_,
+            "frame_count": fc_,
+            "file_size_in_bytes": media_size_1,
+            "file_size": media_size_2
+        } if found else None
+        return dict_
