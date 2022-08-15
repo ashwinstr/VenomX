@@ -6,6 +6,7 @@ googletrans==3.1.0a0
 heroku3
 motor>=2.3.0
 Pillow
+pymediainfo
 pymongo
 git+https://github.com/ashwinstr/pyrogram-2.git@master
 git+https://github.com/ashwinstr/pyromod.git@master
