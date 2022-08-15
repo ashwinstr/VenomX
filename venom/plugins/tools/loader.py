@@ -36,19 +36,22 @@ async def load_er(_, message: MyMessage):
     if os.path.exists(plug_path):
         os.remove(plug_path)
         reload_ = True
+        msg = "<b>Loaded</b> {},\nRestarting now.".format(f_name)
+    else:
+        msg = "<b>Loaded</b> {}".format(f_name)
     down_ = await reply_.download(plug_path)
     try:
         importlib.import_module(import_path)
     except (SyntaxError, ImportError, NameError) as e:
         os.remove(down_)
         return await message.edit(f"`{e}`")
-    msg = await message.edit("<b>Loaded</b> {},\nRestarting now.".format(f_name))
+    load_conf = await message.edit(msg)
     if reload_:
         await RESTART.insert_one(
             {
                 '_id': 'RESTART',
-                'chat_id': msg.chat.id,
-                'msg_id': msg.id,
+                'chat_id': load_conf.chat.id,
+                'msg_id': load_conf.id,
                 'start': time.time(),
                 'msg': '<b>Reloaded temp plugin successfully.</b>\n<b>Time taken:</b> {} seconds.'
             }

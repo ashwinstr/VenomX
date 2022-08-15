@@ -1,21 +1,28 @@
 # help.py
 
-from typing import List
+from typing import TypedDict, List
 
-from pyrogram import filters
-from pyrogram.types import InlineQuery
 from pyrogram.enums import ParseMode
 
 from venom import venom, Config, MyMessage, manager
-from venom.helpers import plugin_name, post_tg, VenomDecorators
+from venom.helpers import plugin_name, post_tg
 
 
-help_ = Config.HELP[plugin_name(__name__)] = {'type': 'help', 'commands': []}
 dot_ = Config.BULLET_DOT
 
 TRIG = Config.CMD_TRIGGER
 S_TRIG = Config.SUDO_TRIGGER
 
+############################################################################################################################################
+
+class Help(TypedDict):
+    command: str
+    flags: dict
+    usage: str
+    syntax: str
+    sudo: bool
+
+help_ = Config.HELP[plugin_name(__name__)] = {'type': 'help', 'commands': []}
 
 ############################################################################################################################################
 
@@ -23,7 +30,7 @@ help_['commands'].append(
     {
         'command': 'help',
         'flags': None,
-        'about': 'check help',
+        'usage': 'check help',
         'syntax': '{tr}help',
         'sudo': True
     }
@@ -53,6 +60,10 @@ For anything else, ask for help in @UX_xplugin_support.
 
     await message.edit(help__, parse_mode=ParseMode.MARKDOWN)
 
+@venom.trigger('nhelp')
+async def help_ing(_, message: MyMessage):
+    " helping hand in using the bot "
+    
 
 ############################################################################################################################################
 
@@ -62,7 +73,7 @@ help_['commands'].append(
         'flags': {
             '-tg': 'show plugins in telegraph'
         },
-        'about': 'check plugin list',
+        'usage': 'check plugin list',
         'syntax': '{tr}plugins',
         'sudo': True
     }
@@ -91,7 +102,7 @@ help_['commands'].append(
     {
         'command': 'plugin',
         'flags': None,
-        'about': 'check command list in plugin',
+        'usage': 'check command list in plugin',
         'syntax': '{tr}plugin [plugin name]',
         'sudo': True
     }
@@ -126,7 +137,7 @@ help_['commands'].append(
     {
         'command': 'cmd',
         'flags': None,
-        'about': 'see command details',
+        'usage': 'see command details',
         'syntax': '{tr}cmd [command name]',
         'sudo': True
     }
@@ -182,7 +193,7 @@ help_['commands'].append(
     {
         'command': 's',
         'flags': None,
-        'about': 'search command or plugin',
+        'usage': 'search command or plugin',
         'syntax': '{tr}s [partial command or plugin name]',
         'sudo': True
     }
