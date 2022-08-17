@@ -19,7 +19,6 @@ async def new_kang(_, message: MyMessage):
     reply_ = message.replied
     if not reply_:
         return await message.edit("`Reply to sticker or potential sticker...`", del_in=5)
-    user = await venom.get_me()
     bot_ = await venom.bot.get_me()
     emoji_ = None
     is_anim = False
@@ -33,7 +32,7 @@ async def new_kang(_, message: MyMessage):
     await message.edit("`Kanging...`")
     pack = 1
     u_name = bot_.username
-    u_name = "@" + u_name if u_name else user.first_name or user.id
+    u_name = "@" + u_name if u_name else bot_.first_name or bot_.id
     packname = f"a{user.id}_by_{bot_.username}_{pack}"
     custom_packnick = Config.CUSTOM_PACK_NAME or f"{u_name}'s venom pack"
     packnick = f"{custom_packnick} vol.{pack}"
