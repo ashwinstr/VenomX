@@ -42,7 +42,6 @@ async def mark_read(_, message: MyMessage):
             f"    <b>Mentions:</b> <i>{one.unread_mentions_count}</i>\n"
             f"    <b>Marked read:</b> <i>Successful</i>\n\n"
         )
-        print(r)
         total_ += 1
     if not total_:
         out_ = f"`No unread messages to mark read...`"

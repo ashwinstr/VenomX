@@ -1,7 +1,6 @@
 # kangs.py ported from USERGE-X
 
 import os
-import io
 from PIL import Image
 
 from pyrogram import emoji
@@ -156,7 +155,7 @@ async def kang_ing(_, message: MyMessage):
         packnick = f"{custom_packnick} vol.{pack}"
         cmd = "/newpack"
         if resize:
-            media_ = await resize_photo(media_, is_video, ff_vid)
+            media_ = await resize_media(media_, is_video, ff_vid)
         if is_anim:
             packname += "_anim"
             packnick += " (Animated)"
@@ -168,7 +167,7 @@ async def kang_ing(_, message: MyMessage):
         exist = False
         while True:
             try:
-                exist = await message.client.send(
+                exist = await venom.invoke(
                     GetStickerSet(
                         stickerset=InputStickerSetShortName(short_name=packname), hash=0
                     )
@@ -199,6 +198,8 @@ async def kang_ing(_, message: MyMessage):
                 return await kang_msg.edit("First **unblock** @Stickers bot.", del_in=5)
             except Exception as e:
                 return await kang_msg.edit(("<b>ERROR:</b> %s", e), del_in=5)
+            await start_.wait()
+            await start_.reply(packname)
             resp = await start_.wait()
             limit = "50" if is_anim else "120"
             while limit in resp.text:
@@ -293,7 +294,7 @@ async def kang_ing(_, message: MyMessage):
         if os.path.exists(str(media_)):
             os.remove(media_)
 
-async def resize_photo(media: str, video: bool, fast_forward: bool) -> str:
+async def resize_media(media: str, video: bool, fast_forward: bool) -> str:
     """Resize the given photo to 512x512"""
     if video:
         info_ = Media_Info.data(media)
@@ -323,7 +324,7 @@ async def resize_photo(media: str, video: bool, fast_forward: bool) -> str:
         fps_ = float(info_["frame_rate"])
         fps_cmd = "-r 30 " if fps_ > 30 else ""
         cmd = f"ffmpeg -i {media} {cmd_f} -ss 00:00:00 -to 00:00:03 -an -c:v libvpx-vp9 {fps_cmd}-fs 256K {resized_video}"
-        _, error = await runcmd(cmd)
+        _, error, __, ___ = await runcmd(cmd)
         os.remove(media)
         if error:
             await CHANNEL.log(error)
