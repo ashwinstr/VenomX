@@ -32,9 +32,9 @@ async def new_kang(_, message: MyMessage):
         is_video = reply_.sticker.is_video
     await message.edit("`Kanging...`")
     pack = 1
-    u_name = user.username
+    u_name = bot_.username
     u_name = "@" + u_name if u_name else user.first_name or user.id
-    packname = f"a{user.id}_by_{user.username}_{pack}"
+    packname = f"a{user.id}_by_{bot_.username}_{pack}"
     custom_packnick = Config.CUSTOM_PACK_NAME or f"{u_name}'s venom pack"
     packnick = f"{custom_packnick} vol.{pack}"
     old_pack = True
