@@ -33,7 +33,7 @@ async def new_kang(_, message: MyMessage):
     pack = 1
     u_name = bot_.username
     u_name = "@" + u_name if u_name else bot_.first_name or bot_.id
-    packname = f"a{user.id}_by_{bot_.username}_{pack}"
+    packname = f"a{bot_.id}_by_{bot_.username}_{pack}"
     custom_packnick = Config.CUSTOM_PACK_NAME or f"{u_name}'s venom pack"
     packnick = f"{custom_packnick} vol.{pack}"
     old_pack = True
