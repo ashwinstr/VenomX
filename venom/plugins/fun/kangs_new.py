@@ -1,14 +1,18 @@
 # kangs_new.py
+# on hold
 
 from pyrogram.errors import StickersetInvalid
+from pyrogram.raw.functions.users import GetUsers
 from pyrogram.raw.functions.messages import GetStickerSet
 from pyrogram.raw.functions.stickers import CreateStickerSet, AddStickerToSet
 from pyrogram.raw.types import (
     InputStickerSetShortName,
     InputStickerSetItem,
     InputDocument,
-    StickerSet
+    StickerSet,
+    InputUserSelf
 )
+from pyrogram.raw.base import User
 from pyrogram.file_id import FileId
 
 from venom import venom, MyMessage, Config
@@ -46,9 +50,7 @@ async def new_kang(_, message: MyMessage):
     if old_pack:
         await venom.bot.invoke(
             AddStickerToSet(
-                stickerset=InputStickerSetShortName(
-                    short_name=pack_.set.short_name
-                ),
+                stickerset=InputStickerSetShortName(short_name=packname),
                 sticker=InputStickerSetItem(
                     document=InputDocument(
                         id=file_.media_id,
@@ -60,9 +62,10 @@ async def new_kang(_, message: MyMessage):
             )
         )
         return
-    await venom.invoke(
+    await venom.invoke(InputUserSelf())
+    await venom.bot.invoke(
         CreateStickerSet(
-            user_id=(await venom.resolve_peer((await venom.bot.get_me()).id)),
+            user_id=InputUser(user_id=(await venom.get_me()).id, access_hash=user.id),
             title=packnick,
             short_name=packname,
             stickers=[InputStickerSetItem(

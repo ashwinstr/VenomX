@@ -19,7 +19,9 @@ help_['commands'].append(
     {
         'command': 'markr',
         'flags': None,
-        'about': 'mark tags/mentions as read'
+        'usage': 'mark tags/mentions as read',
+        'syntax': '{tr}markr',
+        'sudo': False
     }
 )
 
