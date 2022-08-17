@@ -61,7 +61,7 @@ async def new_kang(_, message: MyMessage):
         return
     await venom.bot.invoke(
         CreateStickerSet(
-            user_id=(await venom.resolve_peer((await venom.bot.get_me()).id)),
+            user_id=(await venom.resolve_peer((await venom.get_me()).id)),
             title=packnick,
             short_name=packname,
             stickers=[InputStickerSetItem(
