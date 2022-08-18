@@ -102,7 +102,7 @@ def resize_photo(media: str) -> str:
 
     image = image.resize(new_size, Image.LANCZOS)
     resized_photo = io.BytesIO()
-    resized_photo.name = "sticker.webp"
-    image.save(resized_photo, "WEBP")
+    resized_photo.name = "sticker.png"
+    image.save(resized_photo, "PNG")
     os.remove(media)
     return resized_photo
