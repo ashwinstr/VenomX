@@ -41,7 +41,7 @@ async def new_kang(_, message: MyMessage):
         down_ = await reply_.download(Config.DOWN_PATH)
         resized_ = resize_photo(down_)
         if reply_.document:
-            sticker_ = await venom.send_document(bot_.username, resized_)
+            sticker_ = await venom.send_document(bot_.username, resized_, file_name="stick.png")
             file_ = FileId.decode(sticker_.document.file_id)
         elif reply_.photo:
             sticker_ = await venom.send_sticker(bot_.username, resized_)
