@@ -45,7 +45,7 @@ async def new_kang(_, message: MyMessage):
             sticker_ = await venom.send_document(send_to, resized_)
         elif reply_.photo:
             sticker_ = await venom.send_sticker(send_to, resized_)
-        file_ = FileId.decode(sticker_.sticker.file_id)
+        file_ = FileId.decode(sticker_.document.file_id)
     await message.edit("`Kanging...`")
     pack = 1
     u_name = bot_.username
@@ -102,7 +102,7 @@ def resize_photo(media: str) -> str:
 
     image = image.resize(new_size, Image.LANCZOS)
     resized_photo = io.BytesIO()
-    resized_photo.name = "sticker.webp"
-    image.save(resized_photo, "WEBP")
+    resized_photo.name = "sticker.png"
+    image.save(resized_photo, "PNG")
     os.remove(media)
     return resized_photo
