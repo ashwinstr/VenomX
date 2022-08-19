@@ -40,10 +40,11 @@ async def new_kang(_, message: MyMessage):
         await message.edit("`Downloading...`")
         down_ = await reply_.download(Config.DOWN_PATH)
         resized_ = resize_photo(down_)
+        send_to = (await venom.get_users(Config.OWNER_ID)).username if venom.isbot else bot_.username
         if reply_.document:
-            sticker_ = await venom.send_document(bot_.username, resized_)
+            sticker_ = await venom.send_document(send_to, resized_)
         elif reply_.photo:
-            sticker_ = await venom.send_sticker(bot_.username, resized_)
+            sticker_ = await venom.send_sticker(send_to, resized_)
         file_ = FileId.decode(sticker_.sticker.file_id)
     await message.edit("`Kanging...`")
     pack = 1
@@ -71,24 +72,24 @@ async def new_kang(_, message: MyMessage):
                 )
             )
         )
-        return
-    await venom.bot.invoke(
-        CreateStickerSet(
-            user_id=await venom.resolve_peer(user.id),
-            title=packnick,
-            short_name=packname,
-            stickers=[InputStickerSetItem(
-                document=InputDocument(
-                    id=file_.media_id,
-                    access_hash=file_.access_hash,
-                    file_reference=file_.file_reference
-                ),
-                emoji=emoji_ or "👁‍🗨"
-            )],
-            animated=is_anim,
-            videos=is_video
+    else:
+        await venom.bot.invoke(
+            CreateStickerSet(
+                user_id=await venom.resolve_peer(user.id),
+                title=packnick,
+                short_name=packname,
+                stickers=[InputStickerSetItem(
+                    document=InputDocument(
+                        id=file_.media_id,
+                        access_hash=file_.access_hash,
+                        file_reference=file_.file_reference
+                    ),
+                    emoji=emoji_ or "👁‍🗨"
+                )],
+                animated=is_anim,
+                videos=is_video
+            )
         )
-    )
     await message.edit(f"Sticker <b>kanged</b>.\n<a href='t.me/addstickers/{packname}'>HERE</a>")
 
 

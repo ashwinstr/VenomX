@@ -10,7 +10,7 @@ class Collection:
     ALIVE_MEDIA = get_collection("ALIVE_MEDIA")
 
     # basic collections
-    TOGGLES = get_collection("TOGGLES") # SUDO, PM_TOG, F_DEL, FBAN_TAG, KANGLOG, PM_GUARD
+    TOGGLES = get_collection("TOGGLES") # FBAN_TAG, F_DEL, KANGLOG, PM_GUARD, PM_TOG, SUDO, USER_IS_SELF
 
     # fbans
     FED_LIST = get_collection("FED_LIST")

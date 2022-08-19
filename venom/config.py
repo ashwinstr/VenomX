@@ -33,6 +33,7 @@ class Config:
     THUMB_PATH = DOWN_PATH + "thumb_image.jpg"
     UPSTREAM_REMOTE = os.environ.get("UPSTREAM_REMOTE", 'upstream')
     UPSTREAM_REPO = os.environ.get("UPSTREAM_REPO")
+    USER_IS_SELF = False
 
     ##### characters #####
     BULLET_DOT = "•"

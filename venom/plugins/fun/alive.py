@@ -160,69 +160,70 @@ class AliveInfo:
 
 ########################################################################################################################################################################
 
+if venom.hasbot:
 
-@venom.bot.on_inline_query(filters.regex("^alive$"))
-@VenomDecorators.inline_checker(owner=True)
-async def alive_media_inline(_, i_q: InlineQuery):
-    " alive media inline query "
-    iq = i_q.query
-    results = []
-    if iq == "alive":
-        user_ = (await venom.get_me()).mention
-        btns_ = AliveInfo.alive_buttons()
-        cap_ = AliveInfo.alive_info(user_)
-        if Config.ALIVE_PIC_TYPE == MessageMediaType.PHOTO:
-            results.append(
-                InlineQueryResultPhoto(
-                    title="Alive media.",
-                    photo_url=Config.ALIVE_PIC,
-                    caption=cap_,
-                    reply_markup=btns_,
+    @venom.bot.on_inline_query(filters.regex("^alive$"))
+    @VenomDecorators.inline_checker(owner=True)
+    async def alive_media_inline(_, i_q: InlineQuery):
+        " alive media inline query "
+        iq = i_q.query
+        results = []
+        if iq == "alive":
+            user_ = (await venom.get_me()).mention
+            btns_ = AliveInfo.alive_buttons()
+            cap_ = AliveInfo.alive_info(user_)
+            if Config.ALIVE_PIC_TYPE == MessageMediaType.PHOTO:
+                results.append(
+                    InlineQueryResultPhoto(
+                        title="Alive media.",
+                        photo_url=Config.ALIVE_PIC,
+                        caption=cap_,
+                        reply_markup=btns_,
+                    )
                 )
-            )
-        elif Config.ALIVE_PIC_TYPE == MessageMediaType.ANIMATION:
-            results.append(
-                InlineQueryResultAnimation(
-                    title="Alive media.",
-                    animation_url=Config.ALIVE_PIC,
-                    caption=cap_,
-                    reply_markup=btns_,
+            elif Config.ALIVE_PIC_TYPE == MessageMediaType.ANIMATION:
+                results.append(
+                    InlineQueryResultAnimation(
+                        title="Alive media.",
+                        animation_url=Config.ALIVE_PIC,
+                        caption=cap_,
+                        reply_markup=btns_,
+                    )
                 )
-            )
-        elif Config.ALIVE_PIC_TYPE == MessageMediaType.VIDEO:
-            results.append(
-                InlineQueryResultVideo(
-                    title="Alive media.",
-                    video_url=Config.ALIVE_PIC,
-                    caption=cap_,
-                    reply_markup=btns_,
+            elif Config.ALIVE_PIC_TYPE == MessageMediaType.VIDEO:
+                results.append(
+                    InlineQueryResultVideo(
+                        title="Alive media.",
+                        video_url=Config.ALIVE_PIC,
+                        caption=cap_,
+                        reply_markup=btns_,
+                    )
                 )
-            )
-        else:
-            HELP_MENU = InlineQueryResultArticle(
-                title="VenomX error.",
-                input_message_content=InputTextMessageContent(
-                    message_text="Content not found."
+            else:
+                HELP_MENU = InlineQueryResultArticle(
+                    title="VenomX error.",
+                    input_message_content=InputTextMessageContent(
+                        message_text="Content not found."
+                    )
                 )
-            )
-            results.append(HELP_MENU)
-    if len(results) != 0:
-        await i_q.answer(results=results, cache_time=1)
+                results.append(HELP_MENU)
+        if len(results) != 0:
+            await i_q.answer(results=results, cache_time=1)
 
 
 #################################################################################################################################################################
 
 
-@venom.bot.on_callback_query(filters.regex("^INFO$"))
-@VenomDecorators.callback_checker()
-async def bot_info(_, cq: CallbackQuery):
-    info_ = f"""
-### 𝐈𝐧𝐟𝐨𝐫𝐦𝐚𝐭𝐢𝐨𝐧 𝐚𝐛𝐨𝐮𝐭 𝐕𝐞𝐧𝐨𝐦𝐗 ###
+    @venom.bot.on_callback_query(filters.regex("^INFO$"))
+    @VenomDecorators.callback_checker()
+    async def bot_info(_, cq: CallbackQuery):
+        info_ = f"""
+    ### 𝐈𝐧𝐟𝐨𝐫𝐦𝐚𝐭𝐢𝐨𝐧 𝐚𝐛𝐨𝐮𝐭 𝐕𝐞𝐧𝐨𝐦𝐗 ###
 
-{DOT_} 𝗢𝘄𝗻𝗲𝗿: Kakashi
-{DOT_} 𝗕𝗮𝘀𝗲𝗱 𝗼𝗻:
-    USERGE/USERGE-X
-    (for understanding core parts)
-{DOT_} 𝗥𝗲𝗹𝗲𝗮𝘀𝗲 𝗱𝗮𝘁𝗲: NO ETA
-"""
-    await cq.answer(info_, show_alert=True)
+    {DOT_} 𝗢𝘄𝗻𝗲𝗿: Kakashi
+    {DOT_} 𝗕𝗮𝘀𝗲𝗱 𝗼𝗻:
+        USERGE/USERGE-X
+        (for understanding core parts)
+    {DOT_} 𝗥𝗲𝗹𝗲𝗮𝘀𝗲 𝗱𝗮𝘁𝗲: NO ETA
+    """
+        await cq.answer(info_, show_alert=True)

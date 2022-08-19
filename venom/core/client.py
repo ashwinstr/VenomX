@@ -55,7 +55,7 @@ class VenomBot(CustomVenom):
 class Venom(CustomVenom):
     logging.info("### Processing: %s ###", "Venom client")
     
-    def __init__(self, client: Client):
+    def __init__(self):
         kwargs = {
             'name': 'VenomX',
             'api_id': Config.API_ID,
@@ -72,20 +72,11 @@ class Venom(CustomVenom):
             kwargs['session_string'] = Config.STRING_SESSION
         else:
             self.bot = VenomBot(bot=self, **kwargs)
-        
-        self.client = client
-        for attr_ in dir(client):
-            value_ = getattr(client, attr_)
-            self.__setattr__(attr_, value_)
         super().__init__(**kwargs)
 
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         return super().__setattr__(__name, __value)
-
-#    def getCLogger(self, name: str) -> 'Message':
-#        logged = ChannelLogger(self, name)
-#        return logged
 
     @property
     def uptime(self):
@@ -101,13 +92,13 @@ class Venom(CustomVenom):
     
     @property
     def isuser(self):
-        if Config.STRING_SESSION:
+        if Config.STRING_SESSION and Config.USER_IS_SELF:
             return True
         return False
     
     @property
     def isbot(self):
-        if Config.BOT_TOKEN and not Config.STRING_SESSION:
+        if Config.BOT_TOKEN and not Config.STRING_SESSION and not Config.USER_IS_SELF:
             return True
         return False
     
@@ -129,7 +120,7 @@ class Venom(CustomVenom):
         return dict_
 
     async def start(self):
-        if self.bot is not None:
+        if hasattr(self, 'bot') and self.bot is not None:
             _LOG.info("### %s ###", "Starting bot")
             await self.bot.start()
         await super().start()

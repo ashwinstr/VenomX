@@ -16,6 +16,7 @@ from pyromod import listen
 from venom import Config
 from venom.core.types.message import MyMessage
 from venom.core.filter import Filter
+from venom.core import client as _client
 from ...command_manager import manager
 
 _FUNC = Callable[['Message'], Any]
@@ -60,6 +61,10 @@ class MyDecorator(Client):
 
             async def template(rc, rm) -> None:
                 os.makedirs(Config.TEMP_PATH, exist_ok=True)
+                os.makedirs(Config.DOWN_PATH, exist_ok=True)
+                if Config.USER_IS_SELF:
+                    if isinstance(rc, '_client.VenomBot'):
+                        return
                 new_message = MyMessage(rm)
                 try:
                     await func(rc, new_message)
