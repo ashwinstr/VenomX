@@ -63,7 +63,7 @@ class MyDecorator(Client):
                 os.makedirs(Config.TEMP_PATH, exist_ok=True)
                 os.makedirs(Config.DOWN_PATH, exist_ok=True)
                 if Config.USER_IS_SELF:
-                    if isinstance(rc, '_client.VenomBot'):
+                    if isinstance(rc, _client.VenomBot):
                         return
                 new_message = MyMessage(rm)
                 try:
