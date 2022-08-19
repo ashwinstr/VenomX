@@ -32,7 +32,7 @@ async def _init() -> None:
         )
     else:
         _LOG.info(_LOG_STR, "Remote upstream exists, using same")
-    os.system(f"git fetch {upstrm}")
+    os.system(f"git init && git fetch upstream")
 
 
 ########################################################################################################################################################################
