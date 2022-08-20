@@ -64,8 +64,11 @@ async def new_kang(_, message: MyMessage):
         file_ = FileId.decode(file_id=reply_.document.file_id)
     if is_video:
         await message.edit("`Downloading...`")
-        down_ = await reply_.download(f"{Config.DOWN_PATH}{reply_.document.file_name}")
-        converted_vid = await convert_video(down_)
+        down_ = await reply_.download(Config.DOWN_PATH)
+        if not reply_.sticker:
+            converted_vid = await convert_video(down_)
+        else:
+            converted_vid = down_
         await venom.send_document(bot_.username, converted_vid, caption="#KANG")
         await asyncio.sleep(3)
         return await message.edit(f"<i>Sticker will be kanged...</i>\n<i>Check [<b>HERE</b>](t.me/addstickers/{packname}).")
