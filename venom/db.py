@@ -18,6 +18,9 @@ class Collection:
     # loader
     TEMP_LOADED = get_collection("TEMP_LOADED")
 
+    # phone number
+    PHONE_NUMBER = get_collection("PHONE_NUMBER")
+
     # pm guard
     ALLOWED_TO_PM = get_collection("ALLOWED_TO_PM")
     DISALLOWED_PM_COUNT = get_collection("DISALLOWED_PM_COUNT")

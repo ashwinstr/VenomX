@@ -1,6 +1,7 @@
 # gen_str.py
 
 import asyncio
+import traceback
 
 from pyrogram import filters, Client
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -13,7 +14,9 @@ from pyrogram.errors import (
     SessionPasswordNeeded
 )
 
-from venom import venom, MyMessage, Config
+from venom import venom, MyMessage, Config, Collection
+
+CHANNEL = venom.getCLogger(__name__)
 
 
 @venom.bot.on_message(
@@ -26,16 +29,47 @@ from venom import venom, MyMessage, Config
 async def generate_str(_, m):
     " generate session string in bot mode "
     message: MyMessage = MyMessage.parse(m)
-    await message.reply("Are you certain you want to generate session_string?\nReply `yes`/`y` to continue.")
+    await message.reply("Are you certain you want to generate session_string?\nReply `y` to continue.")
     try:
         resp = await message.wait()
-    except TimeoutError:
+    except asyncio.TimeoutError:
         return await message.reply("`Response not found !!!\nTerminating process...`")
     if resp.text.upper() != 'YES' and resp.text.upper() != 'Y':
         return await message.reply("`Wrong response.\nTerminating the process...`")
     api_id = Config.API_ID
     api_hash = Config.API_HASH
-    number = (await venom.get_me()).phone_number
+    num_found = await Collection.PHONE_NUMBER.find_one({'_id': 'PHONE_NUMBER'})
+    if not num_found:
+        try:
+            number = await resp.ask("`Enter your phone number with international code:`", timeout=30)
+            input_ = True
+            num = number.text
+        except asyncio.TimeoutError:
+            return await message.reply("<b>Timeout !!!</b>")
+    else:
+        input_ = False
+        num = num_found['number']
+        try:
+            confirm_ = await message.ask(f"Phone number found in database.\nIs `{num}` your number? (`y`/`n`)")
+        except asyncio.TimeoutError:
+            return await message.reply("<b>Timeout !!!</b>")
+        if confirm_.text.lower() == 'y':
+            pass
+        elif confirm_.text.lower() == 'n':
+            input_ = True
+            try:
+                number = await message.ask("`Enter new number with international code:`", timeout=30)
+                num = number.text
+            except asyncio.TimeoutError:
+                return await message.reply("<b>Timeout !!!</b>")
+        else:
+            return await message.reply("`Invalid input.\nTerminating...`")
+    if input_:
+        if not num.startswith("+") or not num.lstrip("+").isnumeric():
+            return await message.reply("`Invalid phone number!\nTerminating...`")
+        await Collection.PHONE_NUMBER.update_one(
+            {'_id': 'PHONE_NUMBER'}, {'$set': {'number': num}}, upsert=True
+        )
     process_ = await resp.reply("`Generating session string...`")
     try:
         client = Client(name="MyAccount", api_hash=api_hash, api_id=api_id)
@@ -50,7 +84,7 @@ async def generate_str(_, m):
         return await process_.edit(e)
     await process_.edit("`Successfully connected to client.`")
     try:
-        code = await client.send_code(number)
+        code = await client.send_code(num)
         await asyncio.sleep(1)
     except FloodWait as e:
         return await process_.edit(f"`You have floodwait of {e.x} seconds.`", del_in=5)
@@ -70,7 +104,7 @@ async def generate_str(_, m):
         return await client.disconnect()
     otp_code = otp.text
     try:
-        await client.sign_in(number, code.phone_code_hash, phone_code=' '.join(str(otp_code)))
+        await client.sign_in(num, code.phone_code_hash, phone_code=' '.join(str(otp_code)))
     except PhoneCodeInvalid:
         return await otp.reply("`Invalid code.`")
     except PhoneCodeExpired:
@@ -91,10 +125,10 @@ async def generate_str(_, m):
             await client.check_password(new_code)
         except Exception as e:
             return await two_step_code.reply(f"**ERROR:** `{str(e)}`")
-    except Exception as e:
-        await otp.reply(f"**ERROR:** `{str(e)}`")
+    except Exception:
+        return await otp.reply(f"**ERROR:** `{traceback.format_exc()}`")
     session_string = await client.export_session_string()
-    await client.send_message("me", f"#PYROGRAM #HU_STRING_SESSION #UX_xplugin_support\n\n```{session_string}```")
+    await client.send_message("me", f"#PYROGRAM #STRING_SESSION @UX_xplugin_support\n\n```{session_string}```")
 
     text = "`String session is successfully generated.\nClick on button Below.`"
     reply_markup = InlineKeyboardMarkup(

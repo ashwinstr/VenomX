@@ -3,7 +3,9 @@
 import json
 import re
 import os
+from typing import Union
 from telegraph import Telegraph, upload_file
+from pastypy import Paste
 
 from pymediainfo import MediaInfo
 
@@ -175,3 +177,25 @@ class Media_Info:
             "file_size": media_size_2
         } if found else None
         return dict_
+
+async def paste_it(msg_content: Union[MyMessage, str]) -> str:
+    " paste content to pasty.lus "
+    if isinstance(msg_content, MyMessage):
+        reply_ = msg_content.replied
+        if reply_.document:
+            if not reply_.document.mime_type in "text/*":
+                return False
+            await msg_content.edit("`Downloading document...`")
+            down_ = await reply_.download()
+            with open(down_, "r") as file_:
+                content_ = file_.read()
+            os.remove(down_)
+        elif reply_.text or reply_.caption:
+            content_ = reply_.text or reply_.caption
+        else:
+            return False
+    elif isinstance(msg_content, str):
+        content_ = msg_content.input_str
+    paste_ = Paste(content=content_)
+    paste_.save()
+    return paste_.url

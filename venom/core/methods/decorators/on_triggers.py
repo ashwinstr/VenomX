@@ -25,7 +25,10 @@ CURRENT_MODULE = ""
 
 def owner_filter(cmd: str) -> RFilter:
     " owner filters "
-    filters_ = filters.regex(fr"^{Config.CMD_TRIGGER}{cmd}(\s(.|\n)*?)?$")\
+    trig_: str = "\." if Config.CMD_TRIGGER == "." else Config.CMD_TRIGGER
+    filters_ = filters.regex(
+        fr"^(?:\{Config.CMD_TRIGGER})({cmd.strip('^')})(\s(.|\n)*?)?$" if trig_ else fr"^{cmd.strip('^')}"
+    )\
         & filters.create(
             lambda _, __, m:
             (m.from_user and (m.from_user.id == Config.OWNER_ID))
@@ -34,7 +37,7 @@ def owner_filter(cmd: str) -> RFilter:
 
 def sudo_filter(cmd: str) -> RFilter:
     " sudo filters "
-    filters_ = filters.regex(fr"^{Config.SUDO_TRIGGER}{cmd}(\s(.|\n)*?)?$")\
+    filters_ = filters.regex(fr"^(?:\{Config.SUDO_TRIGGER})({cmd})(\s(.|\n)*?)?$")\
         & filters.create(
             lambda _, __, m:
             (bool(Config.SUDO) and m.from_user\
@@ -45,11 +48,10 @@ def sudo_filter(cmd: str) -> RFilter:
 class MyDecorator(Client):
     _PYROFUNC = Callable[[_FUNC], _FUNC]
 
-    def my_decorator(self, flt: 'Filter', filters_=RFilter, group: int = 0, **kwargs) -> 'MyDecorator._PYROFUNC':
+    def my_decorator(self, flt: 'Filter', filters_ = RFilter, group: int = 0, **kwargs) -> 'MyDecorator._PYROFUNC':
 
         def inner(func: _FUNC) -> _FUNC:
 
-            # preparing plugins and commands list
             global CURRENT_MODULE
             if func.__module__ != CURRENT_MODULE:
                 manager.plugins.append(func.__module__)

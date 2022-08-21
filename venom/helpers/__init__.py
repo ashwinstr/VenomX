@@ -14,7 +14,8 @@ from .venom_tools import (
                         get_import_paths,
                         extract_id,
                         report_user,
-                        Media_Info
+                        Media_Info,
+                        paste_it
                         )
 
 from .decorators import VenomDecorators
