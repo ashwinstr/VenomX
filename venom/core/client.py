@@ -11,10 +11,11 @@ from typing import Any, Optional
 
 from pyrogram import Client
 
-from venom import Config, logging
 from .methods import Methods
 from ..plugins import all_plugins
 from .database import _close_db
+
+from venom import Config, logging
 from venom.helpers import time_format
 
 _LOG = logging.getLogger(__name__)
@@ -134,7 +135,7 @@ class Venom(CustomVenom):
             await self.bot.stop()
         _close_db()
         await super().stop()
-
+    
     async def restart(self):
         _LOG.info("### %s ###", "Restarting VenomX")
         os.execl(sys.executable, sys.executable, '-m', 'venom')

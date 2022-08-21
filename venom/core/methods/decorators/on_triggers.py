@@ -14,6 +14,7 @@ from pyrogram.errors import MessageTooLong
 from pyromod import listen
 
 from venom import Config
+from venom.helpers import paste_it
 from venom.core.types.message import MyMessage
 from venom.core.filter import Filter
 from venom.core import client as _client
@@ -62,7 +63,7 @@ class MyDecorator(Client):
             filtered = filters_\
                 and owner_filter(flt.cmd) | sudo_filter(flt.cmd)
 
-            async def template(rc, rm) -> None:
+            async def template(rc, rm: 'MyMessage') -> None:
                 os.makedirs(Config.TEMP_PATH, exist_ok=True)
                 os.makedirs(Config.DOWN_PATH, exist_ok=True)
                 if Config.USER_IS_SELF:
@@ -75,7 +76,7 @@ class MyDecorator(Client):
                     error_ = traceback.format_exc().strip()
                     try:
                         await self.send_message(chat_id=Config.LOG_CHANNEL_ID,
-                                            text=f"### **TRACEBACK** ###\n\n"
+                                            text=f"###**TRACEBACK**###\n\n"
                                                  f"**PLUGIN:** `{func.__module__}`\n"
                                                  f"**FUNCTIONS:** `{func.__name__}`\n"
                                                  f"**ERROR:** `{e or None}`\n\n"
@@ -85,11 +86,14 @@ class MyDecorator(Client):
                             tb.write(error_)
                         await self.send_document(chat_id=Config.LOG_CHANNEL_ID,
                                                 document="traceback.txt",
-                                                caption=f"### **TRACEBACK** ###\n\n"
+                                                caption=f"###**TRACEBACK**###\n\n"
                                                  f"**PLUGIN:** `{func.__module__}`\n"
                                                  f"**FUNCTIONS:** `{func.__name__}`\n"
                                                  f"**ERROR:** `{e or None}`\n\n")
                         os.remove("traceback.txt")
+                    link_ = await paste_it(error_)
+                    await self.send_message(chat_id=rm.from_user.id,
+                                            text=f"Something unexpected happended, send the below error to @UX_xplugin_support...\n<b>Traceback:</b> [HERE]({link_})")
 
             self.add_handler(pyrogram.handlers.MessageHandler(template, filtered), group)
             self.add_handler(pyrogram.handlers.EditedMessageHandler(template, filtered), group)

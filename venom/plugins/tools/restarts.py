@@ -1,7 +1,6 @@
 # restarts.py
 
 import time
-import os
 import shutil
 
 from venom import venom, Config, MyMessage, Collection

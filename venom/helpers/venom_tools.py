@@ -195,7 +195,7 @@ async def paste_it(msg_content: Union[MyMessage, str]) -> str:
         else:
             return False
     elif isinstance(msg_content, str):
-        content_ = msg_content.input_str
+        content_ = msg_content
     paste_ = Paste(content=content_)
     paste_.save()
     return paste_.url

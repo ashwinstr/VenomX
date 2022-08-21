@@ -7,6 +7,7 @@ heroku3
 motor>=2.3.0
 pastypy
 Pillow
+psutil
 pymediainfo
 pymongo
 git+https://github.com/ashwinstr/pyrogram-2.git@master

@@ -31,6 +31,8 @@ class Config:
     STRING_SESSION = os.environ.get("STRING_SESSION")
     TEMP_PATH = "venom/plugins/temp/"
     THUMB_PATH = DOWN_PATH + "thumb_image.jpg"
+    TRACEBACK = {'id': int}
+    EXECUTOR_TB = {'id': int}
     UPSTREAM_REMOTE = os.environ.get("UPSTREAM_REMOTE", 'upstream')
     UPSTREAM_REPO = os.environ.get("UPSTREAM_REPO")
     USER_IS_SELF = False
