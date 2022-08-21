@@ -38,38 +38,9 @@ async def generate_str(_, m):
         return await message.reply("`Wrong response.\nTerminating the process...`")
     api_id = Config.API_ID
     api_hash = Config.API_HASH
-    num_found = await Collection.PHONE_NUMBER.find_one({'_id': 'PHONE_NUMBER'})
-    if not num_found:
-        try:
-            number = await resp.ask("`Enter your phone number with international code:`", timeout=30)
-            input_ = True
-            num = number.text
-        except asyncio.TimeoutError:
-            return await message.reply("<b>Timeout !!!</b>")
-    else:
-        input_ = False
-        num = num_found['number']
-        try:
-            confirm_ = await message.ask(f"Phone number found in database.\nIs `{num}` your number? (`y`/`n`)")
-        except asyncio.TimeoutError:
-            return await message.reply("<b>Timeout !!!</b>")
-        if confirm_.text.lower() == 'y':
-            pass
-        elif confirm_.text.lower() == 'n':
-            input_ = True
-            try:
-                number = await message.ask("`Enter new number with international code:`", timeout=30)
-                num = number.text
-            except asyncio.TimeoutError:
-                return await message.reply("<b>Timeout !!!</b>")
-        else:
-            return await message.reply("`Invalid input.\nTerminating...`")
-    if input_:
-        if not num.startswith("+") or not num.lstrip("+").isnumeric():
-            return await message.reply("`Invalid phone number!\nTerminating...`")
-        await Collection.PHONE_NUMBER.update_one(
-            {'_id': 'PHONE_NUMBER'}, {'$set': {'number': num}}, upsert=True
-        )
+    num = (await venom.get_users(Config.OWNER_ID)).phone_number
+    if num is None:
+        return await message.reply("`First allow me in phone number privacy setting...`")
     process_ = await resp.reply("`Generating session string...`")
     try:
         client = Client(name="MyAccount", api_hash=api_hash, api_id=api_id)

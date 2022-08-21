@@ -27,7 +27,7 @@ def owner_filter(cmd: str) -> RFilter:
     " owner filters "
     trig_: str = "\." if Config.CMD_TRIGGER == "." else Config.CMD_TRIGGER
     filters_ = filters.regex(
-        fr"^(?:\{Config.CMD_TRIGGER})({cmd.strip('^')})(\s(.|\n)*?)?$" if trig_ else fr"^{cmd.strip('^')}"
+        fr"^(?:\{trig_})({cmd.strip('^')})(\s(.|\n)*?)?$" if trig_ else fr"^{cmd.strip('^')}"
     )\
         & filters.create(
             lambda _, __, m:
@@ -37,7 +37,8 @@ def owner_filter(cmd: str) -> RFilter:
 
 def sudo_filter(cmd: str) -> RFilter:
     " sudo filters "
-    filters_ = filters.regex(fr"^(?:\{Config.SUDO_TRIGGER})({cmd})(\s(.|\n)*?)?$")\
+    trig_: str = "\." if Config.SUDO_TRIGGER == "." else Config.SUDO_TRIGGER
+    filters_ = filters.regex(fr"^(?:\{trig_})({cmd})(\s(.|\n)*?)?$")\
         & filters.create(
             lambda _, __, m:
             (bool(Config.SUDO) and m.from_user\

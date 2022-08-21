@@ -88,7 +88,7 @@ class MyMessage(Message):
             if isinstance(one, dict):
                 key_ = one.keys()[0]
                 one = f"{key_}{one[key_]}"
-            input_ = input_.lstrip(one)
+            input_ = input_.lstrip(one).strip()
         return input_
 
     @property
