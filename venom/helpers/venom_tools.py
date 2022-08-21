@@ -183,7 +183,7 @@ async def paste_it(msg_content: Union[MyMessage, str]) -> str:
     if isinstance(msg_content, MyMessage):
         reply_ = msg_content.replied
         if reply_.document:
-            if not reply_.document.mime_type in "text/*":
+            if reply_.document.mime_type == "text/*":
                 return False
             await msg_content.edit("`Downloading document...`")
             down_ = await reply_.download()
