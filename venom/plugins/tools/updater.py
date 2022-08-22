@@ -23,7 +23,7 @@ async def _init() -> None:
     if not exists_:
         _LOG.info(_LOG_STR, "Adding remote upstream")
         os.system(
-            f"git remote add upstream {upstrm}"
+            f"git remote add upstream {upstrm.rstrip('.git')}.git"
         )
     elif str(exists_).strip() != upstrm:
         _LOG.info(_LOG_STR, "Updating remote upstream")
