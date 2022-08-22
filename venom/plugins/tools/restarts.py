@@ -2,6 +2,7 @@
 
 import time
 import shutil
+import asyncio
 
 from venom import venom, Config, MyMessage, Collection
 from venom.helpers import plugin_name
