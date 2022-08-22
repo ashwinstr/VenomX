@@ -136,6 +136,10 @@ class Venom(CustomVenom):
         _close_db()
         await super().stop()
     
-    async def restart(self):
+    async def restart(self, hard: bool = False):
         _LOG.info("### %s ###", "Restarting VenomX")
-        os.execl(sys.executable, sys.executable, '-m', 'venom')
+        if not hard:
+            os.execl(sys.executable, sys.executable, '-m', 'venom')
+        else:
+            _LOG.info("### %s ###", "Installing requirements")
+            os.execl("bash", "./run")
