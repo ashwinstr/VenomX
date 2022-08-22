@@ -71,7 +71,7 @@ async def update_r(_, message: MyMessage):
         else:
             return await message.edit(f"`{g_e}`")
     if not pull_:
-        if fetch_:
+        if total_:
             out_ = (
                 "<b>VenomX update found.</b>\n\n"
                 f"<b>Changelog:</b> [<b>{total_}</b>]\n\n"
@@ -81,7 +81,7 @@ async def update_r(_, message: MyMessage):
         else:
             await message.edit("<b>VenomX is UP-TO-DATE with upstream.</b>")
         return
-    if not fetch_:
+    if not total_:
         return await message.edit("<b>VenomX is already UP-TO-DATE with upstream.</b>")
     try:
         pull_update(repo, branch)
