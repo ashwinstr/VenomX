@@ -43,6 +43,7 @@ HELP['commands'].append(
         'command': 'update',
         'flags': {
             '-now': 'pull updates',
+            '-r': 'update requirements'
         },
         'about': 'bot updater',
         'syntax': '{tr}update [optional flag]',
@@ -57,6 +58,8 @@ async def update_r(_, message: MyMessage):
     pull_ = False
     if "-now" in message.flags:
         pull_ = True
+    if "-h" in message.flags:
+        up_req = True
     repo = Repo()
     branch = "main"
     message = await message.edit("`Checking...`")
@@ -88,9 +91,10 @@ async def update_r(_, message: MyMessage):
     except Exception as e:
         return await message.edit(f"<b>ERROR:</b> `{e}`")
     await asyncio.sleep(1)
+    req = " and updating requirements" if up_req else ""
     await message.edit(
         "<b>VenomX update process started.</b>\n"
-        "`Now restarting... Wait for a while.`"
+        f"`Now restarting{req}... Wait for a while.`"
     )
     await Collection.UPDATE.insert_one(
         {
@@ -100,7 +104,10 @@ async def update_r(_, message: MyMessage):
             'start': START_
         }
     )
-    asyncio.get_event_loop().create_task(venom.restart())
+    if up_req:
+        await venom.restart()
+    else:
+        asyncio.get_event_loop().create_task(venom.restart())
 
     
 
