@@ -56,6 +56,7 @@ async def update_r(_, message: MyMessage):
     " bot updater "
     START_ = time.time()
     pull_ = False
+    up_req = False
     if "-now" in message.flags:
         pull_ = True
     if "-h" in message.flags:
