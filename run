@@ -2,6 +2,7 @@
 
 start() {
     git init
+    git clone $UPSTREAM_REPO .
     pip3 -q install -U -r requirements.txt
     python3 -m venom
 }
