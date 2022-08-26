@@ -26,6 +26,7 @@ logs
 downloads
 venom/xcache
 venom/plugins/temp
+venom/plugins/test
 
 # session files
 *.session*

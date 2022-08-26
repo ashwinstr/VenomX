@@ -28,6 +28,7 @@ class Config:
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
     ME: dict = {}
     OWNER_ID = int(os.environ.get("OWNER_ID"))
+    PAUSE = False
     STRING_SESSION = os.environ.get("STRING_SESSION")
     TEMP_PATH = "venom/plugins/temp/"
     THUMB_PATH = DOWN_PATH + "thumb_image.jpg"
@@ -35,7 +36,7 @@ class Config:
     EXECUTOR_TB = {'id': int}
     UPSTREAM_REMOTE = os.environ.get("UPSTREAM_REMOTE", 'upstream')
     UPSTREAM_REPO = os.environ.get("UPSTREAM_REPO")
-    USER_IS_SELF = False
+    USER_MODE = False
 
     ##### characters #####
     BULLET_DOT = "•"

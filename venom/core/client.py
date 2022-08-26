@@ -93,13 +93,13 @@ class Venom(CustomVenom):
     
     @property
     def isuser(self):
-        if Config.STRING_SESSION and Config.USER_IS_SELF:
+        if Config.STRING_SESSION and Config.USER_MODE:
             return True
         return False
     
     @property
     def isbot(self):
-        if Config.BOT_TOKEN and not Config.STRING_SESSION and not Config.USER_IS_SELF:
+        if Config.BOT_TOKEN and not Config.STRING_SESSION and not Config.USER_MODE:
             return True
         return False
     

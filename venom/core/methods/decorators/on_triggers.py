@@ -66,9 +66,11 @@ class MyDecorator(Client):
             async def template(rc, rm: 'MyMessage') -> None:
                 os.makedirs(Config.TEMP_PATH, exist_ok=True)
                 os.makedirs(Config.DOWN_PATH, exist_ok=True)
-                if Config.USER_IS_SELF:
+                if Config.USER_MODE:
                     if isinstance(rc, _client.VenomBot):
                         return
+                if Config.PAUSE:
+                    return
                 new_message = MyMessage(rm)
                 try:
                     await func(rc, new_message)
