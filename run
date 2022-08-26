@@ -1,7 +1,9 @@
 #!/bin/sh
 
 start() {
-    git init
+    git clone $UPSTREAM_REPO ./temp_path
+    mv ./temp_path/requirements.txt .
+    pip3 -q install -U -r requirements.txt
     python3 -m venom
 }
 

@@ -23,7 +23,7 @@ async def _init() -> None:
     if not exists_:
         _LOG.info(_LOG_STR, "Adding remote upstream")
         os.system(
-            f"git remote add upstream {upstrm}"
+            f"git remote add upstream {upstrm.rstrip('.git')}.git"
         )
     elif str(exists_).strip() != upstrm:
         _LOG.info(_LOG_STR, "Updating remote upstream")
@@ -32,7 +32,7 @@ async def _init() -> None:
         )
     else:
         _LOG.info(_LOG_STR, "Remote upstream exists, using same")
-    os.system(f"git init && git fetch upstream")
+    os.system(f"git fetch upstream main")
 
 
 ########################################################################################################################################################################
@@ -43,6 +43,7 @@ HELP['commands'].append(
         'command': 'update',
         'flags': {
             '-now': 'pull updates',
+            '-r': 'update requirements'
         },
         'about': 'bot updater',
         'syntax': '{tr}update [optional flag]',
@@ -55,8 +56,11 @@ async def update_r(_, message: MyMessage):
     " bot updater "
     START_ = time.time()
     pull_ = False
+    up_req = False
     if "-now" in message.flags:
         pull_ = True
+    if "-h" in message.flags:
+        up_req = True
     repo = Repo()
     branch = "main"
     message = await message.edit("`Checking...`")
@@ -71,7 +75,7 @@ async def update_r(_, message: MyMessage):
         else:
             return await message.edit(f"`{g_e}`")
     if not pull_:
-        if fetch_:
+        if total_:
             out_ = (
                 "<b>VenomX update found.</b>\n\n"
                 f"<b>Changelog:</b> [<b>{total_}</b>]\n\n"
@@ -81,16 +85,17 @@ async def update_r(_, message: MyMessage):
         else:
             await message.edit("<b>VenomX is UP-TO-DATE with upstream.</b>")
         return
-    if not fetch_:
+    if not total_:
         return await message.edit("<b>VenomX is already UP-TO-DATE with upstream.</b>")
     try:
         pull_update(repo, branch)
     except Exception as e:
         return await message.edit(f"<b>ERROR:</b> `{e}`")
     await asyncio.sleep(1)
+    req = " and updating requirements" if up_req else ""
     await message.edit(
         "<b>VenomX update process started.</b>\n"
-        "`Now restarting... Wait for a while.`"
+        f"`Now restarting{req}... Wait for a while.`"
     )
     await Collection.UPDATE.insert_one(
         {
@@ -100,7 +105,10 @@ async def update_r(_, message: MyMessage):
             'start': START_
         }
     )
-    asyncio.get_event_loop().create_task(venom.restart())
+    if up_req:
+        await venom.restart()
+    else:
+        asyncio.get_event_loop().create_task(venom.restart())
 
     
 

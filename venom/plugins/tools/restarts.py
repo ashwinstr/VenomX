@@ -2,6 +2,7 @@
 
 import time
 import shutil
+import asyncio
 
 from venom import venom, Config, MyMessage, Collection
 from venom.helpers import plugin_name
@@ -46,8 +47,7 @@ async def rest_art(_, message: MyMessage):
             )
             Config.HEROKU_APP.restart()
             return
-        await msg.edit("`HEROKU_APP not found...`")
-        action = "normally"
+        return await venom.restart()
     elif '-t' in message.flags:
         shutil.rmtree(Config.TEMP_PATH, ignore_errors=True)
         action = "and deleting temp path"
@@ -64,4 +64,4 @@ async def rest_art(_, message: MyMessage):
             'start': time.time(),
         }
     )
-    await venom.restart()
+    asyncio.get_event_loop().create_task(venom.restart())

@@ -94,7 +94,7 @@ class MyDecorator(Client):
                                                  f"**ERROR:** `{e or None}`\n\n")
                         os.remove("traceback.txt")
                     link_ = await paste_it(error_)
-                    await self.send_message(chat_id=rm.from_user.id,
+                    await self.send_message(chat_id=rm.chat.id,
                                             text=f"Something unexpected happended, send the below error to @UX_xplugin_support...\n<b>Traceback:</b> [HERE]({link_})")
 
             self.add_handler(pyrogram.handlers.MessageHandler(template, filtered), group)
