@@ -176,7 +176,8 @@ async def guard_(_, message: MyMessage):
 
 @venom.on_message(
     filters.me
-    & filters.private
+    & filters.private,
+    group=2
 )
 async def auto_allow(_, message: MyMessage):
     " automatic allow on first message "

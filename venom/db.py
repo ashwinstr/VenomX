@@ -10,16 +10,13 @@ class Collection:
     ALIVE_MEDIA = get_collection("ALIVE_MEDIA")
 
     # basic collections
-    TOGGLES = get_collection("TOGGLES") # FBAN_TAG, F_DEL, KANGLOG, PM_GUARD, PM_TOG, SUDO, USER_IS_SELF
+    TOGGLES = get_collection("TOGGLES") # FBAN_TAG, F_DEL, KANGLOG, PM_GUARD, PM_TOG, SUDO, USER_BOT
 
     # fbans
     FED_LIST = get_collection("FED_LIST")
 
     # loader
     TEMP_LOADED = get_collection("TEMP_LOADED")
-
-    # phone number
-    PHONE_NUMBER = get_collection("PHONE_NUMBER")
 
     # pm guard
     ALLOWED_TO_PM = get_collection("ALLOWED_TO_PM")
@@ -36,3 +33,6 @@ class Collection:
     SUDO_USERS = get_collection("SUDO_USERS")
     TRUSTED_SUDO_USERS = get_collection("TRUSTED_SUDO_USERS")
     SUDO_CMD_LIST = get_collection("SUDO_CMD_LIST")
+
+    # startup
+    PAUSE = get_collection("PAUSE")

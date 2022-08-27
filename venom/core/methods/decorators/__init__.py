@@ -1,6 +1,6 @@
 
-from .on_cmd import Trigger
+from .on_cmd import Trigger, OnMessage
 
 
-class Decorator(Trigger):
+class Decorator(Trigger, OnMessage):
     """ decorator """
