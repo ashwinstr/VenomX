@@ -9,7 +9,7 @@ import asyncio
 import traceback
 from typing import Any, Optional
 
-from pyrogram import Client
+from pyrogram import Client, idle
 
 from .methods import Methods
 from ..plugins import all_plugins
@@ -19,6 +19,7 @@ from venom import Config, logging
 from venom.helpers import time_format
 
 _LOG = logging.getLogger(__name__)
+_LOG_STR = "### %s ###"
 
 START_ = time.time()
 
@@ -43,18 +44,18 @@ class CustomVenom(Methods, Client):
 
 class VenomBot(CustomVenom):
 
-    def __init__(self, bot: Optional['VenomBot'] = None, **kwargs) -> None:
+    def __init__(self, bot: Optional['VenomBot'] = None, *args, **kwargs) -> None:
         self.bot = bot
-        super().__init__(in_memory=True, **kwargs)
+        super().__init__(in_memory=True, *args, **kwargs)
 
     @property
     def ubot(self) -> 'Venom':
         " returns userbot "
-        return self.bot
+        return self._bot
 
 
 class Venom(CustomVenom):
-    logging.info("### Processing: %s ###", "Venom client")
+    logging.info(_LOG_STR, "Processing: Venom client")
     
     def __init__(self):
         kwargs = {
@@ -75,9 +76,11 @@ class Venom(CustomVenom):
             self.bot = VenomBot(bot=self, **kwargs)
         super().__init__(**kwargs)
 
-
     def __setattr__(self, __name: str, __value: Any) -> None:
         return super().__setattr__(__name, __value)
+
+    def _bot(self):
+        return self.bot
 
     @property
     def uptime(self):
@@ -99,7 +102,7 @@ class Venom(CustomVenom):
     
     @property
     def isbot(self):
-        if Config.BOT_TOKEN and not Config.STRING_SESSION and not Config.USER_MODE:
+        if Config.BOT_TOKEN and not Config.USER_MODE:
             return True
         return False
     
@@ -122,24 +125,25 @@ class Venom(CustomVenom):
 
     async def start(self):
         if hasattr(self, 'bot') and self.bot is not None:
-            _LOG.info("### %s ###", "Starting bot")
+            _LOG.info(_LOG_STR, "Starting bot")
             await self.bot.start()
         await super().start()
         await _init_tasks()
         END_ = time.time()
         print(END_ - START_)
+        await idle()
 
     async def stop(self):
         if self.bot:
-            _LOG.info("### %s ###", "Stopping bot")
+            _LOG.info(_LOG_STR, "Stopping bot")
             await self.bot.stop()
         _close_db()
         await super().stop()
     
     async def restart(self, hard: bool = False):
-        _LOG.info("### %s ###", "Restarting VenomX")
+        _LOG.info(_LOG_STR, "Restarting VenomX")
         if not hard:
             os.execl(sys.executable, sys.executable, '-m', 'venom')
         else:
-            _LOG.info("### %s ###", "Installing requirements")
-            os.execl("bash", "./run")
+            _LOG.info(_LOG_STR, "Installing requirements")
+            os.execl("bash", "run")

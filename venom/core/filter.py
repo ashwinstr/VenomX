@@ -2,12 +2,14 @@
 
 import time
 import bisect
+from typing import Union
 
 from pyrogram import Client, filters
 from pyrogram.handlers import EditedMessageHandler
 from pyrogram.filters import Filter
 
 from venom import Config
+from . import client as _client
 
 
 class Filtered:

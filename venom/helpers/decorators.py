@@ -46,7 +46,7 @@ class VenomDecorators:
 
 
     def no_group(func):
-        async def wrapper(venom, message: MyMessage):
+        async def wrapper(venom, message: 'MyMessage'):
             if message.chat.type == ChatType.SUPERGROUP:
                 print(message.id)
                 return await message.edit("`Invalid chat type: SUPERGROUP!`")

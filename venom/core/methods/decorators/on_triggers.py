@@ -3,7 +3,8 @@
 
 import os
 import traceback
-from typing import Any, Callable
+import asyncio
+from typing import Any, Callable, Union
 
 import pyrogram
 from pyrogram import filters, Client
@@ -48,12 +49,13 @@ def sudo_filter(cmd: str) -> RFilter:
     return filters_
 
 class MyDecorator(Client):
+
     _PYROFUNC = Callable[[_FUNC], _FUNC]
 
-    def my_decorator(self, flt: 'Filter', filters_ = RFilter, group: int = 0, **kwargs) -> 'MyDecorator._PYROFUNC':
+    def my_decorator(self, flt: Union['Filter', '_client.Venom', '_client.VenomBot'] = None, filters_ = RFilter, group: int = 0, **kwargs) -> 'MyDecorator._PYROFUNC':
 
         def inner(func: _FUNC) -> _FUNC:
-
+            
             global CURRENT_MODULE
             if func.__module__ != CURRENT_MODULE:
                 manager.plugins.append(func.__module__)
@@ -69,11 +71,14 @@ class MyDecorator(Client):
                 if Config.USER_MODE:
                     if isinstance(rc, _client.VenomBot):
                         return
+                else:
+                    if isinstance(rc, _client.Venom):
+                        return
                 if Config.PAUSE:
                     return
-                new_message = MyMessage(rm)
+                my_message = MyMessage.parse(rm)
                 try:
-                    await func(rc, new_message)
+                    await func(rc, my_message, **kwargs)
                 except Exception as e:
                     error_ = traceback.format_exc().strip()
                     try:
@@ -97,7 +102,12 @@ class MyDecorator(Client):
                     await self.send_message(chat_id=rm.chat.id,
                                             text=f"Something unexpected happended, send the below error to @UX_xplugin_support...\n<b>Traceback:</b> [HERE]({link_})")
 
-            self.add_handler(pyrogram.handlers.MessageHandler(template, filtered), group)
-            self.add_handler(pyrogram.handlers.EditedMessageHandler(template, filtered), group)
-            return template
+#            self.add_handler(pyrogram.handlers.MessageHandler(template, filtered), group)
+#            self.add_handler(pyrogram.handlers.EditedMessageHandler(template, filtered), group)
+#            return template
+            if not hasattr(func, "handlers"):
+                func.handlers = []
+            func.handlers.append((pyrogram.handlers.MessageHandler(template, filtered), group))
+            func.handlers.append((pyrogram.handlers.EditedMessageHandler(template, filtered), group))
+            return func
         return inner

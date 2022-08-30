@@ -18,7 +18,7 @@ _CANCEL_PROCESS: List[int] = []
 
 class MyMessage(Message):
 
-    def __init__(self, message: Union[Message, 'MyMessage']) -> None:
+    def __init__(self, message: Union[Message, 'MyMessage'], **kwargs) -> None:
         " testing "
         self.msg = message
         self.msg._flags = {}
@@ -32,8 +32,7 @@ class MyMessage(Message):
                     setattr(self, one, attr_)
                 except:
                     pass
-#        self.__dict__ = message.__dict__.copy()
-#        super().__init__()
+#        super().__init__(**kwargs)
 
     @classmethod
     def parse(cls, message):

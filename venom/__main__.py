@@ -1,6 +1,6 @@
 # main.py
 
-from . import venom
+from venom import venom
 
 
 if __name__ == "__main__":

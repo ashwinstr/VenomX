@@ -3,7 +3,9 @@
 
 from .on_triggers import MyDecorator
 from .on_message import NewOnMessage
+from venom import Config
 from venom.core import filter
+from ... import client as _client
 
 
 class Trigger(MyDecorator):
