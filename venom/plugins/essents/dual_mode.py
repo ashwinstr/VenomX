@@ -5,7 +5,7 @@ import os
 
 from venom import venom, Config, MyMessage, Collection
 from venom.helpers import plugin_name
-from ...core.methods.decorators.on_triggers import MyDecorator
+# from ...core.methods.decorators.on_triggers import MyDecorator
 
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'essents', 'commands': []}
