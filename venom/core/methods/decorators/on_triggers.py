@@ -76,11 +76,13 @@ class MyDecorator(Client):
                         return
                 else:
                     return
+                print(func)
+                print(rc)
                 if Config.PAUSE:
                     return
                 my_message = MyMessage.parse(rm)
                 try:
-                    await func(my_message, **kwargs)
+                    await func(rc, my_message, **kwargs)
                 except Exception as e:
                     error_ = traceback.format_exc().strip()
                     try:
