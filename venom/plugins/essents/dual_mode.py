@@ -46,6 +46,8 @@ async def dual_mode(_, message: MyMessage):
         Config.USER_MODE = True
         mode_ = "USER"
 #        client = venom
+    else:
+        print(Config.USER_MODE)
     await Collection.TOGGLES.update_one(
         {'_id': 'USER_MODE'}, {'$set': {'switch': Config.USER_MODE}}, upsert=True
     )
