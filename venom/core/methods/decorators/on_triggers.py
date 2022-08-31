@@ -71,8 +71,9 @@ class MyDecorator(Client):
                 if Config.USER_MODE:
                     if isinstance(rc, _client.VenomBot):
                         return
-                elif isinstance(rc, _client.Venom):
-                    return
+                elif not Config.USER_MODE:
+                    if isinstance(rc, _client.Venom):
+                        return
                 else:
                     return
                 if Config.PAUSE:
