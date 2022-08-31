@@ -35,6 +35,7 @@ async def dual_mode(_, message: MyMessage):
         if Config.USER_MODE and isinstance(_, _client.VenomBot):
             print(f"1 {Config.USER_MODE} and {_}")
             return
+        Config.USER_MODE = True
         await Collection.TOGGLES.update_one({'_id': 'USER_MODE'}, {'$set': {'switch': True}}, upsert=True)
 #        if isinstance(_, _client.VenomBot):
 #            print(f"2 {Config.USER_MODE} and {_}")
