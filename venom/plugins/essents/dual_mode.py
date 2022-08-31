@@ -48,10 +48,8 @@ async def dual_mode(_, message: MyMessage):
         Config.USER_MODE = True
         mode_ = "USER"
         client = venom
-    await asyncio.gather(
-        Collection.TOGGLES.update_one(
-            {'_id': 'USER_MODE'}, {'$set': {'switch': Config.USER_MODE}}, upsert=True
-        ),
-        message.edit(f"Mode changed to: <b>{mode_}</b>")
+    await Collection.TOGGLES.update_one(
+        {'_id': 'USER_MODE'}, {'$set': {'switch': Config.USER_MODE}}, upsert=True
     )
+    await message.edit(f"Mode changed to: <b>{mode_}</b>")
     MyDecorator.my_decorator(client)
