@@ -71,9 +71,8 @@ class MyDecorator(Client):
                 if Config.USER_MODE:
                     if isinstance(rc, _client.VenomBot):
                         return
-                else:
-                    if isinstance(rc, _client.Venom):
-                        return
+                elif isinstance(rc, _client.Venom):
+                    return
                 if Config.PAUSE:
                     return
                 my_message = MyMessage.parse(rm)

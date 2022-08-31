@@ -9,7 +9,7 @@ import asyncio
 import traceback
 from typing import Any, Optional
 
-from pyrogram import Client, idle
+from pyrogram import Client
 
 from .methods import Methods
 from ..plugins import all_plugins
@@ -79,9 +79,6 @@ class Venom(CustomVenom):
     def __setattr__(self, __name: str, __value: Any) -> None:
         return super().__setattr__(__name, __value)
 
-    def _bot(self):
-        return self.bot
-
     @property
     def uptime(self):
         time_ = (time.time() - START_)
@@ -131,7 +128,7 @@ class Venom(CustomVenom):
         await _init_tasks()
         END_ = time.time()
         print(END_ - START_)
-        await idle()
+#        await idle()
 
     async def stop(self):
         if self.bot:
