@@ -44,7 +44,7 @@ async def dual_mode(_, message: MyMessage):
         Config.USER_MODE = False
         mode_ = "BOT"
         client = venom.bot
-    else:
+    elif not Config.USER_MODE:
         Config.USER_MODE = True
         mode_ = "USER"
         client = venom
