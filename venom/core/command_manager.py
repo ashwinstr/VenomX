@@ -11,9 +11,13 @@ class Manager():
     commands: List[str] = []
 
     def plugin_loc(self, plug_name: str) -> str:
+        found = False
         for one in self.plugins:
             if one.endswith(plug_name):
+                found = True
                 break
+        if not found:
+            return None
         plug_loc = one.replace(".", "/")
         return plug_loc
 
