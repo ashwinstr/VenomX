@@ -3,8 +3,7 @@
 
 import os
 import traceback
-import asyncio
-from typing import Any, Callable, Union
+from typing import Any, Callable
 
 import pyrogram
 from pyrogram import filters, Client
@@ -74,15 +73,11 @@ class MyDecorator(Client):
                 elif not Config.USER_MODE:
                     if isinstance(rc, _client.Venom):
                         return
-                else:
-                    return
-                print(func)
-                print(rc)
                 if Config.PAUSE:
                     return
                 my_message = MyMessage.parse(rm)
                 try:
-                    await func(rc, my_message, **kwargs)
+                    await func(rc, my_message)
                 except Exception as e:
                     error_ = traceback.format_exc().strip()
                     try:

@@ -4,7 +4,7 @@ import os
 
 from venom import venom, Config, MyMessage, Collection
 from venom.helpers import plugin_name
-# from ...core.methods.decorators.on_triggers import MyDecorator
+from venom.core import client as _client
 
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'essents', 'commands': []}
@@ -21,11 +21,9 @@ async def _init() -> None:
 HELP_['commands'].append(
     {
         'command': 'mode',
-        'flags': {
-            '-c': 'check',
-        },
+        'flags': None,
         'usage': 'toggle mode [user/bot]',
-        'syntax': '{tr}mode [optional flag]',
+        'syntax': '{tr}mode user/bot',
         'sudo': False
     }
 )
@@ -33,23 +31,23 @@ HELP_['commands'].append(
 @venom.trigger('mode')
 async def dual_mode(_, message: MyMessage):
     " toggle mode [user/bot] "
-    if '-c' in message.flags:
-        switch_ = "USER" if Config.USER_MODE else "BOT"
-        return await message.edit(f"Current mode: <b>{switch_}</b>", del_in=5)
-    if not Config.STRING_SESSION:
-        return await message.edit("`Can't change to USER mode without STRING_SESSION.`", del_in=3)
-    if Config.USER_MODE:
-        Config.USER_MODE = False
-        mode_ = "BOT"
-#        client = venom.bot
-    elif not Config.USER_MODE:
+    input_ = message.input_str or ""
+    if input_.lower() == "user":
+        if Config.USER_MODE and isinstance(_, _client.VenomBot):
+            return
         Config.USER_MODE = True
-        mode_ = "USER"
-#        client = venom
+        if isinstance(_, _client.VenomBot):
+            return
+        await message.edit("Mode set to: <b>USER</b>", del_in=5)
+        await Collection.TOGGLES.update_one({'_id': 'USER_MODE'}, {'$set': {'switch': True}}, upsert=True)
+    elif input_.lower() == "bot":
+        if not Config.USER_MODE and isinstance(_, _client.Venom):
+            return
+        Config.USER_MODE = False
+        if isinstance(_, _client.Venom):
+            return
+        await message.edit("Mode set to: <b>BOT</b>", del_in=5)
+        await Collection.TOGGLES.update_one({'_id': 'USER_MODE'}, {'$set': {'switch': False}}, upsert=True)
     else:
-        print(Config.USER_MODE)
-    await Collection.TOGGLES.update_one(
-        {'_id': 'USER_MODE'}, {'$set': {'switch': Config.USER_MODE}}, upsert=True
-    )
-    await message.edit(f"Mode changed to: <b>{mode_}</b>")
-#    MyDecorator.my_decorator()
+        mode_ = "USER" if Config.USER_MODE else "BOT"
+        await message.edit(f"Current mode: <b>{mode_}</b>\nTo change, send `user` or `bot` as input.")
