@@ -52,7 +52,7 @@ class MyDecorator(Client):
 
     _PYROFUNC = Callable[[_FUNC], _FUNC]
 
-    def my_decorator(self, flt: 'Filter', filters_ = RFilter, group: int = 0, **kwargs) -> 'MyDecorator._PYROFUNC':
+    def my_decorator(self, flt: 'Filter' = None, filters_ = RFilter, group: int = 0, **kwargs) -> 'MyDecorator._PYROFUNC':
 
         def inner(func: _FUNC) -> _FUNC:
             
