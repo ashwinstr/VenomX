@@ -73,6 +73,8 @@ class MyDecorator(Client):
                         return
                 elif isinstance(rc, _client.Venom):
                     return
+                else:
+                    return
                 if Config.PAUSE:
                     return
                 my_message = MyMessage.parse(rm)
