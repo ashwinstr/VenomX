@@ -80,7 +80,7 @@ class MyDecorator(Client):
                     return
                 my_message = MyMessage.parse(rm)
                 try:
-                    await func(rc, my_message, **kwargs)
+                    await func(my_message, **kwargs)
                 except Exception as e:
                     error_ = traceback.format_exc().strip()
                     try:
