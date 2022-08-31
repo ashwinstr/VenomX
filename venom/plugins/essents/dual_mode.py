@@ -11,7 +11,6 @@ from venom.helpers import plugin_name
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'essents', 'commands': []}
 
 async def _init() -> None:
-    global trigger
     found = await Collection.TOGGLES.find_one({'_id': 'USER_MODE'})
     if found:
         Config.USER_MODE = found['switch']
