@@ -43,11 +43,11 @@ async def dual_mode(_, message: MyMessage):
     if Config.USER_MODE:
         Config.USER_MODE = False
         mode_ = "BOT"
-        client = venom.bot
+#        client = venom.bot
     elif not Config.USER_MODE:
         Config.USER_MODE = True
         mode_ = "USER"
-        client = venom
+#        client = venom
     await Collection.TOGGLES.update_one(
         {'_id': 'USER_MODE'}, {'$set': {'switch': Config.USER_MODE}}, upsert=True
     )
