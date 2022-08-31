@@ -1,6 +1,5 @@
 # dual_mode.py
 
-import asyncio
 import os
 
 from venom import venom, Config, MyMessage, Collection
@@ -50,5 +49,5 @@ async def dual_mode(_, message: MyMessage):
     await Collection.TOGGLES.update_one(
         {'_id': 'USER_MODE'}, {'$set': {'switch': Config.USER_MODE}}, upsert=True
     )
-    await message.edit(f"Mode changed to: <b>{mode_}</b>")
+#    await message.edit(f"Mode changed to: <b>{mode_}</b>")
 #    MyDecorator.my_decorator()
