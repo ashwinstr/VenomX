@@ -36,7 +36,7 @@ class Config:
     EXECUTOR_TB = {'id': int}
     UPSTREAM_REMOTE = os.environ.get("UPSTREAM_REMOTE", 'upstream')
     UPSTREAM_REPO = os.environ.get("UPSTREAM_REPO")
-    USER_MODE: bool = False
+    USER_MODE: bool = None
 
     ##### characters #####
     BULLET_DOT = "•"
