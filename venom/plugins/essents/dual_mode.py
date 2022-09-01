@@ -45,6 +45,9 @@ async def dual_mode(_, message: MyMessage):
             Config.FIRST = False
             await message.edit("Mode set to: <b>USER</b>", del_in=5)
     elif input_.lower() == "bot":
+        b_pres_ = await _present(message)
+        if not b_pres_:
+            return await message.edit("`Bot not present, terminating...", del_in=3)
         if not Config.USER_MODE and isinstance(_, _client.Venom):
             print(f"1 {Config.USER_MODE} and {_}")
             return
@@ -60,3 +63,15 @@ async def dual_mode(_, message: MyMessage):
     else:
         mode_ = "USER" if Config.USER_MODE else "BOT"
         await message.edit(f"Current mode: <b>{mode_}</b>\nTo change, send `user` or `bot` as input.")
+
+async def _present(message: MyMessage):
+    bot_ = await venom.bot.get_me()
+    bot_p = False
+    chat_ = message.chat
+    try:
+        pres_ = await chat_.get_member(bot_.id)
+        if pres_:
+            bot_p = True
+    except Exception as e:
+        await message.reply(e)
+    return bot_p
