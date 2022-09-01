@@ -73,5 +73,5 @@ async def _present(message: MyMessage):
         if pres_:
             bot_p = True
     except Exception as e:
-        await message.reply(e)
+        bot_p = False
     return bot_p
