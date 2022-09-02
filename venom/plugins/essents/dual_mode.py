@@ -34,19 +34,25 @@ async def dual_mode(_, message: MyMessage):
     if input_.lower() == "user":
         if Config.USER_MODE and isinstance(_, _client.VenomBot):
             return
-        Config.USER_MODE = True
-        await Collection.TOGGLES.update_one({'_id': 'USER_MODE'}, {'$set': {'switch': True}}, upsert=True)
         if Config.FIRST:
             Config.FIRST = False
-            await message.edit("Mode set to: <b>USER</b>", del_in=5)
+            try:
+                await venom.send_message(message.chat.id, "Mode set to: <b>USER</b>", del_in=5)
+            except Exception as e:
+                return await message.edit(e)
+            Config.USER_MODE = True
+            await Collection.TOGGLES.update_one({'_id': 'USER_MODE'}, {'$set': {'switch': True}}, upsert=True)
     elif input_.lower() == "bot":
         if not Config.USER_MODE and isinstance(_, _client.Venom):
             return
-        Config.USER_MODE = False
-        await Collection.TOGGLES.update_one({'_id': 'USER_MODE'}, {'$set': {'switch': False}}, upsert=True)
         if Config.FIRST:
             Config.FIRST = False
-            await message.edit("Mode set to: <b>BOT</b>", del_in=5)
+            try:
+                await venom.bot.send_message(message.chat.id, "Mode set to: <b>BOT</b>", del_in=5)
+            except Exception as e:
+                return await message.edit(e)
+            Config.USER_MODE = False
+            await Collection.TOGGLES.update_one({'_id': 'USER_MODE'}, {'$set': {'switch': False}}, upsert=True)
     else:
         mode_ = "USER" if Config.USER_MODE else "BOT"
         await message.edit(f"Current mode: <b>{mode_}</b>\nTo change, send `user` or `bot` as input.")
