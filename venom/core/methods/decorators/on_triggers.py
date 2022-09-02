@@ -67,12 +67,10 @@ class MyDecorator(Client):
             async def template(rc, rm: 'MyMessage') -> None:
                 os.makedirs(Config.TEMP_PATH, exist_ok=True)
                 os.makedirs(Config.DOWN_PATH, exist_ok=True)
-                if Config.USER_MODE:
-                    if isinstance(rc, _client.VenomBot):
-                        return
-                elif not Config.USER_MODE:
-                    if isinstance(rc, _client.Venom):
-                        return
+
+                if (isinstance(rc, _client.VenomBot) and Config.USER_MODE) or (isinstance(rc, _client.Venom) and not Config.USER_MODE):
+                    return
+                    
                 if Config.PAUSE:
                     return
                 my_message = MyMessage.parse(rm)

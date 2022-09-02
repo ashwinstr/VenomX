@@ -14,7 +14,7 @@ from pyrogram.errors import (
     SessionPasswordNeeded
 )
 
-from venom import venom, MyMessage, Config, Collection
+from venom import venom, MyMessage, Config
 
 CHANNEL = venom.getCLogger(__name__)
 
