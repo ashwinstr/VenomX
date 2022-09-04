@@ -33,7 +33,7 @@ async def load_er(_, message: MyMessage):
     await message.edit("`Trying to load...`")
     f_name = reply_.document.file_name
     plug_path = os.path.join(Config.TEMP_PATH, f_name)
-    import_path = plug_path.replace("/", ".")[:-3] if plug_path.endswith('.py') else plug_path.replace("/", ".")
+    import_path = plug_path.replace("/", ".")[:-3] if f_name.endswith('.py') else plug_path.replace("/", ".")
     reload_ = False
     if os.path.exists(plug_path):
         os.remove(plug_path)
