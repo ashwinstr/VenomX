@@ -1,5 +1,7 @@
 # dual_mode.py
 
+from pyrogram.errors import PeerIdInvalid
+
 from venom import venom, Config, MyMessage, Collection
 from venom.helpers import plugin_name
 from venom.core import client as _client
@@ -37,9 +39,9 @@ async def dual_mode(_, message: MyMessage):
         if Config.FIRST:
             Config.FIRST = False
             try:
-                await venom.send_message(message.chat.id, "Mode set to: <b>USER</b>", del_in=5)
-            except Exception as e:
-                return await message.edit(e)
+                await venom.send_message(message.chat.id, "Mode set to: <b>USER</b>")
+            except PeerIdInvalid:
+                return await message.edit("`User account need to be present in chat to change mode...`", del_in=5)
             Config.USER_MODE = True
             await Collection.TOGGLES.update_one({'_id': 'USER_MODE'}, {'$set': {'switch': True}}, upsert=True)
     elif input_.lower() == "bot":
@@ -48,9 +50,9 @@ async def dual_mode(_, message: MyMessage):
         if Config.FIRST:
             Config.FIRST = False
             try:
-                await venom.bot.send_message(message.chat.id, "Mode set to: <b>BOT</b>", del_in=5)
-            except Exception as e:
-                return await message.edit(e)
+                await venom.bot.send_message(message.chat.id, "Mode set to: <b>BOT</b>")
+            except PeerIdInvalid:
+                return await message.edit("`Bot need to be present in chat to change mode...`", del_in=5)
             Config.USER_MODE = False
             await Collection.TOGGLES.update_one({'_id': 'USER_MODE'}, {'$set': {'switch': False}}, upsert=True)
     else:

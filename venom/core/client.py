@@ -7,7 +7,7 @@ import importlib
 import logging
 import asyncio
 import traceback
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from pyrogram import Client
 
@@ -41,6 +41,10 @@ async def _init_tasks():
 
 class CustomVenom(Methods, Client):
     """ testing """
+    
+    @classmethod
+    def parse(cls, client: Union['Venom', 'VenomBot'], **kwargs):
+        return super().parse(client, **kwargs)
 
 class VenomBot(CustomVenom):
 
@@ -78,6 +82,13 @@ class Venom(CustomVenom):
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         return super().__setattr__(__name, __value)
+    
+    @property
+    def both(self):
+        if Config.USER_MODE:
+            return self
+        else:
+            return self.bot
 
     @property
     def uptime(self):

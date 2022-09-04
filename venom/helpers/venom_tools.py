@@ -1,6 +1,7 @@
 # venom tools
 
 import json
+import time
 import re
 import os
 from typing import Union
@@ -21,7 +22,7 @@ from pyrogram.raw.types import (
 from pyrogram.raw.functions.account import ReportPeer
 from pyrogram.errors import UserIdInvalid
 
-from venom import logging, Config
+from venom import logging, Config, MyMessage, Collection
 from venom.core.types.message import MyMessage
 
 _LOG = logging.getLogger(__name__)
@@ -83,7 +84,6 @@ async def post_tg_media(message: MyMessage) -> str:
         return await message.edit(f"<b>ERROR:</b>\n {str(t_e)}")
     os.remove(down_)
     return f"https://telegra.ph{up_[0]}"
-
 
 def get_owner() -> dict:
     file_ = open("venom/xcache/user.txt", "r")
@@ -199,3 +199,17 @@ async def paste_it(msg_content: Union[MyMessage, str]) -> str:
     paste_ = Paste(content=content_)
     paste_.save()
     return paste_.url
+
+async def restart_msg(msg: MyMessage, text: str = "") -> None:
+    try:
+        await Collection.RESTART.insert_one(
+            {
+                '_id':'RESTART',
+                'chat_id': msg.chat.id,
+                'msg_id': msg.id,
+                'start': time.time(),
+                'text': text
+            }
+        )
+    except Exception as e:
+        await msg.edit(e)

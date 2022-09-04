@@ -2,6 +2,8 @@
 
 import asyncio
 
+from pyrogram.errors import MessageDeleteForbidden
+
 from venom import venom, MyMessage, Config
 from venom.helpers import plugin_name
 
@@ -30,6 +32,8 @@ async def get_logs(_, message: MyMessage):
             message.reply_document("logs/venom.log"),
             message.delete()
         )
+    except MessageDeleteForbidden:
+        pass
     except Exception as e:
-        await message.edit(str(e))
+        await message.edit(e)
 

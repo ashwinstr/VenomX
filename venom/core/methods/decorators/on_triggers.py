@@ -1,6 +1,7 @@
 # on_triggers.py
 # idea taken from USERGE-X
 
+import re
 import os
 import traceback
 from typing import Any, Callable
@@ -39,12 +40,19 @@ def owner_filter(cmd: str) -> RFilter:
 def sudo_filter(cmd: str) -> RFilter:
     " sudo filters "
     trig_ = Config.SUDO_TRIGGER
-    filters_ = filters.regex(fr"^(?:\{trig_})({cmd})(\s(.|\n)*?)?$")\
+    filters_ = filters.regex(fr"^(?:\{trig_})({cmd.strip('^')})(\s(.|\n)*?)?$")\
         & filters.create(
             lambda _, __, m:
             (bool(Config.SUDO) and m.from_user\
                 and ((m.from_user.id in Config.TRUSTED_SUDO_USERS) or (m.from_user.id in Config.SUDO_USERS and cmd in Config.SUDO_CMD_LIST)))
         )
+    return filters_
+
+def owner_sudo(cmd: str) -> RFilter:
+    " bot filters with owner account "
+    trig_ = Config.SUDO_TRIGGER
+    filters_ = filters.regex(fr"^(?:\{trig_})({cmd})(\s(.|\n)*?)?$")\
+        & filters.user(Config.OWNER_ID)
     return filters_
 
 class MyDecorator(Client):
@@ -62,14 +70,19 @@ class MyDecorator(Client):
             CURRENT_MODULE = func.__module__
 
             filtered = filters_\
-                and owner_filter(flt.cmd) | sudo_filter(flt.cmd)
+                and owner_filter(flt.cmd) | sudo_filter(flt.cmd) | owner_sudo(flt.cmd)
 
             async def template(rc, rm: 'MyMessage') -> None:
                 os.makedirs(Config.TEMP_PATH, exist_ok=True)
                 os.makedirs(Config.DOWN_PATH, exist_ok=True)
 
-                if (isinstance(rc, _client.VenomBot) and Config.USER_MODE) or (isinstance(rc, _client.Venom) and not Config.USER_MODE):
-                    return
+                if rm.from_user.id == Config.OWNER_ID and bool(re.search(fr"^\{Config.SUDO_TRIGGER}", rm.text)):
+                    if isinstance(rc, _client.Venom):
+                        return
+                else:
+                    if ((isinstance(rc, _client.VenomBot) and Config.USER_MODE)
+                        or (isinstance(rc, _client.Venom) and not Config.USER_MODE)):
+                        return
                     
                 if Config.PAUSE:
                     return
@@ -96,12 +109,9 @@ class MyDecorator(Client):
                                                  f"**ERROR:** `{e or None}`\n\n")
                         os.remove("traceback.txt")
                     link_ = await paste_it(error_)
-                    await self.send_message(chat_id=rm.chat.id,
+                    await self.both.send_message(chat_id=rm.chat.id,
                                             text=f"Something unexpected happended, send the below error to @UX_xplugin_support...\n<b>Traceback:</b> [HERE]({link_})")
 
-#            self.add_handler(pyrogram.handlers.MessageHandler(template, filtered), group)
-#            self.add_handler(pyrogram.handlers.EditedMessageHandler(template, filtered), group)
-#            return template
             if not hasattr(func, "handlers"):
                 func.handlers = []
             func.handlers.append((pyrogram.handlers.MessageHandler(template, filtered), group))

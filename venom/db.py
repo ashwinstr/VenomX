@@ -15,6 +15,9 @@ class Collection:
     # fbans
     FED_LIST = get_collection("FED_LIST")
 
+    # freezing
+    FROZEN = get_collection("FROZEN")
+
     # loader
     TEMP_LOADED = get_collection("TEMP_LOADED")
 
@@ -28,6 +31,12 @@ class Collection:
     # restart/update
     RESTART = get_collection("RESTART")
     UPDATE = get_collection("UPDATE")
+    '''
+    '_id': 'RESTART/UPDATE',
+    'chat_id': msg.chat.id,
+    'msg_id': msg.id,
+    'start': time.time(),
+    '''
 
     # sudo collections
     SUDO_USERS = get_collection("SUDO_USERS")

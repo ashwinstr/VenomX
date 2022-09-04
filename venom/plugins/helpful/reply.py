@@ -28,4 +28,4 @@ async def reply_(_, message: MyMessage):
         return
     reply_ = message.replied
     reply_to = reply_.id if reply_ else None
-    await venom.send_message(message.chat.id, input_, reply_to_message_id=reply_to)
+    await venom.both.send_message(message.chat.id, input_, reply_to_message_id=reply_to)
