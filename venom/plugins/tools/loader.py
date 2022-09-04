@@ -28,6 +28,7 @@ HELP['commands'].append(
 async def load_er(_, message: MyMessage):
     " load plugin temporarily "
     reply_ = message.replied
+    flags_ = message.flags
     if not reply_ or not reply_.document:
         return await message.edit("`Reply to python plugin...`")
     await message.edit("`Trying to load...`")
@@ -43,7 +44,7 @@ async def load_er(_, message: MyMessage):
         msg = "<b>Loaded</b> {}".format(f_name)
     down_ = await reply_.download(plug_path)
     try:
-        if '-r' in message.flags:
+        if '-r' in flags_:
             new_path = f"{down_.rstrip('.py')}.py"
             os.rename(down_, new_path)
         importlib.import_module(import_path)
