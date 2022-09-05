@@ -41,6 +41,7 @@ async def load_er(_, message: MyMessage):
         reload_ = True
         msg = "<b>Loaded</b> {},\nRestarting now.".format(f_name)
     else:
+        reload_ = True
         msg = "<b>Loaded</b> {}".format(f_name)
     down_ = await reply_.download(plug_path)
     try:
@@ -54,7 +55,7 @@ async def load_er(_, message: MyMessage):
     load_conf = await message.edit(msg)
     if reload_:
         text_ = f"<b>Reloaded temp plugin {f_name} successfully.</b>"
-    await restart_msg(load_conf, text=text_)
+        await restart_msg(load_conf, text=text_)
     asyncio.get_event_loop().create_task(venom.restart())
 
 ##########################################################################################################################################################################
