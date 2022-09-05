@@ -33,7 +33,8 @@ def owner_filter(cmd: str) -> RFilter:
     )\
         & filters.create(
             lambda _, __, m:
-            (m.from_user and (m.from_user.id == Config.OWNER_ID))
+            (m.from_user and (m.from_user.id == Config.OWNER_ID)\
+                and m.reactions is None)
         )
     return filters_
 
@@ -44,7 +45,8 @@ def sudo_filter(cmd: str) -> RFilter:
         & filters.create(
             lambda _, __, m:
             (bool(Config.SUDO) and m.from_user\
-                and ((m.from_user.id in Config.TRUSTED_SUDO_USERS) or (m.from_user.id in Config.SUDO_USERS and cmd in Config.SUDO_CMD_LIST)))
+                and ((m.from_user.id in Config.TRUSTED_SUDO_USERS) or (m.from_user.id in Config.SUDO_USERS and cmd in Config.SUDO_CMD_LIST))\
+                    and m.reactions is None)
         )
     return filters_
 
