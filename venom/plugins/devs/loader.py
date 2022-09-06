@@ -35,14 +35,9 @@ async def load_er(_, message: MyMessage):
     f_name = reply_.document.file_name
     plug_path = os.path.join(Config.TEMP_PATH, f_name)
     import_path = plug_path.replace("/", ".")[:-3] if f_name.endswith('.py') else plug_path.replace("/", ".")
-    reload_ = False
     if os.path.exists(plug_path):
         os.remove(plug_path)
-        reload_ = True
-        msg = "<b>Loaded</b> {},\nRestarting now.".format(f_name)
-    else:
-        reload_ = True
-        msg = "<b>Loaded</b> {}".format(f_name)
+    msg = "<b>Loaded</b> {},\nRestarting now.".format(f_name)
     down_ = await reply_.download(plug_path)
     try:
         if '-r' in flags_:
@@ -53,9 +48,8 @@ async def load_er(_, message: MyMessage):
         os.remove(down_)
         return await message.edit(f"`{e}`")
     load_conf = await message.edit(msg)
-    if reload_:
-        text_ = f"<b>Reloaded temp plugin {f_name} successfully.</b>"
-        await restart_msg(load_conf, text=text_)
+    text_ = f"<b>Reloaded temp plugin {f_name} successfully.</b>"
+    await restart_msg(load_conf, text=text_)
     asyncio.get_event_loop().create_task(venom.restart())
 
 ##########################################################################################################################################################################
