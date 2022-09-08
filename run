@@ -1,9 +1,36 @@
 #!/bin/sh
 
-start() {
-    git init
-    pip3 -q install -U -r requirements.txt
-    python3 -m venom
+server() {
+    if test $APACHE2 ; then 
+        service apache2 restart
+        echo "Started..."
+    else
+        echo "Skipping..."
+    fi
 }
 
-start
+reqs_() {
+#    git init ## No need for it.
+    if test $UPDATE_REQ ; then
+        echo "Updating Requirements..."
+        pip3 -q install -r requirements.txt
+    else
+        echo "Skipping..."
+    fi
+### Add a if Condition so it won't lag the bot on each boot.
+
+# OR
+
+### We can also do something like this to update few Requirements that are necessary instead of installing all again.
+    if test $req_update ; then
+        echo "updating $req_update"
+        pip install -q $req_update #which is a Var with single or multiple values of packages that needs updating
+# or we can specify a file like this which we add in repo and has the list of packages that needs updating.
+        pip install -r updated_reqs.txt
+    else
+        echo "Requirements Up to date."
+    fi
+}
+server
+#reqs_ uncomment it with rest of its code which you decide to go with.
+python3 -m venom
