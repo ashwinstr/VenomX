@@ -12,7 +12,6 @@ from pyrogram.errors import MessageAuthorRequired, MessageTooLong, MessageIdInva
 from pyromod import listen
 
 from venom import Config
-from venom.helpers import paste_it
 
 _CANCEL_PROCESS: List[int] = []
 
@@ -119,8 +118,6 @@ class MyMessage(Message):
             reply_to_id = reply_to
         else:
             reply_to_id = self.msg.id if not self.msg.reply_to_message else self.msg.reply_to_message.id
-        link_ = await paste_it(text)
-        caption += f"\nPasted <b>[HERE]({link_})</b>"
         return await self.msg._client.send_document(chat_id=self.msg.chat.id,
                                                     document=file_,
                                                     file_name=file_name,
