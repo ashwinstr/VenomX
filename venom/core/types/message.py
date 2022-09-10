@@ -7,7 +7,7 @@ from typing import List, Union
 from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup
 from pyrogram.enums import ParseMode, ChatType
-from pyrogram.errors import MessageAuthorRequired, MessageTooLong, MessageIdInvalid
+from pyrogram.errors import MessageAuthorRequired, MessageTooLong, MessageIdInvalid, MessageDeleteForbidden
 
 from pyromod import listen
 
@@ -113,7 +113,10 @@ class MyMessage(Message):
         with open(file_, "w+", encoding='utf-8') as fn:
             fn.write(str(text))
         if delete_message:
-            await self.msg.delete()
+            try:
+                await self.msg.delete()
+            except MessageDeleteForbidden:
+                pass
         if reply_to:
             reply_to_id = reply_to
         else:
