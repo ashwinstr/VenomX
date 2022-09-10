@@ -270,7 +270,8 @@ async def fban_(_, message: MyMessage):
         total += 1
         chat_id = int(data["_id"])
         try:
-            response = await venom.ask(chat_id, f"/fban {user} {reason}", filters=(filters.user([609517172]) & ~filters.service))
+            send_ = await venom.send_message(chat_id, f"/fban {user} {reason}")
+            response = await send_.wait(filters=(filters.user([609517172]) & ~filters.service))
             resp = response.text
             if not (
                 ("New FedBan" in resp)
@@ -464,11 +465,11 @@ async def fban_p(_, message: MyMessage):
         total += 1
         chat_id = int(data["_id"])
         try:
-            response = await venom.ask(
+            send_ = await venom.send_message(
                 chat_id,
-                f"/fban {user} {reason}",
-                filters=(filters.user([609517172]) & ~filters.service)
+                f"/fban {user} {reason}"
             )
+            response = await send_.wait(filters=(filters.user([609517172]) & ~filters.service))
             resp = response.text
             if not (
                 ("New FedBan" in resp)
@@ -555,7 +556,8 @@ async def unfban_(_, message: MyMessage):
         total += 1
         chat_id = int(data["_id"])
         try:
-            response = await venom.ask(chat_id, f"/unfban {user} {reason}", filters=(filters.user([609517172]) & ~filters.service))
+            send_ = await venom.send_message(chat_id, f"/unfban {user} {reason}")
+            response = await send_.wait(filters=(filters.user([609517172]) & ~filters.service))
             resp = response.text
             if (
                 ("New un-FedBan" not in resp)

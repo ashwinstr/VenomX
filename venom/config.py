@@ -64,7 +64,7 @@ class Config:
     DEFAULT_ALIVE_PIC = "https://telegra.ph/file/34c891bbd8d21c0564cbc.jpg"
     ALIVE_PIC_TYPE: MessageMediaType = MessageMediaType.PHOTO
         ### datetime
-    TIME_ZONE: int = 5.5
+    TIME_ZONE: str = "Asia/Kolkata"
         ### kangs
     CUSTOM_PACK_NAME = os.environ.get("CUSTOM_PACK_NAME", "")
         ### pmguard

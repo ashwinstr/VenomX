@@ -15,7 +15,21 @@ class Listen(RClient):
         " custom listener for VenomX "
 
         msg = await super().listen(chat_id=chat_id,
-                            timeout=timeout,
-                            filters=filters)
+                            filters=filters,
+                            timeout=timeout)
+
+        return types.message.MyMessage.parse(msg)
+
+    async def ask(self,
+                chat_id: Union[str, int],
+                text: str,
+                timeout: int = 15,
+                filters: filters.Filter = None) -> 'types.message.MyMessage':
+        " custom ask for VenomX"
+
+        msg = await super().ask(chat_id=chat_id,
+                                text=text,
+                                filters=filters,
+                                timeout=timeout)
 
         return types.message.MyMessage.parse(msg)

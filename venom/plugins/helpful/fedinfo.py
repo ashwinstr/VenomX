@@ -5,7 +5,7 @@ from pyrogram.errors import YouBlockedUser
 from pyrogram.enums import ParseMode
 
 from venom import venom, MyMessage, Config
-from venom.helpers import plugin_name
+from venom.helpers import plugin_name, MyFilters
 
 help_ = Config.HELP[plugin_name(__name__)] = {'type': 'helpful', 'commands': []}
 BOT_ = "MissRose_bot"
@@ -32,7 +32,8 @@ async def f_stat(_, message: MyMessage):
             return await message.edit("`Give user id or reply to user to get fstat.`", del_in=5)
         user_ = reply_.from_user.id
     try:
-        receive_ = await venom.ask(BOT_, f"/fstat {user_}", filters=flt.edit)
+        send_ = await venom.send_message(BOT_, f"/fstat {user_}")
+        receive_ = await send_.wait(filters=MyFilters.edited)
     except YouBlockedUser:
         return await message.edit("Unblock or start @MissRose_bot first.", del_in=3)
     await message.edit(receive_.text.html)  
