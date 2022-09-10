@@ -71,7 +71,10 @@ async def defreezer_(_, message: MyMessage):
         async for plug in FROZ_.find():
             old_ = plug["plug_loc"]
             new_ = f"{old_}.py"
-            os.rename(old_, new_)
+            try:
+                os.rename(old_, new_)
+            except:
+                pass
         await FROZ_.drop()
         msg_ = await message.edit("All frozen plugins are <b>re-enabled</b> now.\nRestarting bot...")
         await CHANNEL.log("All frozen plugins are <b>re-enabled</b>.")
