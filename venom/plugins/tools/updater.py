@@ -33,8 +33,8 @@ async def _init() -> None:
     else:
         _LOG.info(_LOG_STR, "Remote upstream exists, using same")
     os.system(
-        f"git config --global user.email 'ashwinstr@gmail.com' && git config --global user.name 'Kakashi' &&"
-        f"git fetch && git add . && git commit -m 'first boot'"
+        "git config --global user.email 'ashwinstr@gmail.com' && git config --global user.name 'Kakashi' &&"
+        "git fetch upstream main && git add . && git commit -m 'first boot'"
     )
 
 
