@@ -270,6 +270,7 @@ async def fban_(_, message: MyMessage):
         total += 1
         chat_id = int(data["_id"])
         try:
+            user = f"<a href='tg://user?id={user}'>{user}</a>" if user.isdigit() else user
             send_ = await venom.send_message(chat_id, f"/fban {user} {reason}")
             response = await send_.wait(filters=(filters.user([609517172]) & ~filters.service))
             resp = response.text
@@ -465,6 +466,7 @@ async def fban_p(_, message: MyMessage):
         total += 1
         chat_id = int(data["_id"])
         try:
+            user = f"<a href='tg://user?id={user}'>{user}</a>" if user.isdigit() else user
             send_ = await venom.send_message(
                 chat_id,
                 f"/fban {user} {reason}"
@@ -556,6 +558,7 @@ async def unfban_(_, message: MyMessage):
         total += 1
         chat_id = int(data["_id"])
         try:
+            user = f"<a href='tg://user?id={user}'>{user}</a>" if user.isdigit() else user
             send_ = await venom.send_message(chat_id, f"/unfban {user} {reason}")
             response = await send_.wait(filters=(filters.user([609517172]) & ~filters.service))
             resp = response.text
