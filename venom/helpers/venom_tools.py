@@ -99,10 +99,10 @@ def time_format(time: float) -> dict:
     hour_ = (days_ - int(days_)) * 24
     min_ = (hour_ - int(hour_)) * 60
     sec_ = (min_ - int(min_)) * 60
-    out_ = f"<b>{int(days_)}</b> D," if int(days_) else ""
-    out_ += f" <b>{int(hour_)}</b> H," if int(hour_) else ""
-    out_ += f" <b>{int(min_)}</b> M," if int(min_) else ""
-    out_ += f" <b>{int(sec_)}</b> S"
+    out_ = f"<b>{int(days_)}</b>d," if int(days_) else ""
+    out_ += f" <b>{int(hour_)}</b>h," if int(hour_) else ""
+    out_ += f" <b>{int(min_)}</b>m," if int(min_) else ""
+    out_ += f" <b>{int(sec_)}</b>s"
     return out_.strip()
 
 def extract_id(mention):

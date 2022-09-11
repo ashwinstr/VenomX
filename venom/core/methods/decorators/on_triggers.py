@@ -29,7 +29,7 @@ def owner_filter(cmd: str) -> RFilter:
     " owner filters "
     trig_ = Config.CMD_TRIGGER
     filters_ = filters.regex(
-        fr"^(?:\{trig_})({cmd.strip('^')})(\s(.|\n)*?)?$" if trig_ else fr"^{cmd.strip('^')}"
+        fr"^(?:\{trig_}){cmd.strip('^')}" if trig_ else fr"^{cmd.strip('^')}"
     )\
         & filters.create(
             lambda _, __, m:
@@ -41,7 +41,7 @@ def owner_filter(cmd: str) -> RFilter:
 def sudo_filter(cmd: str) -> RFilter:
     " sudo filters "
     trig_ = Config.SUDO_TRIGGER
-    filters_ = filters.regex(fr"^(?:\{trig_})({cmd.strip('^')})(\s(.|\n)*?)?$")\
+    filters_ = filters.regex(fr"^(?:\{trig_}){cmd.strip('^')}")\
         & filters.create(
             lambda _, __, m:
             (bool(Config.SUDO) and m.from_user\
@@ -53,7 +53,7 @@ def sudo_filter(cmd: str) -> RFilter:
 def owner_sudo(cmd: str) -> RFilter:
     " bot filters with owner account "
     trig_ = Config.SUDO_TRIGGER
-    filters_ = filters.regex(fr"^(?:\{trig_})({cmd})(\s(.|\n)*?)?$")\
+    filters_ = filters.regex(fr"^(?:\{trig_}){cmd}")\
         & filters.user(Config.OWNER_ID)
     return filters_
 
@@ -68,7 +68,7 @@ class MyDecorator(Client):
             global CURRENT_MODULE
             if func.__module__ != CURRENT_MODULE:
                 manager.plugins.append(func.__module__)
-            manager.commands.append(f"{func.__module__}.{flt.cmd}")
+            manager.commands.append(f"{func.__module__}.{flt.cmd.split()[0]}")
             CURRENT_MODULE = func.__module__
 
             filtered = filters_\

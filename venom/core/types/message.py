@@ -198,6 +198,23 @@ class MyMessage(Message):
                                             file_name=file_name,
                                             caption=caption,
                                             reply_to=reply_to)
+
+    async def reply_or_send_as_file(self,
+                                    text: str,
+                                    file_name: str = "File.txt",
+                                    caption: str = None,
+                                    del_in: int = -1,
+                                    parse_mode: ParseMode = ParseMode.DEFAULT,
+                                    dis_preview: bool = False) -> 'MyMessage':
+        " edit or send as file "
+        try:
+            return await self.reply(text=text, del_in=del_in, parse_mode=parse_mode, dis_preview=dis_preview)
+        except MessageTooLong:
+            reply_to = self.replied.id if self.replied else self.id
+            return await self.send_as_file(text=text,
+                                            file_name=file_name,
+                                            caption=caption,
+                                            reply_to=reply_to)
     
     async def ask(self, text: str, timeout: int = 15, filters: filters.Filter = None) -> 'MyMessage':
         " monkey patching to MyMessage using pyromod.ask "
