@@ -62,6 +62,9 @@ async def date_time(_, message: MyMessage):
             total += 1
             text_ += f"{Config.BULLET_DOT}{total} - <b>{one}</b>\n"
         return await message.edit(text_.format(total))
-    format_ = "%d-%b, %Y </b>at<b> %I:%M:%S %p</b> on <b>%A"
+    format_ = (
+        "<b>Date:</b> `%d-%b-%Y` `%A`\n"
+        "<b>Time:</b> `%I:%M:%S %p`"
+    )
     dt_ = datetime.now().astimezone(tz_).strftime(format_)
-    await message.edit(f"Timezone <b>{cn.get(country)}</b>({ct[country][int(num) - 1]}): <b>{dt_}</b>")
+    await message.edit(f"Timezone <b>{cn.get(country)}</b>({ct[country][int(num) - 1]}):\n{dt_}")
