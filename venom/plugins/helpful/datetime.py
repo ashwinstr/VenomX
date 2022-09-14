@@ -63,7 +63,7 @@ async def date_time(_, message: MyMessage):
             text_ += f"{Config.BULLET_DOT}{total} - <b>{one}</b>\n"
         return await message.edit(text_.format(total))
     except KeyError:
-        text_ = f"#<b>KEY_ERROR</b>\n\nWrong country code <b>{country}</b>\nSee country codes **[HERE]({COUNTRY_LIST})**")
+        text_ = f"#<b>KEY_ERROR</b>\n\nWrong country code <b>{country}</b>\nSee country codes **[HERE]({COUNTRY_LIST})**"
         return await message.edit(text_)
     format_ = (
         "<b>Date:</b> `%d-%b-%Y` `%A`\n"
