@@ -55,7 +55,7 @@ async def date_time(_, message: MyMessage):
         tz_ = tz(zone=ct[country][int(num) - 1])
     except UnknownTimeZoneError:
         return await message.edit(f"`Unknown timezone.`\nSee country list **[HERE]({COUNTRY_LIST})**", del_in=5)
-    except IndexError:
+    except (IndexError, KeyError):
         text_ = f"#<b>INDEX_ERROR</b>\n\n</b>Country <b>{country}</b>'s timezones:" + " [<b>{}</b>]\n"
         total = 0
         for one in ct[country]:
