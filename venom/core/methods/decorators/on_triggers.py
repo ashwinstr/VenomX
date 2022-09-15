@@ -41,7 +41,7 @@ def owner_filter(cmd: str) -> RFilter:
 def sudo_filter(cmd: str) -> RFilter:
     " sudo filters "
     trig_ = Config.SUDO_TRIGGER
-    filters_ = filters.regex(fr"^(?:\{trig_}){cmd.strip('^')}(?:\s\S)?")\
+    filters_ = filters.regex(fr"^(?:\{trig_}){cmd.strip('^')}")\
         & filters.create(
             lambda _, __, m:
             (bool(Config.SUDO) and m.from_user\
@@ -53,7 +53,7 @@ def sudo_filter(cmd: str) -> RFilter:
 def owner_sudo(cmd: str) -> RFilter:
     " bot filters with owner account "
     trig_ = Config.SUDO_TRIGGER
-    filters_ = filters.regex(fr"^(?:\{trig_}){cmd}")\
+    filters_ = filters.regex(fr"^(?:\{trig_}){cmd.strip('^')}")\
         & filters.user(Config.OWNER_ID)
     return filters_
 
