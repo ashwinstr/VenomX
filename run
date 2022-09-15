@@ -1,9 +1,13 @@
 #!/bin/sh
 
-start() {
-    git init
-    pip3 -q install -U -r requirements.txt
-    python3 -m venom
+server() {
+    if test $APACHE2 ; then 
+        service apache2 restart
+        echo "Started apache2..."
+    else
+        echo "Skipping apache2..."
+    fi
 }
 
-start
+server
+python3 -m venom
