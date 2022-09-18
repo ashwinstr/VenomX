@@ -44,6 +44,8 @@ class MyMessage(Message):
 
     @property
     def input_str(self) -> str:
+        if not self.msg.text:
+            return ""
         if " " in self.msg.text or "\n" in self.msg.text:
             text_ = self.msg.text
             split_ = text_.split(maxsplit=1)

@@ -26,9 +26,8 @@ CHANNEL = venom.getCLogger(__name__)
     & filters.command('genstr', prefixes=Config.CMD_TRIGGER),
     group=2
 )
-async def generate_str(_, m):
+async def generate_str(_, message: MyMessage):
     " generate session string in bot mode "
-    message: MyMessage = MyMessage.parse(m)
     await message.reply("Are you certain you want to generate session_string?\nReply `y` to continue.")
     try:
         resp = await message.wait()

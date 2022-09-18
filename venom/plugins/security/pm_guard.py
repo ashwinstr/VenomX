@@ -10,6 +10,7 @@ from venom.helpers import plugin_name, report_user
 
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'security', 'commands': []}
+CHANNEL = venom.getCLogger(__name__)
 WELCOME_MSG = """
 Hi <b>{}</b>,
 This is <b>{}</b>'s userbot, VenomX.
@@ -153,7 +154,6 @@ NOT_ALLOWED = filters.create(lambda _, __, m: m.from_user.id not in Config.ALLOW
 )
 async def guard_(_, message: MyMessage):
     " guard on duty "
-    message = MyMessage.parse(message)
     pm_by = message.from_user.id
     if pm_by not in Config.DISALLOWED_PM_COUNT.keys():
         disallowed_count = Config.DISALLOWED_PM_COUNT[pm_by] = 1
@@ -174,10 +174,20 @@ async def guard_(_, message: MyMessage):
         {'_id': pm_by}, {'$set': {'count': disallowed_count}}, upsert=True
     )
 
+
 @venom.on_message(
-    filters.me
+    PM_GUARD
+    & NOT_ALLOWED
+    & filters.me
     & filters.private,
     group=2
 )
 async def auto_allow(_, message: MyMessage):
     " automatic allow on first message "
+    user_ = message.chat.id
+    if user_ not in Config.DISALLOWED_PM_COUNT.keys():
+        Config.ALLOWED_TO_PM.append(user_)
+        await asyncio.gather(
+            CHANNEL.log(f"User <b>{message.chat.id}</b> auto-approved to PM."),
+            Collection.ALLOWED_TO_PM.insert_one({'_id': user_})
+        )

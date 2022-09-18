@@ -28,7 +28,7 @@ CURRENT_MODULE = ""
 def owner_filter(cmd: str) -> RFilter:
     " owner filters "
     trig_ = Config.CMD_TRIGGER
-    regex_ = fr"^(?:\{trig_}){cmd.strip('^')}" if trig_ else fr"^{cmd.strip('^')}"
+    regex_ = fr"^(?:{trig_}){cmd.strip('^')}" if trig_ else fr"^{cmd.strip('^')}"
     if [one for one in "^()[]+*.\\|?:$" if one in cmd]:
         pass
     else:
@@ -44,7 +44,7 @@ def owner_filter(cmd: str) -> RFilter:
 def sudo_filter(cmd: str) -> RFilter:
     " sudo filters "
     trig_ = Config.SUDO_TRIGGER
-    regex_ = fr"^(?:\{trig_}){cmd.strip('^')}"
+    regex_ = fr"^(?:{trig_}){cmd.strip('^')}"
     if [one for one in "^()[]+*.\\|?:$" if one in cmd]:
         pass
     else:
@@ -61,7 +61,7 @@ def sudo_filter(cmd: str) -> RFilter:
 def owner_sudo(cmd: str) -> RFilter:
     " bot filters with owner account "
     trig_ = Config.SUDO_TRIGGER
-    regex_ = fr"^(?:\{trig_}){cmd.strip('^')}"
+    regex_ = fr"^(?:{trig_}){cmd.strip('^')}"
     if [one for one in "^()[]+*.\\|?:$" if one in cmd]:
         pass
     else:
