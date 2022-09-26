@@ -20,7 +20,7 @@ class NewOnMessage(RClient):
         def wrapper(func):
             async def template(rc, rm: Message):
                 if Config.PAUSE:
-                    if bool(re.search(rf"^({Config.CMD_TRIGGER}|{Config.SUDO_TRIGGER})start$", rm.text)):
+                    if bool(re.search(rf"^(\{Config.CMD_TRIGGER}|\{Config.SUDO_TRIGGER})start$", rm.text)):
                         if rm.from_user.id != Config.OWNER_ID and rm.from_user.id not in Config.TRUSTED_SUDO_USERS:
                             return
                     else:

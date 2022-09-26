@@ -105,7 +105,8 @@ async def alive_or_not(_, message: MyMessage):
 
 async def normal_alive(message: MyMessage):
     " check bot info in fancy way with tg bot "
-    await message.reply_photo(Config.ALIVE_PIC, AliveInfo.alive_info((await venom.bot.get_me()).first_name), reply_markup=AliveInfo.alive_buttons())
+    me_ = await venom.get_me()
+    await message.reply_photo(Config.ALIVE_PIC, caption=AliveInfo.alive_info(me_.first_name), reply_markup=AliveInfo.alive_buttons())
 
 async def inline_alive(message: MyMessage):
     " check bot info in fancy way with inline "
@@ -142,7 +143,7 @@ class AliveInfo:
 {DOT_} <b>Pyro {':':>12}</b> `{ver}`
 {DOT_} <b>Dev {':':>13}</b> [Kakashi](https://t.me/Kakashi_HTK)
 
-<b>Support:</b> [VenomX Support](https://t.me/AntiVenom_X)
+<b>Support:</b> [VenomX Support](https://t.me/VenomX_support)
 """
         return info_
 

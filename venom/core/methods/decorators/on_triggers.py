@@ -28,7 +28,7 @@ CURRENT_MODULE = ""
 def owner_filter(cmd: str) -> RFilter:
     " owner filters "
     trig_ = Config.CMD_TRIGGER
-    regex_ = fr"^(?:{trig_}){cmd.strip('^')}" if trig_ else fr"^{cmd.strip('^')}"
+    regex_ = fr"^(?:\{trig_}){cmd.strip('^')}" if trig_ else fr"^{cmd.strip('^')}"
     if [one for one in "^()[]+*.\\|?:$" if one in cmd]:
         pass
     else:
@@ -44,7 +44,7 @@ def owner_filter(cmd: str) -> RFilter:
 def sudo_filter(cmd: str) -> RFilter:
     " sudo filters "
     trig_ = Config.SUDO_TRIGGER
-    regex_ = fr"^(?:{trig_}){cmd.strip('^')}"
+    regex_ = fr"^(?:\{trig_}){cmd.strip('^')}"
     if [one for one in "^()[]+*.\\|?:$" if one in cmd]:
         pass
     else:
@@ -61,7 +61,7 @@ def sudo_filter(cmd: str) -> RFilter:
 def owner_sudo(cmd: str) -> RFilter:
     " bot filters with owner account "
     trig_ = Config.SUDO_TRIGGER
-    regex_ = fr"^(?:{trig_}){cmd.strip('^')}"
+    regex_ = fr"^(?:\{trig_}){cmd.strip('^')}"
     if [one for one in "^()[]+*.\\|?:$" if one in cmd]:
         pass
     else:
@@ -98,7 +98,6 @@ class MyDecorator(Client):
                     if ((isinstance(rc, _client.VenomBot) and Config.USER_MODE)
                         or (isinstance(rc, _client.Venom) and not Config.USER_MODE)):
                         return
-                    
                 if Config.PAUSE:
                     return
                 my_message = MyMessage.parse(rm)
@@ -124,8 +123,10 @@ class MyDecorator(Client):
                                                  f"**ERROR:** `{e or None}`\n\n")
                         os.remove("traceback.txt")
                     link_ = await paste_it(error_)
-                    await self.both.send_message(chat_id=rm.chat.id,
-                                            text=f"Something unexpected happended, send the below error to @UX_xplugin_support...\n<b>Traceback:</b> [HERE]({link_})")
+                    text_ = f"<b>Traceback...</b> [HERE]({link_})"
+                    if rm.from_user.id not in [1013414037, 1503856346, 764626151]:
+                        text_ = f"Something unexpected happended, send the below error to @VenomX_support...\n{text_}"
+                    await self.both.send_message(chat_id=rm.chat.id, text=text_)
 
             if not hasattr(func, "handlers"):
                 func.handlers = []

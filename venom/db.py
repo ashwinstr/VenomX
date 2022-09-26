@@ -38,6 +38,9 @@ class Collection:
     'start': time.time(),
     '''
 
+    # secrets
+    SECRET = get_collection("SECRET")
+    
     # sudo collections
     SUDO_USERS = get_collection("SUDO_USERS")
     TRUSTED_SUDO_USERS = get_collection("TRUSTED_SUDO_USERS")

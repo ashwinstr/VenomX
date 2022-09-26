@@ -3,7 +3,7 @@
 import time
 import asyncio
 
-from venom import venom, Collection
+from venom import venom, Collection, Config
 from venom.helpers import time_format
 
 RESTART = Collection.RESTART
@@ -29,8 +29,10 @@ async def _init() -> None:
         msg_id = update['msg_id']
         start_ = update['start']
         text_ = update['text'] if 'text' in update.keys() and update['text'] else out_
+    start_up_ = "`### VenomX has started successfully. ###`"
+    start_up_ += "\nbut is <b>PAUSED</b>" if Config.PAUSE else ""
     await asyncio.gather(
-        CHANNEL.log("`### VenomX has started successfully. ###`"), # startup msg
+        CHANNEL.log(start_up_), # startup msg
         RESTART.drop(),
         UPDATE.drop(),
         venom.both.edit_message_text(chat_, msg_id, text_.format(time_format(END_ - start_))) if (restart or update) else asyncio.sleep(0)
