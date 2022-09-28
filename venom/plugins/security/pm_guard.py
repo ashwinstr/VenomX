@@ -141,7 +141,7 @@ async def dis_allow_pm(_, message: MyMessage):
 ########################################################################################################################################################
 
 PM_GUARD = filters.create(lambda _, __, ___: Config.PM_GUARD)
-NOT_ALLOWED = filters.create(lambda _, __, m: m.from_user.id not in Config.ALLOWED_TO_PM)
+NOT_ALLOWED = filters.create(lambda _, __, m: (m.from_user and m.from_user.id not in Config.ALLOWED_TO_PM))
 
 @venom.on_message(
     PM_GUARD

@@ -93,8 +93,8 @@ def get_owner() -> dict:
     user = json.loads(str(data))
     return user
 
-def time_format(time: float) -> dict:
-    " time formatter"
+def time_format(time: float) -> str:
+    " time formatter "
     days_ = time / 60 / 60 / 24
     hour_ = (days_ - int(days_)) * 24
     min_ = (hour_ - int(hour_)) * 60
@@ -104,6 +104,15 @@ def time_format(time: float) -> dict:
     out_ += f" <b>{int(min_)}</b>m," if int(min_) else ""
     out_ += f" <b>{int(sec_)}</b>s"
     return out_.strip()
+
+def time_stamp(time: float) -> str:
+    " time stamp "
+    hour_ = time / 60 / 60
+    min_ = (hour_ - int(hour_)) * 60
+    sec_ = (min_ - int(min_)) * 60
+    out_ = f"{int(hour_):02}:" if int(hour_) >= 1 else ""
+    out_ += f"{int(min_):02}:{int(sec_):02}"
+    return out_
 
 def extract_id(mention):
     if str(mention).isdigit():

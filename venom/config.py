@@ -77,6 +77,10 @@ class Config:
     LAST_CHAT: int = 0
     PM_LOG_CHANNEL = int(os.environ.get("PM_LOG_CHANNEL", 0))
     PM_TOG = False
+        ### spotify
+    SPOTIFY_ID = os.environ.get("SPOTIFY_ID")
+    SPOTIFY_SECRET = os.environ.get("SPOTIFY_SECRET")
+    SPOTIFY_TOKEN = os.environ.get("SPOTIFY_TOKEN")
     
     ##### sudo configs #####
     SUDO: bool = False
@@ -88,5 +92,3 @@ class Config:
     ##### tokens #####
         ### github token
     GH_TOKEN = os.environ.get("GH_TOKEN")
-        ### spotify token
-    SPOTIFY_TOKEN = os.environ.get("SPOTIFY_TOKEN")

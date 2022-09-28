@@ -16,7 +16,8 @@ from .venom_tools import (
                         report_user,
                         Media_Info,
                         paste_it,
-                        restart_msg
+                        restart_msg,
+                        time_stamp
                         )
 
 from .decorators import VenomDecorators
