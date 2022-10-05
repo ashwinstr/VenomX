@@ -399,7 +399,7 @@ async def fban_p(_, message: MyMessage):
     if (
         user in Config.SUDO_USERS
         or user in Config.TRUSTED_SUDO_USERS
-        or user in Config.OWNER_ID
+        or user == Config.OWNER_ID
         or user == (await venom.get_me()).id
     ):
         fps = False
@@ -426,7 +426,7 @@ async def fban_p(_, message: MyMessage):
             reason = "not specified"
         if (
             user in Config.SUDO_USERS
-            or user in Config.OWNER_ID
+            or user == Config.OWNER_ID
             or user == (await venom.get_me()).id
         ):
             return await message.err(
