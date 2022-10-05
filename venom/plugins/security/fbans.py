@@ -284,7 +284,7 @@ async def fban_(_, message: MyMessage):
         except UserBannedInChannel:
             pass
         except FloodWait as f:
-            await asyncio.sleep(f.x + 3)
+            await asyncio.sleep(f.value + 3)
         except BaseException:
             failed.append(data["fed_name"])
     if total == 0:
@@ -485,7 +485,7 @@ async def fban_p(_, message: MyMessage):
         except UserBannedInChannel:
             pass
         except FloodWait as f:
-            await asyncio.sleep(f.x + 3)
+            await asyncio.sleep(f.value + 3)
         except BaseException:
             failed.append(data["fed_name"])
     if total == 0:

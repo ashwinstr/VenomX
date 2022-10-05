@@ -25,6 +25,7 @@ HELP['commands'].append(
 async def cancel_(_, message: MyMessage):
     " cancel running message process "
     replied = message.replied
+    replied = MyMessage.parse(replied)
     if not replied:
         return await message.edit("`Reply to message to cancel process...`")
     replied.cancel_process()

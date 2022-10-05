@@ -11,9 +11,7 @@ HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'helpful', 'commands': []}
 HELP_['commands'].append(
     {
         'command': 'reply',
-        'flags': {
-            '-b': 'bot'
-        },
+        'flags': None,
         'usage': 'reply to any message',
         'syntax': '{tr}reply text',
         'sudo': False

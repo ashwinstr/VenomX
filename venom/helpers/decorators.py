@@ -33,7 +33,7 @@ class VenomDecorators:
                 try:
                     await func(venom, c_q)
                 except FloodWait as e:
-                    await asyncio.sleep(e.x + 3)
+                    await asyncio.sleep(e.value + 3)
                 except Exception as e:
                     await venom.send_message(Config.LOG_CHANNEL_ID,
                                                 text=f"### **CALLBACK TRACEBACK** ###\n\n"
@@ -79,7 +79,7 @@ class VenomDecorators:
                 try:
                     await func(venom, iq)
                 except FloodWait as e:
-                    await asyncio.sleep(e.x + 3)
+                    await asyncio.sleep(e.value + 3)
                 except Exception as e:
                     await venom.send_message(Config.LOG_CHANNEL_ID,
                                                 text=f"### **INLINE_QUERY TRACEBACK** ###\n\n"

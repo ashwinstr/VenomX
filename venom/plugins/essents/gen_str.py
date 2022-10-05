@@ -57,7 +57,7 @@ async def generate_str(_, message: MyMessage):
         code = await client.send_code(num)
         await asyncio.sleep(1)
     except FloodWait as e:
-        return await process_.edit(f"`You have floodwait of {e.x} seconds.`", del_in=5)
+        return await process_.edit(f"`You have floodwait of {e.value} seconds.`", del_in=5)
     except ApiIdInvalid:
         return await process_.edit("`API_ID and API_HASH are invalid.`", del_in=5)
     except PhoneNumberInvalid:

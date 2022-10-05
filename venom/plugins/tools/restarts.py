@@ -32,14 +32,12 @@ async def rest_art(_, message: MyMessage):
     " restart the bot "
     action = "normally"
     if '-h' in message.flags:
-        msg = await message.edit("`Restart the bot [HARD] ...`")
-        if Config.HEROKU_APP:
-            await restart_msg(msg=msg, text=msg.text)
-            await Collection.FROZEN.drop()
-            Config.HEROKU_APP.restart()
-            return
+        msg = await message.edit("`Restarting the bot [HARD] ...`")
         await Collection.FROZEN.drop()
         await restart_msg(msg=msg, text=msg.text)
+        if Config.HEROKU_APP:
+            Config.HEROKU_APP.restart()
+            return
         return await venom.restart()
     elif '-t' in message.flags:
         shutil.rmtree(Config.TEMP_PATH, ignore_errors=True)
