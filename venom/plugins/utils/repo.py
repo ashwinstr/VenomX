@@ -11,7 +11,7 @@ from venom import Config, MyMessage, venom
 from venom.helpers import plugin_name
 
 
-help_ = Config.HELP[plugin_name(__name__)] = {'type': 'help', 'commands': []}
+help_ = Config.HELP[plugin_name(__name__)] = {'type': 'utils', 'commands': []}
 
 
 help_['commands'].append(
