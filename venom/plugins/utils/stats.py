@@ -32,7 +32,7 @@ async def get_stats_(_,message: MyMessage):
     """get info about your TG account"""
     #start = time.time()
     await message.edit(
-        "💁‍♂️ `Collecting your Telegram Stats ...`\n"
+        "`Collecting your Telegram Stats ...`\n"
         "<b>Please wait it will take some time</b>"
     )
     owner = await venom.get_me()
@@ -80,8 +80,8 @@ async def get_stats_(_,message: MyMessage):
         await asyncio.sleep(e.value + 5)
 
     results = f"""
-📊 <b><u>Telegram Stats</u></b>
-👤 User:  <b>{u_mention}</b>
+<b><u>Telegram Stats</u></b>
+User:  <b>{u_mention}</b>
 
 <b>Private Chats:</b> <code>{private_chats}</code><code>
     • Users: {users_}
@@ -98,6 +98,6 @@ async def get_stats_(_,message: MyMessage):
 <b>Unread Mentions:</b> <code>{unread_mentions}</code>
 """
     #end = time.time()
-    #results += f"\n⏳ <i>Process took: {time_formatter(end - start)}.</i>"
+    #results += f"\n<i>Process took: {time_formatter(end - start)}.</i>"
     await message.edit(results)
 
