@@ -1,6 +1,7 @@
 # pm_guard.py
 
 import asyncio
+from pymongo.errors import DuplicateKeyError
 
 from pyrogram import filters
 from pyrogram.enums import MessagesFilter, ChatType
@@ -187,7 +188,10 @@ async def auto_allow(_, message: MyMessage):
     user_ = message.chat.id
     if user_ not in Config.DISALLOWED_PM_COUNT.keys():
         Config.ALLOWED_TO_PM.append(user_)
-        await asyncio.gather(
-            CHANNEL.log(f"User <b>{message.chat.id}</b> auto-approved to PM."),
-            Collection.ALLOWED_TO_PM.insert_one({'_id': user_})
-        )
+        try:
+            await asyncio.gather(
+                CHANNEL.log(f"User <b>{message.chat.id}</b> auto-approved to PM."),
+                Collection.ALLOWED_TO_PM.insert_one({'_id': user_})
+            )
+        except DuplicateKeyError:
+            pass
