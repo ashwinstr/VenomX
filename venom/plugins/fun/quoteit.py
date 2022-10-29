@@ -46,7 +46,7 @@ async def quote_message(_, message: MyMessage):
     }
     json_ = json.dumps(form_, indent=4)
     if pfp_:
-        down_ = await venom.download_media(pfp_, file_name=f"profile_pic_{username_}.jpg")
+        down_ = await venom.download_media(pfp_, file_name=f"profile_pic_{name_}.jpg")
         req_ = await venom.send_photo(bot_, down_, caption=json_)
         req_ = MyMessage.parse(req_)
         os.remove(down_)
@@ -109,7 +109,7 @@ async def make_tweet(_, message: MyMessage):
     }
     json_ = json.dumps(form_, indent=4)
     if pfp_:
-        down_ = await venom.download_media(pfp_)
+        down_ = await venom.download_media(pfp_, file_name=f"profile_pic_{username_}.jpg")
         req_ = await venom.send_photo(bot_, down_, caption=json_)
         req_ = MyMessage.parse(req_)
         os.remove(down_)
