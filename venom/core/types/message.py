@@ -1,16 +1,15 @@
 # message.py
 
-import re
 import os
+import re
 from typing import List, Union
 
 from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardMarkup
-from pyrogram.enums import ParseMode, ChatType
-from pyrogram.errors import MessageAuthorRequired, MessageTooLong, MessageIdInvalid, MessageDeleteForbidden
-
+from pyrogram.enums import ChatType, ParseMode
+from pyrogram.errors import (MessageAuthorRequired, MessageDeleteForbidden,
+                             MessageIdInvalid, MessageTooLong)
+from pyrogram.types import InlineKeyboardMarkup, Message
 from pyromod import listen
-
 from venom import Config
 
 _CANCEL_PROCESS: List[int] = []
@@ -217,6 +216,13 @@ class MyMessage(Message):
                                             file_name=file_name,
                                             caption=caption,
                                             reply_to=reply_to)
+
+    async def delete(self):
+        " message delete method "
+        try:
+            return await self.msg._client.delete()
+        except Exception as e:
+            await self.msg._client.send_message(Config.LOG_CHANNEL_ID, f"Unable to delete...\nERROR: {e}")
     
     async def ask(self, text: str, timeout: int = 15, filters: filters.Filter = None) -> 'MyMessage':
         " monkey patching to MyMessage using pyromod.ask "
