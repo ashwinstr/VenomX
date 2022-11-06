@@ -220,7 +220,7 @@ class MyMessage(Message):
     async def delete(self):
         " message delete method "
         try:
-            return await self.msg._client.delete()
+            return await self.msg.delete()
         except Exception as e:
             await self.msg._client.send_message(Config.LOG_CHANNEL_ID, f"Unable to delete...\nERROR: {e}")
     

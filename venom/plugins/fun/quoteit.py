@@ -3,6 +3,8 @@
 import asyncio
 import json
 import os
+import re
+from sre_constants import error as sre_err
 
 from pyrogram import filters
 from venom import Config, MyMessage, venom
@@ -46,7 +48,7 @@ async def quote_message(_, message: MyMessage):
     }
     json_ = json.dumps(form_, indent=4)
     if pfp_:
-        down_ = await venom.download_media(pfp_, file_name=f"profile_pic_{name_}.jpg")
+        down_ = await venom.both.download_media(pfp_, file_name=f"profile_pic_{name_}.jpg")
         req_ = await venom.send_photo(bot_, down_, caption=json_)
         req_ = MyMessage.parse(req_)
         os.remove(down_)
@@ -88,12 +90,16 @@ async def make_tweet(_, message: MyMessage):
     name_ = reply_.from_user.first_name
     username_ = "@" + reply_.from_user.username
     pfp_ = reply_.from_user.photo.big_file_id if reply_.from_user.photo else None
+    regex_it = True if "-r" in message.flags else False
     text_ = (
         reply_.text
-        if reply_.text and "-f" not in message.flags
+        if (reply_.text or (reply_.text and regex_it)) and "-f" not in message.flags
         else message.filtered_input
     )
-    fake_ = True if "-f" in message.flags else False
+    if regex_it:
+        regex_ = message.filtered_input
+        text_ = send_sed(text_, regex_)
+    fake_ = True if "-f" in message.flags or "-r" in message.flags else False
     bg_ = (26, 43, 60) if "-b" not in message.flags else (0, 0, 0)
     if not text_:
         return await message.edit("`Text not found...`", del_in=5)
@@ -135,3 +141,97 @@ async def make_tweet(_, message: MyMessage):
         message.delete(),
     )
 
+DELIMITERS = ("/", ":", "|", "_")
+
+
+def separate_sed(sed_string):
+    """Separate sed arguments."""
+    
+    if str(sed_string).endswith(" -n"):
+        sed_string = sed_string.replace(" -n", "")
+    else:
+        sed_string = str(sed_string)
+    if len(sed_string) < 1:
+        return
+
+    if sed_string[1] in DELIMITERS and sed_string.count(sed_string[1]) >= 1:
+        delim = sed_string[1]
+        start = counter = 2
+        while counter < len(sed_string):
+            if sed_string[counter] == r"\\":
+                counter += 1
+            elif sed_string[counter] == delim:
+                replace = sed_string[start:counter]
+                counter += 1
+                start = counter
+                break
+
+            counter += 1
+
+        else:
+            return None
+
+        while counter < len(sed_string):
+            if (
+                sed_string[counter] == "\{2}"
+                and counter + 1 < len(sed_string)
+                and sed_string[counter + 1] == delim
+            ):
+                sed_string = sed_string[:counter] + sed_string[counter + 1 :]
+            elif (counter + 1) < len(sed_string) and (sed_string[counter] + sed_string[counter + 1]) == "\/":
+                sed_string = sed_string.replace(sed_string[counter], "")
+                counter += 1
+            elif sed_string[counter] == delim:
+                replace_with = sed_string[start:counter]
+                counter += 1
+                break
+
+            counter += 1
+        else:
+            return replace, sed_string[start:], ""
+
+        flags = ""
+        if counter < len(sed_string):
+            flags = sed_string[counter:]
+        return replace, replace_with, flags.lower()
+    return None
+
+
+def send_sed(text_, regex):
+    sed_result = separate_sed(regex)
+    if sed_result:
+        repl, repl_with, flags = sed_result
+    else:
+        return
+    if sed_result:
+        try:
+            check = re.match(repl, text_, flags=re.IGNORECASE)
+            if check and check.group(0).lower() == text_.lower():
+                 pass
+            if "i" in flags and "g" in flags:
+                text = re.sub(fr"{repl}", fr"{repl_with}", text_, flags=re.I).strip()
+            elif "u" in flags and "g" in flags:
+                repl_with = bytes(repl_with, "utf-8").decode('unicode_escape')
+                text = re.sub(fr"{repl}", repl_with, text_).strip()
+            elif "u" in flags and "i" in flags:
+                repl_with = bytes(repl_with, "utf-8").decode('unicode_escape')
+                text = re.sub(fr"{repl}", repl_with, text_, count=1, flags=re.I).strip()
+            elif "i" in flags:
+                text = re.sub(fr"{repl}", fr"{repl_with}", text_, count=1, flags=re.I).strip()
+            elif "g" in flags:
+                text = re.sub(fr"{repl}", fr"{repl_with}", text_).strip()
+            elif "m" in flags:
+                text = re.sub(fr"{repl}", fr"{repl_with}", text_.html, count=1).strip()
+            elif "u" in flags:
+                repl_with = bytes(repl_with, "utf-8").decode('unicode_escape')
+                text = re.sub(fr"{repl}", repl_with, text_, count=1).strip()
+#            elif "e" in flags:
+#                text = re.sub(fr"{repl}", repl_with, to_fix, count=1).strip()
+            else:
+                text = re.sub(fr"{repl}", fr"{repl_with}", text_, count=1).strip()
+        except sre_err as e:
+            return f"ERROR: {e}"
+#            return await bot.send_message(message.chat.id, "**[Learn Regex](https://regexone.com)**")
+        if text:
+            return text
+        return "ERROR !!!"
