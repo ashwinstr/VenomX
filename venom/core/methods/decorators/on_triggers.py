@@ -1,24 +1,24 @@
 # on_triggers.py
 # idea taken from USERGE-X
 
-import re
 import os
+import re
 import traceback
-from typing import Any, Callable
+from typing import Any, Callable, Union
 
 import pyrogram
-from pyrogram import filters, Client
+from pyrogram import Client, filters
+from pyrogram.errors import MessageTooLong
 from pyrogram.filters import Filter as RFilter
 from pyrogram.types import Message
-from pyrogram.errors import MessageTooLong
-
 from pyromod import listen
 
 from venom import Config
-from venom.helpers import paste_it
-from venom.core.types.message import MyMessage
-from venom.core.filter import Filter
 from venom.core import client as _client
+from venom.core.filter import Filter
+from venom.core.types.message import MyMessage
+from venom.helpers import paste_it
+
 from ...command_manager import manager
 
 _FUNC = Callable[['Message'], Any]
@@ -72,16 +72,15 @@ def owner_sudo(cmd: str) -> RFilter:
         regex_ += r"(?:\s([\S\s]+))?$"
     filters_ = filters.regex(regex_) \
                & filters.user(Config.OWNER_ID) \
-               & filters.create(
-        lambda _, __, m:
-        m.reactions is None)
+               & filters.create(lambda _, __, m: m.reactions is None)
     return filters_
 
 
 class MyDecorator(Client):
     _PYROFUNC = Callable[[_FUNC], _FUNC]
 
-    def my_decorator(self, flt: 'Filter' = None, filters_=RFilter, group: int = 0, **kwargs) -> 'MyDecorator._PYROFUNC':
+    def my_decorator(self: Union['_client.Venom', '_client.VenomBot'], flt: 'Filter' = None, filters_=RFilter,
+                     group: int = 0, **kwargs) -> 'MyDecorator._PYROFUNC':
 
         def inner(func: _FUNC) -> _FUNC:
 
@@ -98,7 +97,7 @@ class MyDecorator(Client):
                 os.makedirs(Config.TEMP_PATH, exist_ok=True)
                 os.makedirs(Config.DOWN_PATH, exist_ok=True)
 
-                if rm.from_user.id == Config.OWNER_ID and bool(re.search(fr"^\{Config.SUDO_TRIGGER}", rm.text)):
+                if rm.from_user.id == Config.OWNER_ID and bool(re.search(fr"^{Config.SUDO_TRIGGER}", rm.text)):
                     if isinstance(rc, _client.Venom):
                         return
                 else:

@@ -27,7 +27,7 @@ class Config:
     HELP: Dict[str, Dict[str, Union[str, List[Dict[str, Union[str, bool, Dict[str, str]]]]]]] = {}
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
     ME: dict = {}
-    OWNER_ID = int(os.environ.get("OWNER_ID"))
+    OWNER_ID = int(os.environ.get("OWNER_ID", 0))
     PAUSE = False
     STRING_SESSION = os.environ.get("STRING_SESSION")
     TEMP_PATH = "venom/plugins/temp/"
