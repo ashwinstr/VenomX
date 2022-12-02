@@ -5,13 +5,13 @@ import os
 import shutil
 from subprocess import call
 from time import time
-from wget import download as wget_dl
 
 import yt_dlp
 from pyrogram.errors import MediaEmpty, WebpageCurlFailed
 from pyrogram.types import User
+from wget import download as wget_dl
 
-from venom import venom, Config, MyMessage
+from venom import Config, MyMessage, venom
 from venom.helpers import plugin_name
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'fun', 'commands': []}
