@@ -39,7 +39,8 @@ async def insta_dl(_, message: MyMessage):
     filters.regex(r"https://twitter.com/*")
     | filters.regex(r"^https://youtube.com/shorts/*")
     | filters.regex(r"^https://vm.tiktok.com/*")
-    | filters.regex(r"^\.dl")
+    | filters.regex(r"^\.dl"),
+    group=3
 )
 async def video_dl(_, message: MyMessage):
     chat_id = message.chat.id
