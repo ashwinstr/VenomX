@@ -24,6 +24,7 @@ class Config:
     CMD_TRIGGER = os.environ.get("CMD_TRIGGER", ".")
     DB_URI = os.environ.get("DATABASE_URL")
     DOWN_PATH = "downloads"
+    GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN")
     HELP: Dict[str, Dict[str, Union[str, List[Dict[str, Union[str, bool, Dict[str, str]]]]]]] = {}
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
     ME: dict = {}
