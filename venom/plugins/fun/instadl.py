@@ -5,9 +5,9 @@ import os
 import shutil
 from subprocess import call
 from time import time
+from wget import download as wget_dl
 
 import yt_dlp
-from pyrogram import filters
 from pyrogram.errors import MediaEmpty, WebpageCurlFailed
 from pyrogram.types import User
 
@@ -21,86 +21,67 @@ CHANNEL = venom.getCLogger(__name__)
 
 HELP_['commands'].append(
     {
-        'command': 'insta',
+        'command': 'viddl',
         'flags': None,
-        'usage': 'insta reels downloader',
+        'usage': 'social media video downloader',
         'syntax': '{tr}insta [link]',
         'sudo': True
     }
 )
 
 
-@venom.trigger('insta ')
+@venom.trigger(r'viddl (https\:\/\/(?:vm.)?(?:twitter|youtube|tiktok)\.com\/.*)')
 async def insta_dl(_, message: MyMessage):
-    """ insta reels downloader """
-
-
-@venom.on_message(
-    filters.regex(r"https://twitter.com/*")
-    | filters.regex(r"^https://youtube.com/shorts/*")
-    | filters.regex(r"^https://vm.tiktok.com/*")
-    | filters.regex(r"^\.dl")
-)
-async def video_dl(_, message: MyMessage):
+    """ social media video downloader """
     chat_id = message.chat.id
     del_link = True
-    if message.from_user.id == Config.OWNER_ID and message.text.startswith(".dl"):
-        caption = "Shared by : "
-        if message.sender_chat:
-            caption += message.author_signature
-        else:
-            caption += (await venom.get_users(message.from_user.id)).first_name
-        msg = await message.reply("`Trying to download...`")
-        raw_message = message.text.split()
-        for link in raw_message:
-            if link.startswith("http"):
-                start_time = time()
-                dl_path = f"downloads/{str(start_time)}"
+    caption = "Shared by: "
+    if message.sender_chat:
+        caption += message.author_signature
+    else:
+        caption += (await venom.get_users(message.from_user.id)).first_name
+    msg = await message.reply("`Trying to download...`")
+    start_time = time()
+    dl_path = f"downloads/{str(start_time)}"
+    link_ = message.matches[0].group(1)
+    try:
+        _opts = {
+            "outtmpl": f"{dl_path}/video.mp4",
+            "format": "bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]",
+            "prefer_ffmpeg": True,
+            "postprocessors": [{"key": "FFmpegMetadata"}, {"key": "EmbedThumbnail"}],
+        }
+        x = yt_dlp.YoutubeDL(_opts).download(link_)
+        video_path = f"{dl_path}/video.mp4"
+        thumb_path = f"{dl_path}/i.jpg"
+        call(
+            f'''ffmpeg -ss 0.1 -i "{video_path}" -vframes 1 "{thumb_path}"''',
+            shell=True,
+        )
+        await venom.send_video(chat_id, video_path, thumb=thumb_path, caption=caption)
+        if os.path.exists(str(dl_path)):
+            shutil.rmtree(dl_path)
+    except Exception as e:
+        if str(e).startswith("ERROR: [Instagram]"):
+            await msg.edit("Couldn't download video,\n`trying alternate method....`")
+            i_dl = downloader(link_)
+            if i_dl == "not_found":
+                await message.reply("Video download failed.\nLink not supported or private.")
+            else:
                 try:
-                    _opts = {
-                        "outtmpl": f"{dl_path}/video.mp4",
-                        "format": "bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]",
-                        "prefer_ffmpeg": True,
-                        "postprocessors": [{"key": "FFmpegMetadata"}, {"key": "EmbedThumbnail"}],
-                    }
-                    x = yt_dlp.YoutubeDL(_opts).download(link)
-                    video_path = f"{dl_path}/video.mp4"
-                    thumb_path = f"{dl_path}/i.jpg"
-                    call(
-                        f'''ffmpeg -ss 0.1 -i "{video_path}" -vframes 1 "{thumb_path}"''',
-                        shell=True,
-                    )
-                    await venom.send_video(chat_id, video=video_path, thumb=thumb_path, caption=caption)
-                    if os.path.exists(str(dl_path)):
-                        shutil.rmtree(dl_path)
-                except Exception as e:
-                    if str(e).startswith("ERROR: [Instagram]"):
-                        await msg.edit(
-                            "Couldn't download video,\n`trying alternate method....`"
-                        )
-                        i_dl = downloader(link)
-                        if i_dl == "not found":
-                            await message.reply(
-                                "Video download failed.\nLink not supported or private."
-                            )
-                        else:
-                            try:
-                                await message.reply_video(i_dl, caption=caption)
-                            except (MediaEmpty, WebpageCurlFailed):
-                                from wget import download
-
-                                x = download(i_dl, "x.mp4")
-                                await message.reply_video(x, caption=caption)
-                                if os.path.exists(x):
-                                    os.remove(x)
-                    else:
-                        await CHANNEL.log(str(e))
-                        await message.reply("**Link not supported or private.** 🥲")
-                        del_link = False
-                    continue
-        await msg.delete()
-        if del_link or message.from_user.id == 1503856346:
-            await message.delete()
+                    await message.reply_video(i_dl, caption=caption)
+                except (MediaEmpty, WebpageCurlFailed):
+                    x = wget_dl(i_dl, "x.mp4")
+                    await message.reply_video(x, caption=caption)
+                    if os.path.exists(x):
+                        os.remove(x)
+        else:
+            await CHANNEL.log(str(e))
+            await message.reply("**Link not supported or private.**")
+            del_link = False
+    await msg.delete()
+    if del_link:
+        await message.delete()
 
 
 def downloader(url):

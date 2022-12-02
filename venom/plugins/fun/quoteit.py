@@ -12,7 +12,7 @@ from venom import Config, MyMessage, venom
 
 @venom.trigger("qit")
 async def quote_message(_, message: MyMessage):
-    " quote support in ub "
+    """ quote support in userbot """
     from_user_ = message.from_user.id
     flags_ = message.flags
     try:
