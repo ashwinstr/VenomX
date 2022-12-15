@@ -13,6 +13,7 @@ trans = Translator()
 
 ##########################################################################################################################################################
 
+
 @venom.bot.on_inline_query()
 @VenomDecorators.inline_checker(owner=True)
 async def pro_nunciation(_, i_q: InlineQuery):
@@ -27,7 +28,9 @@ async def pro_nunciation(_, i_q: InlineQuery):
             results.append(
                 InlineQueryResultArticle(
                     title="SUPPORTED LANGUAGES.",
-                    input_message_content=InputTextMessageContent("Invalid language code, check [LINK](https://telegra.ph/By-Kakashi-HTK-08-07) for language codes.")
+                    input_message_content=InputTextMessageContent("Invalid language code, check [LINK]("
+                                                                  "https://telegra.ph/By-Kakashi-HTK-08-07) for "
+                                                                  "language codes.")
                 )
             )
         else:

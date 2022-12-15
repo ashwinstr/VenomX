@@ -31,11 +31,17 @@ class MyMessage(Message):
                     setattr(self, one, attr_)
                 except:
                     pass
-#        super().__init__(**kwargs)
+        # super().__init__(**kwargs)
 
     @classmethod
-    def parse(cls, message):
-        return cls(message)
+    def parse(cls, message, **kwargs):
+        vars_ = vars(message)
+        for one in ['_flags', '_filtered_input']:
+            if one in vars_:
+                del vars_[one]
+        if vars_['reply_to_message']:
+            vars_['reply_to_message'] = cls.parse(vars_['reply_to_message'], **kwargs)
+        return cls(message, **kwargs)
 
     @property
     def replied(self) -> 'MyMessage':
@@ -50,7 +56,7 @@ class MyMessage(Message):
             split_ = text_.split(maxsplit=1)
             input_ = split_[-1]
             return input_
-        return None
+        return ''
 
     @property
     def flags(self):
@@ -93,23 +99,23 @@ class MyMessage(Message):
 
     @property
     def process_is_cancelled(self) -> bool:
-        " check if process is cancelled "
+        """ check if process is cancelled """
         if self.msg.id in _CANCEL_PROCESS:
             _CANCEL_PROCESS.remove(self.msg.id)
             return True
         return False
 
     def cancel_process(self) -> None:
-        " cancel process "
+        """ cancel process """
         _CANCEL_PROCESS.append(self.msg.id)
 
     async def send_as_file(self,
-                            text: str,
-                            file_name: str = 'output.txt',
-                            caption: str = '',
-                            delete_message: bool = True,
-                            reply_to: int = None) -> 'MyMessage':
-        " send text as file "
+                           text: str,
+                           file_name: str = 'output.txt',
+                           caption: str = '',
+                           delete_message: bool = True,
+                           reply_to: int = None) -> 'MyMessage':
+        """ send text as file """
         file_ = os.path.join(Config.TEMP_PATH, file_name)
         with open(file_, "w+", encoding='utf-8') as fn:
             fn.write(str(text))
@@ -122,24 +128,24 @@ class MyMessage(Message):
             reply_to_id = reply_to
         else:
             reply_to_id = self.msg.id if not self.msg.reply_to_message else self.msg.reply_to_message.id
-        return await self.msg._client.send_document(chat_id=self.msg.chat.id,
-                                                    document=file_,
-                                                    file_name=file_name,
-                                                    caption=caption,
-                                                    reply_to_message_id=reply_to_id)
-
+        message = await self.msg._client.send_document(chat_id=self.msg.chat.id,
+                                                       document=file_,
+                                                       file_name=file_name,
+                                                       caption=caption,
+                                                       reply_to_message_id=reply_to_id)
+        return self.parse(message)
 
     async def edit(self,
-                    text: str,
-                    dis_preview: bool = False,
-                    del_in: int = -1,
-                    parse_mode: ParseMode = ParseMode.DEFAULT,
-                    reply_markup: InlineKeyboardMarkup = None,
-                    sudo: bool = True) -> 'MyMessage':
+                   text: str,
+                   dis_preview: bool = False,
+                   del_in: int = -1,
+                   parse_mode: ParseMode = ParseMode.DEFAULT,
+                   reply_markup: InlineKeyboardMarkup = None,
+                   sudo: bool = True) -> 'MyMessage':
         " edit or reply message "
         reply_to_id = self.replied.id if self.replied else self.id
         try:
-            return await self.msg._client.edit_message_text(
+            message = await self.msg._client.edit_message_text(
                 chat_id=self.msg.chat.id,
                 message_id=self.msg.id,
                 text=text,
@@ -148,19 +154,20 @@ class MyMessage(Message):
                 dis_preview=dis_preview,
                 reply_markup=reply_markup
             )
+            return self.parse(message)
         except (MessageAuthorRequired, MessageIdInvalid):
             if sudo:
                 reply_ = await self.msg._client.send_message(chat_id=self.msg.chat.id,
-                                                                text=text,
-                                                                del_in=del_in,
-                                                                dis_preview=dis_preview,
-                                                                parse_mode=parse_mode,
-                                                                reply_markup=reply_markup,
-                                                                reply_to_message_id=reply_to_id)
+                                                             text=text,
+                                                             del_in=del_in,
+                                                             dis_preview=dis_preview,
+                                                             parse_mode=parse_mode,
+                                                             reply_markup=reply_markup,
+                                                             reply_to_message_id=reply_to_id)
                 self.msg = reply_
-                return reply_
+                return self.parse(reply_)
             raise MessageAuthorRequired
-    
+
     edit_text = try_to_edit = edit
 
     async def reply(self,
@@ -170,35 +177,37 @@ class MyMessage(Message):
                     parse_mode: ParseMode = ParseMode.DEFAULT,
                     reply_markup: InlineKeyboardMarkup = None,
                     quote: bool = True) -> 'MyMessage':
-        " reply message "
+        """ reply message """
 
         reply_to_id = self.msg.reply_to_message.id if (quote and self.msg.reply_to_message) else None
 
         reply_ = await self.msg._client.send_message(chat_id=self.msg.chat.id,
-                                                    text=text,
-                                                    del_in=del_in,
-                                                    dis_preview=dis_preview,
-                                                    parse_mode=parse_mode,
-                                                    reply_to_message_id=reply_to_id,
-                                                    reply_markup=reply_markup)
+                                                     text=text,
+                                                     del_in=del_in,
+                                                     dis_preview=dis_preview,
+                                                     parse_mode=parse_mode,
+                                                     reply_to_message_id=reply_to_id,
+                                                     reply_markup=reply_markup)
         return reply_ if self.chat.type != ChatType.PRIVATE else self.parse(reply_)
 
     async def edit_or_send_as_file(self,
-                                    text: str,
-                                    file_name: str = "File.txt",
-                                    caption: str = None,
-                                    del_in: int = -1,
-                                    parse_mode: ParseMode = ParseMode.DEFAULT,
-                                    dis_preview: bool = False) -> 'MyMessage':
-        " edit or send as file "
+                                   text: str,
+                                   file_name: str = "File.txt",
+                                   caption: str = None,
+                                   del_in: int = -1,
+                                   parse_mode: ParseMode = ParseMode.DEFAULT,
+                                   dis_preview: bool = False) -> 'MyMessage':
+        """ edit or send as file """
         try:
             return await self.edit(text=text, del_in=del_in, parse_mode=parse_mode, dis_preview=dis_preview)
         except MessageTooLong:
             reply_to = self.replied.id if self.replied else self.id
-            return await self.send_as_file(text=text,
-                                            file_name=file_name,
-                                            caption=caption,
-                                            reply_to=reply_to)
+            msg_ = await self.send_as_file(text=text,
+                                           file_name=file_name,
+                                           caption=caption,
+                                           reply_to=reply_to)
+            os.remove(file_name)
+            return msg_
 
     async def reply_or_send_as_file(self,
                                     text: str,
@@ -207,27 +216,31 @@ class MyMessage(Message):
                                     del_in: int = -1,
                                     parse_mode: ParseMode = ParseMode.DEFAULT,
                                     dis_preview: bool = False) -> 'MyMessage':
-        " edit or send as file "
+        """ reply or send as file """
         try:
             return await self.reply(text=text, del_in=del_in, parse_mode=parse_mode, dis_preview=dis_preview)
         except MessageTooLong:
             reply_to = self.replied.id if self.replied else self.id
-            return await self.send_as_file(text=text,
-                                            file_name=file_name,
-                                            caption=caption,
-                                            reply_to=reply_to)
+            msg_ = await self.send_as_file(text=text,
+                                           file_name=file_name,
+                                           caption=caption,
+                                           reply_to=reply_to)
+            os.remove(file_name)
+            return msg_
 
-    async def delete(self):
-        " message delete method "
+    async def delete(self) -> bool:
+        """ message delete method """
         try:
-            return await self.msg.delete()
+            await self.msg.delete()
+            return True
         except Exception as e:
             await self.msg._client.send_message(Config.LOG_CHANNEL_ID, f"Unable to delete...\nERROR: {e}")
-    
+            return False
+
     async def ask(self, text: str, timeout: int = 15, filters: filters.Filter = None) -> 'MyMessage':
-        " monkey patching to MyMessage using pyromod.ask "
+        """ monkey patching to MyMessage using pyromod.ask """
         return await self.msg._client.ask(self.chat.id, text, timeout=timeout, filters=filters)
 
     async def wait(self, timeout: int = 15, filters: filters.Filter = None) -> 'MyMessage':
-        " monkey patching to MyMessage using pyromod.listen "
+        """ monkey patching to MyMessage using pyromod.listen """
         return await self.msg._client.listen(self.chat.id, timeout=timeout, filters=filters)

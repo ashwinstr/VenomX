@@ -1,17 +1,23 @@
 # command_manager.py
-
-from typing import List, Callable
+import os
+import re
+from typing import List, Dict
 
 from venom import Config
+from venom.helpers import get_import_paths
+
+from venom.plugins import ROOT
 
 
 class Manager():
 
-    plugins: List[Callable] = []
+    plugins: List[str] = []
     commands: List[str] = []
+    tree: Dict[str, Dict[str, List]] = {}
 
-    def plugin_loc(self, plug_name: str) -> str:
+    def plugin_loc(self, plug_name: str) -> str | None:
         found = False
+        one = ""
         for one in self.plugins:
             if one.endswith(plug_name):
                 found = True
@@ -52,6 +58,33 @@ class Manager():
         link_ = f"{Config.UPSTREAM_REPO}/tree/{branch}"
         cmd_loc = self.cmd_plugin_loc(cmd_name)
         return f"{link_}/{cmd_loc}.py"
+
+    def plugin_parents(self) -> list:
+        list_ = self.commands
+        parent_list = []
+        for one in list_:
+            parent_match = re.search(r"(\w+)\.\w+\.\w+$", one)
+            parent = parent_match.group(1)
+            if parent not in parent_list:
+                if parent != "decorators":
+                    parent_list.append(parent)
+        return parent_list
+
+    def plugin_parent(self, plugin: str) -> str:
+        plugins = get_import_paths(ROOT, "/**/")
+        all_plugins = list(plugins)
+        for one in all_plugins:
+            if plugin in one:
+                parent = one.split(".")[0]
+                return parent
+
+    def folder_content(self, folder: str) -> list:
+        print(folder)
+        if os.path.isdir(f"venom/plugins/{folder}"):
+            path_ = f"venom/plugins/{folder}"
+        else:
+            return []
+        return os.listdir(path_)
 
 
 manager = Manager()

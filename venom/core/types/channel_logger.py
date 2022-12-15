@@ -18,5 +18,6 @@ class ChannelLogger:
         self._string = _get_string(name)
 
     async def log(self, input_: str):
+        """ log to channel """
         string_ = self._string.format(input_)
         return await self._client.send_message(chat_id=self._id, text=string_, dis_preview=True)

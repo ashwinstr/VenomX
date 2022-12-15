@@ -11,7 +11,7 @@ Pillow
 psutil
 pymediainfo
 pymongo
-pyrogram==2.0.51
+pyrogram
 pyromod
 python-dotenv>=0.15.0
 pytz

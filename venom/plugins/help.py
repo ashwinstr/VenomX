@@ -7,11 +7,11 @@ from pyrogram.enums import ParseMode
 from venom import venom, Config, MyMessage, manager
 from venom.helpers import plugin_name, post_tg
 
-
 dot_ = Config.BULLET_DOT
 
 TRIG = Config.CMD_TRIGGER
 S_TRIG = Config.SUDO_TRIGGER
+
 
 ############################################################################################################################################
 
@@ -21,6 +21,7 @@ class Help(TypedDict):
     usage: str
     syntax: str
     sudo: bool
+
 
 help_ = Config.HELP[plugin_name(__name__)] = {'type': 'help', 'commands': []}
 
@@ -35,6 +36,7 @@ help_['commands'].append(
         'sudo': True
     }
 )
+
 
 @venom.trigger('help')
 async def help_me(_, message: MyMessage):
@@ -60,10 +62,11 @@ For anything else, ask for help in @UX_xplugin_support.
 
     await message.edit(help__, parse_mode=ParseMode.MARKDOWN)
 
+
 @venom.trigger('nhelp')
 async def help_ing(_, message: MyMessage):
     " helping hand in using the bot "
-    
+
 
 ############################################################################################################################################
 
@@ -95,7 +98,7 @@ async def plugin_s(_, message: MyMessage):
     return await message.edit(f"<b>VenomX</b> plugins list is <b>[HERE]({link_})</b>.", dis_preview=True)
 
 
-##########################################################################################################################################################
+########################################################################################################################
 
 
 help_['commands'].append(
@@ -107,6 +110,7 @@ help_['commands'].append(
         'sudo': True
     }
 )
+
 
 @venom.trigger('plugin')
 async def plug_in(_, message: MyMessage):
@@ -130,7 +134,7 @@ async def plug_in(_, message: MyMessage):
     await message.edit(out_)
 
 
-##############################################################################################################################################################
+########################################################################################################################
 
 
 help_['commands'].append(
@@ -142,6 +146,7 @@ help_['commands'].append(
         'sudo': True
     }
 )
+
 
 @venom.trigger('cmd')
 async def com_mand(_, message: MyMessage):
@@ -198,6 +203,7 @@ help_['commands'].append(
         'sudo': True
     }
 )
+
 
 @venom.trigger('s')
 async def search_help(_, message: MyMessage):

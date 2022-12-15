@@ -11,7 +11,7 @@ from .hide_vars import _DANG
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'security', 'commands': []}
 CHANNEL = venom.getCLogger(__name__)
 
-##########################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -25,9 +25,10 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger('getvar')
 async def get_var(_, message: MyMessage):
-    " get environment variable value in log channel "
+    """ get environment variable value in log channel """
     flags = message.flags
     input_ = message.filtered_input
     if not input_:

@@ -10,7 +10,6 @@ import pyrogram
 from pyrogram import Client, filters
 from pyrogram.errors import MessageTooLong
 from pyrogram.filters import Filter as RFilter
-from pyrogram.types import Message
 from pyromod import listen
 
 from venom import Config
@@ -27,7 +26,7 @@ CURRENT_MODULE = ""
 
 
 def owner_filter(cmd: str) -> RFilter:
-    " owner filters "
+    """ owner filters """
     trig_ = Config.CMD_TRIGGER
     regex_ = fr"^(?:\{trig_}){cmd.strip('^')}" if trig_ else fr"^{cmd.strip('^')}"
     if [one for one in "^()[]+*.\\|?:$" if one in cmd]:
@@ -37,33 +36,34 @@ def owner_filter(cmd: str) -> RFilter:
     filters_ = filters.regex(regex_) \
                & filters.create(
         lambda _, __, m:
-        (m.from_user and (m.from_user.id == Config.OWNER_ID) \
+        (m.from_user and (m.from_user.id == Config.OWNER_ID)
          and m.reactions is None)
     )
     return filters_
 
 
 def sudo_filter(cmd: str) -> RFilter:
-    " sudo filters "
+    """ sudo filters """
     trig_ = Config.SUDO_TRIGGER
     regex_ = fr"^(?:\{trig_}){cmd.strip('^')}"
     if [one for one in "^()[]+*.\\|?:$" if one in cmd]:
         pass
     else:
         regex_ += r"(?:\s([\S\s]+))?$"
-    filters_ = filters.regex(regex_) \
-               & filters.create(
+    filters_ = (
+            filters.regex(regex_) & filters.create(
         lambda _, __, m:
-        (bool(Config.SUDO) and m.from_user \
+        (bool(Config.SUDO) and m.from_user
          and ((m.from_user.id in Config.TRUSTED_SUDO_USERS) or (
-                        m.from_user.id in Config.SUDO_USERS and cmd in Config.SUDO_CMD_LIST)) \
+                        m.from_user.id in Config.SUDO_USERS and cmd in Config.SUDO_CMD_LIST))
          and m.reactions is None)
+    )
     )
     return filters_
 
 
 def owner_sudo(cmd: str) -> RFilter:
-    " bot filters with owner account "
+    """ bot filters with owner account """
     trig_ = Config.SUDO_TRIGGER
     regex_ = fr"^(?:\{trig_}){cmd.strip('^')}"
     if [one for one in "^()[]+*.\\|?:$" if one in cmd]:
@@ -87,6 +87,7 @@ class MyDecorator(Client):
             global CURRENT_MODULE
             if func.__module__ != CURRENT_MODULE:
                 manager.plugins.append(func.__module__)
+                # manager.tree[]
             manager.commands.append(f"{func.__module__}.{flt.cmd.split()[0]}")
             CURRENT_MODULE = func.__module__
 
@@ -113,7 +114,7 @@ class MyDecorator(Client):
                     error_ = traceback.format_exc().strip()
                     try:
                         await self.send_message(chat_id=Config.LOG_CHANNEL_ID,
-                                                text=f"###**TRACEBACK**###\n\n"
+                                                text=f"#**TRACEBACK**#\n\n"
                                                      f"**PLUGIN:** `{func.__module__}`\n"
                                                      f"**FUNCTIONS:** `{func.__name__}`\n"
                                                      f"**ERROR:** `{e or None}`\n\n"
@@ -123,7 +124,7 @@ class MyDecorator(Client):
                             tb.write(error_)
                         await self.send_document(chat_id=Config.LOG_CHANNEL_ID,
                                                  document="traceback.txt",
-                                                 caption=f"###**TRACEBACK**###\n\n"
+                                                 caption=f"#**TRACEBACK**#\n\n"
                                                          f"**PLUGIN:** `{func.__module__}`\n"
                                                          f"**FUNCTIONS:** `{func.__name__}`\n"
                                                          f"**ERROR:** `{e or None}`\n\n")

@@ -1,15 +1,10 @@
 # command.py
 
-import time
 import bisect
-from typing import Union
 
-from pyrogram import Client, filters
-from pyrogram.handlers import EditedMessageHandler
 from pyrogram.filters import Filter
 
 from venom import Config
-from . import client as _client
 
 
 class Filtered:
@@ -21,9 +16,9 @@ class Filtered:
 
     @classmethod
     def parse(cls, cmd: str, group: int = 0):
-        filter = Filter
+        filter_ = Filter
         bisect.insort(Config.CMD_LIST, cmd)
-        return cls(group, cmd, filter)
+        return cls(group, cmd, filter_)
 
     def __repr__(self):
         return f"<command {self.cmd}>"
