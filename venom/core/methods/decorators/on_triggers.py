@@ -10,6 +10,7 @@ import pyrogram
 from pyrogram import Client, filters
 from pyrogram.errors import MessageTooLong
 from pyrogram.filters import Filter as RFilter
+from pyrogram.types import Message
 from pyromod import listen
 
 from venom import Config
