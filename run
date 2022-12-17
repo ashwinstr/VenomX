@@ -1,11 +1,11 @@
 #!/bin/sh
 
 server() {
-    if test $APACHE2 ; then 
-        service apache2 restart
-        echo "Started apache2..."
+    if test $API_PORT ; then 
+        python3 -c "import asyncio;asyncio.run(asyncio.create_subprocess_shell('python3 server.py'))"
+        echo "Started API..."
     else
-        echo "Skipping apache2..."
+        echo "Skipping API..."
     fi
 }
 
