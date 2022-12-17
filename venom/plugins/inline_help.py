@@ -1,8 +1,5 @@
 # inline_help.py
 
-import asyncio
-import json
-import os
 from typing import Dict, List
 
 from pyrogram import filters
@@ -10,6 +7,7 @@ from pyrogram.errors import MessageEmpty, MessageNotModified
 from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
                             InlineKeyboardMarkup, InlineQuery,
                             InlineQueryResultArticle, InputTextMessageContent)
+from pyrogram.enums import ParseMode
 
 from venom import Config, MyMessage, manager, venom
 from venom.helpers import VenomDecorators, plugin_name
@@ -51,7 +49,7 @@ HELP_['commands'].append(
 async def i_help(_, message: MyMessage):
     """ inline help command """
     bot_u = (await venom.bot.get_me()).username
-    results = await venom.get_inline_bot_results(bot_u, "helpME")
+    results = await venom.get_inline_bot_results(bot_u, "")
     await venom.send_inline_bot_result(message.chat.id, query_id=results.query_id, result_id=results.results[0].id)
 
 
@@ -79,11 +77,6 @@ async def inline_helper(_, iq: InlineQuery):
 ################################################## callback ############################################################
 
 
-# @venom.bot.on_callback_query(filters.regex(r"ihelp_(start|back|next|previous)_(\d{1,2})"), group=4)
-# async def ihelp_navigation(_, cq: CallbackQuery):
-#     """ callback navigation """
-
-
 @venom.bot.on_callback_query(filters.regex(r"^ihelp_([A-Za-z]+)(\d{1,2})_(start|back|next|previous|[A-Za-z]+)_(\d{1,2})"), group=6)
 @VenomDecorators.callback_checker(owner=True)
 async def ihelp_callback(_, cq: CallbackQuery):
@@ -91,12 +84,12 @@ async def ihelp_callback(_, cq: CallbackQuery):
     currently_in = cq.matches[0].group(1)
     last_index = int(cq.matches[0].group(2))
     btn_pressed = cq.matches[0].group(3)
-    index = int(cq.matches[0].group(4)) or 0
-    text_ = ""
-    start_text = "<b>Let's get started with the inline help...</b>"
-    general_text = "<b>Available folders are as below...</b>"
-    folder_text = "<b>Currently in --{}-- folder...</b>"
-    plugin_text = "<b>Right now in --{}-- plugin...</b>"
+    index = int(cq.matches[0].group(4))
+    text_ = "testing"
+    start_text = "**Let's get started with the inline help...**"
+    general_text = "**Available folders are as below...**"
+    folder_text = "**Currently in --{}-- folder...**"
+    plugin_text = "**Right now in --{}-- plugin...**"
     reply_markup = start_button()
     if btn_pressed == "start":
         text_ = general_text
@@ -135,7 +128,12 @@ async def ihelp_callback(_, cq: CallbackQuery):
             text_ = cmd_help(btn_pressed)
             reply_markup = InlineKeyboardMarkup([navigation_buttons(btn_pressed, True, True, 0)])
     try:
-        await cq.edit_message_text(text_, disable_web_page_preview=True, reply_markup=reply_markup)
+        await cq.edit_message_text(
+            text_,
+            disable_web_page_preview=True,
+            reply_markup=reply_markup,
+            parse_mode=ParseMode.MARKDOWN
+        )
     except MessageNotModified:
         print("Not modified")
     except MessageEmpty:
@@ -161,12 +159,14 @@ def folder_buttons(index: int) -> InlineKeyboardMarkup:
     start = False
     end = False
     i = 1
+    while index > 0 and index * 10 > len(folder_names):
+        index -= 1
     i_start = index * 10
     i_end = index * 10 + 9
     if index == 0:
         start = True
     if i_end + 1 > len(folder_names):
-        i_end = len(folder_names) - 1
+        i_end = len(folder_names)
         end = True
     for one in folder_names[i_start:i_end]:
         if one == "help":
@@ -195,9 +195,9 @@ def plugin_buttons(folder: str, index: int) -> InlineKeyboardMarkup | None:
     if index == 0:
         start = True
     if i_end + 1 > len(plugin_names):
-        i_end = len(plugin_names) - 1
+        i_end = len(plugin_names)
         end = True
-    for one in plugin_names:
+    for one in plugin_names[i_start:i_end]:
         btn_ = InlineKeyboardButton(text=one, callback_data=f"ihelp_{folder}{index}_{one}_0")
         btn_row.append(btn_)
         if i % 2 == 0:
@@ -224,9 +224,9 @@ def cmd_buttons(folder: str, plugin: str, index: int) -> InlineKeyboardMarkup:
     if index == 0:
         start = True
     if i_end + 1 > len(cmd_list):
-        i_end = len(cmd_list) - 1
+        i_end = len(cmd_list)
         end = True
-    for one in cmd_list:
+    for one in cmd_list[i_start:i_end]:
         btn_ = InlineKeyboardButton(text=one, callback_data=f"ihelp_{plugin}{index}_{one}_0")
         btn_row.append(btn_)
         if i % 2 == 0:
@@ -265,6 +265,8 @@ def cmd_help(cmd_name: str) -> str:
             f"{dot_} **Flags:** {_flags}"
             f"{dot_} **Syntax:** `{sytx}`\n"
             f"{dot_} **Sudo access:** {my_cmd['sudo'] if 'sudo' in my_cmd.keys() else '`Not documented.`'}\n\n"
+            
+            f"__{my_cmd['usage']}__\n\n"
 
             f"**Location:** `{manager.plugin_loc(plugin)}`\n"
             f"**GitHub link:** **[LINK]({gh_link})**"
