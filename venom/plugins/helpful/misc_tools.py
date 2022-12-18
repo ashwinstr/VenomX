@@ -1,4 +1,4 @@
-from venom import MyMessage, venom
+from venom import MyMessage, venom, Config 
 from pyrogram.errors import UsernameInvalid
 from venom.helpers import plugin_name
 
