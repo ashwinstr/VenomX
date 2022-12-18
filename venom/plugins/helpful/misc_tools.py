@@ -48,7 +48,7 @@ async def join_chat(_,message: MyMessage):
 
 
 @venom.trigger("click")
-async def clck(message: Message):
+async def clck(message: MyMessage):
     button_name = message.input_str
     button = message.reply_to_message
     if not button:
