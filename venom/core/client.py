@@ -34,7 +34,7 @@ async def _init_tasks():
         list_.append(init_func())
     try:
         await asyncio.gather(*list_)
-    except Exception:
+    except BaseException:
         print(traceback.format_exc())
     list_.clear()
 
@@ -137,8 +137,8 @@ class Venom(CustomVenom):
             await self.bot.start()
         await super().start()
         await _init_tasks()
-        END_ = time.time()
-        print(END_ - START_)
+        end_ = time.time()
+        print(end_ - START_)
 #        await idle()
 
     async def stop(self):
@@ -146,6 +146,7 @@ class Venom(CustomVenom):
             _LOG.info(_LOG_STR, "Stopping bot")
             await self.bot.stop()
         _close_db()
+        await self.send_message(Config.LOG_CHANNEL_ID, "`Bot stopped...`")
         await super().stop()
     
     async def restart(self, hard: bool = False):

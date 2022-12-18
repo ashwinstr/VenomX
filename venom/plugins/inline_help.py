@@ -127,6 +127,10 @@ async def ihelp_callback(_, cq: CallbackQuery):
         elif currently_in in plugins:
             text_ = cmd_help(btn_pressed)
             reply_markup = InlineKeyboardMarkup([navigation_buttons(btn_pressed, True, True, 0)])
+    if not reply_markup:
+        await cq.answer("Something unexpected happened...\nReport in support group.", show_alert=True)
+        text_ = start_text
+        reply_markup = start_button()
     try:
         await cq.edit_message_text(
             text_,
@@ -171,7 +175,9 @@ def folder_buttons(index: int) -> InlineKeyboardMarkup:
     for one in folder_names[i_start:i_end]:
         if one == "help":
             continue
-        btn_ = InlineKeyboardButton(text=one, callback_data=f"ihelp_folders{index}_{one}_0")
+        one: str
+        one_cap = one.capitalize()
+        btn_ = InlineKeyboardButton(text=one_cap, callback_data=f"ihelp_folders{index}_{one}_0")
         btn_row.append(btn_)
         if i % 2 == 0:
             btns_.append(btn_row)
@@ -182,7 +188,7 @@ def folder_buttons(index: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(btns_)
 
 
-def plugin_buttons(folder: str, index: int) -> InlineKeyboardMarkup | None:
+def plugin_buttons(folder: str, index: int) -> InlineKeyboardMarkup:
     """ returns plugin buttons """
     plugin_names = sorted(help_structure[folder].keys())
     btn_row = []
@@ -198,7 +204,8 @@ def plugin_buttons(folder: str, index: int) -> InlineKeyboardMarkup | None:
         i_end = len(plugin_names)
         end = True
     for one in plugin_names[i_start:i_end]:
-        btn_ = InlineKeyboardButton(text=one, callback_data=f"ihelp_{folder}{index}_{one}_0")
+        one_cap = one.capitalize()
+        btn_ = InlineKeyboardButton(text=one_cap, callback_data=f"ihelp_{folder}{index}_{one}_0")
         btn_row.append(btn_)
         if i % 2 == 0:
             btns_.append(btn_row)
@@ -209,9 +216,12 @@ def plugin_buttons(folder: str, index: int) -> InlineKeyboardMarkup | None:
     return InlineKeyboardMarkup(btns_)
 
 
-def cmd_buttons(folder: str, plugin: str, index: int) -> InlineKeyboardMarkup:
+def cmd_buttons(folder: str, plugin: str, index: int) -> InlineKeyboardMarkup | bool:
     """ returns command buttons """
-    cmd_dicts = help_structure[folder][plugin]
+    try:
+        cmd_dicts = help_structure[folder][plugin]
+    except KeyError:
+        return False
     cmd_list = [one['command'] for one in cmd_dicts]
     cmd_list = sorted(cmd_list)
     btn_row = []
@@ -227,7 +237,8 @@ def cmd_buttons(folder: str, plugin: str, index: int) -> InlineKeyboardMarkup:
         i_end = len(cmd_list)
         end = True
     for one in cmd_list[i_start:i_end]:
-        btn_ = InlineKeyboardButton(text=one, callback_data=f"ihelp_{plugin}{index}_{one}_0")
+        one_cap = one.capitalize()
+        btn_ = InlineKeyboardButton(text=one_cap, callback_data=f"ihelp_{plugin}{index}_{one}_0")
         btn_row.append(btn_)
         if i % 2 == 0:
             btns_.append(btn_row)
@@ -266,7 +277,7 @@ def cmd_help(cmd_name: str) -> str:
             f"{dot_} **Syntax:** `{sytx}`\n"
             f"{dot_} **Sudo access:** {my_cmd['sudo'] if 'sudo' in my_cmd.keys() else '`Not documented.`'}\n\n"
             
-            f"__{my_cmd['usage']}__\n\n"
+            f"__{my_cmd['usage'].capitalize() if 'usage' in my_cmd.keys() else 'No description...'}__\n\n"
 
             f"**Location:** `{manager.plugin_loc(plugin)}`\n"
             f"**GitHub link:** **[LINK]({gh_link})**"
@@ -274,7 +285,7 @@ def cmd_help(cmd_name: str) -> str:
     else:
         out_ = "`Not documented.`"
     trigg = Config.CMD_TRIGGER
-    return out_.replace("{tr}", trigg)
+    return out_.format(tr=trigg)
 
 
 def navigation_buttons(currently_at: str, start: bool, end: bool, index: int) -> List[InlineKeyboardButton]:
