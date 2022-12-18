@@ -510,9 +510,9 @@ async def fban_p(_, message: MyMessage):
     if sudo_:
         msg_ += f"**By:** {message.from_user.mention}"
     del_ = 3 if "-d" in message.flags or Config.F_DEL else -1
-    await message.edit(msg_, del_in=del_, disable_web_page_preview=True)
+    await message.edit(msg_, del_in=del_, dis_preview=True)
     await venom.send_message(
-        int(Config.FBAN_LOG_CHANNEL), msg_, disable_web_page_preview=True
+        int(Config.FBAN_LOG_CHANNEL), msg_, dis_preview=True
     )
 
 ############################################################################################################################################################
