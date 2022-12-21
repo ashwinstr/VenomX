@@ -2,8 +2,9 @@
 
 from venom import venom, Config
 
+
 async def _init() -> None:
-    me_ = await venom.get_me()
+    me_ = await venom.both.get_me()
     dict_ = {
         'name': me_.first_name,
         'full_name': ' '.join([me_.first_name, me_.last_name or '']),

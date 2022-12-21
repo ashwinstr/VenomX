@@ -13,5 +13,4 @@ from .helpers import plugin_name
 
 python_ver = f"v{ver[0]}.{ver[1]}.{ver[2]}"
 
-
 venom = Venom()

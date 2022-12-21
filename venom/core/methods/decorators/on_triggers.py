@@ -103,8 +103,10 @@ class MyDecorator(Client):
                     if isinstance(rc, _client.Venom):
                         return
                 else:
-                    if ((isinstance(rc, _client.VenomBot) and Config.USER_MODE)
-                            or (isinstance(rc, _client.Venom) and not Config.USER_MODE)):
+                    if (
+                            (isinstance(rc, _client.Venom) and not Config.USER_MODE)
+                            or (isinstance(rc, _client.VenomBot) and Config.USER_MODE)
+                    ):
                         return
                 if Config.PAUSE:
                     return
@@ -114,21 +116,21 @@ class MyDecorator(Client):
                 except Exception as e:
                     error_ = traceback.format_exc().strip()
                     try:
-                        await self.send_message(chat_id=Config.LOG_CHANNEL_ID,
-                                                text=f"#**TRACEBACK**#\n\n"
-                                                     f"**PLUGIN:** `{func.__module__}`\n"
-                                                     f"**FUNCTIONS:** `{func.__name__}`\n"
-                                                     f"**ERROR:** `{e or None}`\n\n"
-                                                     f"```{error_}```")
+                        await self.both.send_message(chat_id=Config.LOG_CHANNEL_ID,
+                                                     text=f"#**TRACEBACK**#\n\n"
+                                                          f"**PLUGIN:** `{func.__module__}`\n"
+                                                          f"**FUNCTIONS:** `{func.__name__}`\n"
+                                                          f"**ERROR:** `{e or None}`\n\n"
+                                                          f"```{error_}```")
                     except MessageTooLong:
                         with open("traceback.txt", "w+") as tb:
                             tb.write(error_)
-                        await self.send_document(chat_id=Config.LOG_CHANNEL_ID,
-                                                 document="traceback.txt",
-                                                 caption=f"#**TRACEBACK**#\n\n"
-                                                         f"**PLUGIN:** `{func.__module__}`\n"
-                                                         f"**FUNCTIONS:** `{func.__name__}`\n"
-                                                         f"**ERROR:** `{e or None}`\n\n")
+                        await self.both.send_document(chat_id=Config.LOG_CHANNEL_ID,
+                                                      document="traceback.txt",
+                                                      caption=f"#**TRACEBACK**#\n\n"
+                                                              f"**PLUGIN:** `{func.__module__}`\n"
+                                                              f"**FUNCTIONS:** `{func.__name__}`\n"
+                                                              f"**ERROR:** `{e or None}`\n\n")
                         os.remove("traceback.txt")
                     link_ = await paste_it(error_)
                     text_ = f"<b>Traceback...</b> [HERE]({link_})"

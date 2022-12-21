@@ -4,19 +4,19 @@ import os
 import sys
 import time
 import importlib
-import logging
 import asyncio
 import traceback
 from typing import Any, Optional, Union
 
 from pyrogram import Client
+from pyrogram.errors import AuthKeyDuplicated
 
 from .methods import Methods
 from ..plugins import all_plugins
 from .database import _close_db
 
 from venom import Config, logging
-from venom.helpers import time_format
+from venom.helpers import time_format, get_import_paths
 
 _LOG = logging.getLogger(__name__)
 _LOG_STR = "### %s ###"
@@ -34,6 +34,8 @@ async def _init_tasks():
         list_.append(init_func())
     try:
         await asyncio.gather(*list_)
+    except ConnectionError:
+        print(f"Connection error.\n{traceback.format_exc()}")
     except BaseException:
         print(traceback.format_exc())
     list_.clear()
@@ -41,14 +43,21 @@ async def _init_tasks():
 
 class CustomVenom(Methods, Client):
     """ testing """
-    
+
+    def __int__(self):
+        """ testing """
+        # self.import_all()
+
     @classmethod
     def parse(cls, client: Union['Venom', 'VenomBot'], **kwargs):
-        return super().parse(client, **kwargs)
+        pass
+
+    # def import_all(self):
+    #     for one in get_import_paths()
 
 class VenomBot(CustomVenom):
 
-    def __init__(self, bot: Optional['VenomBot'] = None, *args, **kwargs) -> None:
+    def __init__(self, bot: Optional[Union['VenomBot', 'Venom']] = None, *args, **kwargs) -> None:
         self.bot = bot
         super().__init__(in_memory=True, *args, **kwargs)
 
@@ -56,6 +65,13 @@ class VenomBot(CustomVenom):
     def ubot(self) -> 'Venom':
         " returns userbot "
         return self._bot
+
+    # async def start(self):
+    #     await super(VenomBot, self).start()
+    #     try:
+    #         await _init_tasks()
+    #     except ConnectionError:
+    #         _LOG.error("### Some initial tasks didn't complete because of client error. ###")
 
 
 class Venom(CustomVenom):
@@ -132,22 +148,32 @@ class Venom(CustomVenom):
         return dict_
 
     async def start(self):
-        if hasattr(self, 'bot') and self.bot is not None:
-            _LOG.info(_LOG_STR, "Starting bot")
+        try:
+            await super().start()
+            Config.VALID_STRING_SESSION = True
+            if hasattr(self, 'bot') and self.bot is not None:
+                _LOG.info(_LOG_STR, "Starting bot")
+                await self.bot.start()
+        except AuthKeyDuplicated:
+            _LOG.info(_LOG_STR, "Starting bot mode as main interface...")
+            Config.STRING_SESSION = ""
             await self.bot.start()
-        await super().start()
         await _init_tasks()
         end_ = time.time()
         print(end_ - START_)
-#        await idle()
+        # await idle()
 
     async def stop(self):
-        if self.bot:
-            _LOG.info(_LOG_STR, "Stopping bot")
+        try:
+            if self.bot:
+                _LOG.info(_LOG_STR, "Stopping bot")
+                await self.bot.stop()
+            _close_db()
+            await self.send_message(Config.LOG_CHANNEL_ID, "`Bot stopped...`")
+            await super().stop()
+        except ConnectionError:
+            await self.bot.send_message(Config.LOG_CHANNEL_ID, "`Bot stopped...`")
             await self.bot.stop()
-        _close_db()
-        await self.send_message(Config.LOG_CHANNEL_ID, "`Bot stopped...`")
-        await super().stop()
     
     async def restart(self, hard: bool = False):
         _LOG.info(_LOG_STR, "Restarting VenomX")

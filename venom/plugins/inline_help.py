@@ -47,11 +47,25 @@ HELP_['commands'].append(
 
 @venom.trigger('ihelp')
 async def i_help(_, message: MyMessage):
-    """ inline help command """
+    """ help command """
+    if venom.isuser:
+        await inline_help(message)
+    else:
+        await bot_help(message)
+
+
+async def inline_help(message: MyMessage):
+    """ inline help method """
     bot_u = (await venom.bot.get_me()).username
     results = await venom.get_inline_bot_results(bot_u, "")
     await venom.send_inline_bot_result(message.chat.id, query_id=results.query_id, result_id=results.results[0].id)
 
+
+async def bot_help(message: MyMessage):
+    """ bot help method """
+    await message.edit("<b>Let's get started with the inline help...</b>",
+                       reply_markup=start_button(),
+                       parse_mode=ParseMode.HTML)
 
 ############################################## inline command starter ##################################################
 
@@ -77,7 +91,23 @@ async def inline_helper(_, iq: InlineQuery):
 ################################################## callback ############################################################
 
 
-@venom.bot.on_callback_query(filters.regex(r"^ihelp_([A-Za-z]+)(\d{1,2})_(start|back|next|previous|[A-Za-z]+)_(\d{1,2})"), group=6)
+@venom.bot.on_callback_query(filters.regex(r"ihelp_bot_mode"), group=1)
+async def inline_bot_mode(_, cq: CallbackQuery):
+    """ Inline bot mode """
+    if Config.USER_MODE:
+        Config.USER_MODE = False
+        text_ = "Mode changed to BOT."
+    else:
+        Config.USER_MODE = True
+        text_ = "Mode changed to USER."
+    if Config.STRING_SESSION:
+        await cq.edit_message_text(text=text_, reply_markup=start_button())
+    else:
+        Config.USER_MODE = False
+        await cq.answer("STRING_SESSION not valid/found...\nCan't change to USER mode.", show_alert=True)
+
+
+@venom.both.on_callback_query(filters.regex(r"^ihelp_([A-Za-z]+)(\d{1,2})_(start|back|next|previous|[A-Za-z]+)_(\d{1,2})"), group=6)
 @VenomDecorators.callback_checker(owner=True)
 async def ihelp_callback(_, cq: CallbackQuery):
     """ callback data for ihelp plugin """
@@ -133,7 +163,7 @@ async def ihelp_callback(_, cq: CallbackQuery):
         reply_markup = start_button()
     try:
         await cq.edit_message_text(
-            text_,
+            text=text_,
             disable_web_page_preview=True,
             reply_markup=reply_markup,
             parse_mode=ParseMode.MARKDOWN
@@ -147,9 +177,13 @@ async def ihelp_callback(_, cq: CallbackQuery):
 ################################################## button functions ####################################################
 
 def start_button() -> InlineKeyboardMarkup:
+    mode_ = "USER" if Config.USER_MODE and Config.STRING_SESSION else "BOT"
     btn_ = [
         [
             InlineKeyboardButton(text="Start", callback_data="ihelp_start0_start_0")
+        ],
+        [
+            InlineKeyboardButton(text=mode_, callback_data="ihelp_bot_mode")
         ]
     ]
     return InlineKeyboardMarkup(btn_)

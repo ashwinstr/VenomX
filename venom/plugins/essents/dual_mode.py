@@ -9,14 +9,14 @@ from venom.core import client as _client
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'essents', 'commands': []}
 
+
 async def _init() -> None:
     found = await Collection.TOGGLES.find_one({'_id': 'USER_MODE'})
     if found:
         Config.USER_MODE = found['switch']
-    else:
-        Config.USER_MODE = bool(Config.STRING_SESSION)
+    Config.USER_MODE = Config.USER_MODE and bool(Config.STRING_SESSION)
 
-#######################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -28,12 +28,22 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger('mode')
 async def dual_mode(_, message: MyMessage):
     " toggle mode [user/bot] "
     Config.FIRST = True
     input_ = message.input_str or ""
     if input_.lower() == "user":
+        if not Config.VALID_STRING_SESSION:
+            try:
+                await venom.bot.send_message(
+                    message.chat.id,
+                    "Session string is <b>invalid</b> or <b>not found</b>\n<b>Can't change to user mode.</b>"
+                )
+            except BaseException as e:
+                print(e)
+            return
         if Config.USER_MODE and isinstance(_, _client.VenomBot):
             return
         if Config.FIRST:

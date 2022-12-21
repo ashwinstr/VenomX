@@ -7,12 +7,11 @@ from pyrogram.types import (
     CallbackQuery,
     InlineQuery,
     InlineQueryResultArticle,
-    InputTextMessageContent,
+    InputTextMessageContent
 )
-from pyrogram.enums import ChatType
 from pyrogram.errors import FloodWait
 
-from venom import Config, MyMessage
+from venom import Config
 
 
 class VenomDecorators:
@@ -20,51 +19,53 @@ class VenomDecorators:
     def callback_checker(owner: bool = False):
         def function(func):
             async def wrapper(venom, c_q: CallbackQuery):
-                " callback query owner and tb checker "
+                """ callback query owner and tb checker """
                 if owner:
                     "owner check"
                     user_id = c_q.from_user.id
-                    if not Config.SUDO\
-                        or (not user_id == Config.OWNER_ID\
-                        and not user_id in Config.SUDO_USERS\
-                        and not user_id in Config.TRUSTED_SUDO_USERS):
+                    if not Config.SUDO \
+                            or (not user_id == Config.OWNER_ID
+                                and user_id not in Config.SUDO_USERS
+                                and user_id not in Config.TRUSTED_SUDO_USERS):
                         " if not owner "
-                        return await c_q.answer(f"Only my owner can access this...!\nPlease deploy your own VenomX bot, thank you.", show_alert=True)
+                        return await c_q.answer(
+                            f"Only my owner can access this...!\nPlease deploy your own VenomX bot, thank you.",
+                            show_alert=True)
                 try:
                     await func(venom, c_q)
                 except FloodWait as e:
                     await asyncio.sleep(e.value + 3)
                 except Exception as e:
                     await venom.send_message(Config.LOG_CHANNEL_ID,
-                                                text=f"### **CALLBACK TRACEBACK** ###\n\n"
-                                                    f"**PLUGIN:** `{func.__module__}`\n"
-                                                    f"**FUNCTION:** `{func.__name__}`\n"
-                                                    f"**ERROR:** `{e or None}`\n\n"
-                                                    f"```{traceback.format_exc().strip()}```")
+                                             text=f"### **CALLBACK TRACEBACK** ###\n\n"
+                                                  f"**PLUGIN:** `{func.__module__}`\n"
+                                                  f"**FUNCTION:** `{func.__name__}`\n"
+                                                  f"**ERROR:** `{e or None}`\n\n"
+                                                  f"```{traceback.format_exc().strip()}```")
+
             return wrapper
+
         return function
 
-
-    def no_group(func):
-        async def wrapper(venom, message: 'MyMessage'):
-            if message.chat.type == ChatType.SUPERGROUP:
-                print(message.id)
-                return await message.edit("`Invalid chat type: SUPERGROUP!`")
-            await func(venom, message)
-        return wrapper
-
+    # def no_group(func):
+    #     async def wrapper(venom, message: 'MyMessage'):
+    #         if message.chat.type == ChatType.SUPERGROUP:
+    #             print(message.id)
+    #             return await message.edit("`Invalid chat type: SUPERGROUP!`")
+    #         await func(venom, message)
+    #     return wrapper
 
     def inline_checker(owner: bool = False):
         def function(func):
             async def wrapper(venom, iq: InlineQuery):
-                " inline query owner and tb checker "
+                """ inline query owner and tb checker """
                 if owner:
                     "owner check"
                     user_id = iq.from_user.id
-                    if not Config.SUDO\
-                        or (not user_id == Config.OWNER_ID\
-                        and not user_id in Config.SUDO_USERS\
-                        and not user_id in Config.TRUSTED_SUDO_USERS):
+                    if not Config.SUDO \
+                            or (not user_id == Config.OWNER_ID
+                                and user_id not in Config.SUDO_USERS
+                                and user_id not in Config.TRUSTED_SUDO_USERS):
                         " if not owner "
                         results = []
                         results.append(
@@ -82,10 +83,12 @@ class VenomDecorators:
                     await asyncio.sleep(e.value + 3)
                 except Exception as e:
                     await venom.send_message(Config.LOG_CHANNEL_ID,
-                                                text=f"### **INLINE_QUERY TRACEBACK** ###\n\n"
-                                                    f"**PLUGIN:** `{func.__module__}`\n"
-                                                    f"**FUNCTION:** `{func.__name__}`\n"
-                                                    f"**ERROR:** `{e or None}`\n\n"
-                                                    f"```{traceback.format_exc().strip()}```")
+                                             text=f"### **INLINE_QUERY TRACEBACK** ###\n\n"
+                                                  f"**PLUGIN:** `{func.__module__}`\n"
+                                                  f"**FUNCTION:** `{func.__name__}`\n"
+                                                  f"**ERROR:** `{e or None}`\n\n"
+                                                  f"```{traceback.format_exc().strip()}```")
+
             return wrapper
+
         return function

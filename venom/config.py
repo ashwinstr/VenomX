@@ -37,7 +37,8 @@ class Config:
     EXECUTOR_TB = {'id': int}
     UPSTREAM_REMOTE = os.environ.get("UPSTREAM_REMOTE", 'upstream')
     UPSTREAM_REPO = os.environ.get("UPSTREAM_REPO", "https://github.com/ashwinstr/VenomX")
-    USER_MODE: bool = True
+    USER_MODE: bool = False
+    VALID_STRING_SESSION: bool = False
 
     ##### characters #####
     BULLET_DOT = "•"

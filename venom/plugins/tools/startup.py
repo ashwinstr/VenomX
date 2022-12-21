@@ -13,7 +13,7 @@ CHANNEL = venom.getCLogger(__name__)
 
 
 async def _init() -> None:
-    END_ = time.time()
+    end_ = time.time()
     restart = await RESTART.find_one({'_id': 'RESTART'})
     update = await UPDATE.find_one({'_id': 'UPDATE'})
     if restart:
@@ -35,5 +35,7 @@ async def _init() -> None:
         CHANNEL.log(start_up_), # startup msg
         RESTART.drop(),
         UPDATE.drop(),
-        venom.both.edit_message_text(chat_, msg_id, text_.format(time_format(END_ - start_))) if (restart or update) else asyncio.sleep(0)
+        venom.both.edit_message_text(chat_, msg_id, text_.format(time_format(end_ - start_)))
+        if (restart or update)
+        else asyncio.sleep(0)
     )
