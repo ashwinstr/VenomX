@@ -1,6 +1,6 @@
 # main.py
 
-from pyrogram.errors import AuthKeyDuplicated
+from pyrogram.errors import AuthKeyDuplicated, FloodWait
 
 from venom import logging, venom
 
@@ -16,3 +16,5 @@ if __name__ == "__main__":
         len_ = len(msg_)
         hash_ = "#"*(len_+12)
         _LOG.error(f"\n{hash_}\n{_ERROR.format(msg_)}\n{hash_}\n")
+    except FloodWait as e:
+        print(f"Please wait for {e.value} seconds...")

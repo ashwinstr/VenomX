@@ -1,7 +1,6 @@
 # config.py
 
 import os
-import heroku3
 import asyncio
 from typing import Dict, List, Union
 from dotenv import load_dotenv
@@ -49,16 +48,6 @@ class Config:
 
     ##### fban configs #####
     FBAN_LOG_CHANNEL = int(os.environ.get("FBAN_LOG_CHANNEL", 0))
-
-    ##### heroku configs #####
-    HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY")
-    HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME")
-    HEROKU_ENV = bool(os.environ.get("DYNO", 0))
-    HEROKU_APP = (
-        heroku3.from_key(HEROKU_API_KEY).apps()[HEROKU_APP_NAME]
-        if HEROKU_ENV and HEROKU_API_KEY and HEROKU_APP_NAME
-        else None
-    )
 
     ##### plugins specific #####
         ### alive

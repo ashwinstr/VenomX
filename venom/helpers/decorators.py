@@ -72,7 +72,7 @@ class VenomDecorators:
                             InlineQueryResultArticle(
                                 title="VenomX",
                                 input_message_content=InputTextMessageContent(
-                                    "Only my <b>owner</b> can use this bot. Please deploy your own <b>VenomX</b>, thank you."
+                                    "Only the <b>owner</b> can use this bot. Please deploy your own <b>VenomX</b>, thank you."
                                 ),
                             )
                         )

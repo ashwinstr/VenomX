@@ -5,11 +5,11 @@ dnspython>=2.0.0
 futures>=3.0.5
 gitpython>=3.1.11
 googletrans==3.1.0a0
-# heroku3
 motor>=2.3.0
 pastypy
 Pillow>=9.0.1
 psutil>=5.7.3
+PyDictionary
 pymediainfo>=5.1.0
 pymongo
 pyrogram==2.0.70

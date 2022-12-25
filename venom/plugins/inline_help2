@@ -1,5 +1,5 @@
 # inline_help.py
-
+import traceback
 from typing import Dict, List
 
 from pyrogram import filters
@@ -100,19 +100,29 @@ async def inline_bot_mode(_, cq: CallbackQuery):
     #     return await cq.answer("Bot mode ihelp is disabled for now, please use it in user mode.", show_alert=True)
     if Config.USER_MODE:
         Config.USER_MODE = False
-        text_ = "**Mode changed to BOT.**"
+        text_ = "Mode changed to BOT."
     else:
         Config.USER_MODE = True
-        text_ = "**Mode changed to USER.**"
+        text_ = "Mode changed to USER."
     if Config.STRING_SESSION:
-        message = cq.message
-        if message is not None:
-            chat_ = cq.message.chat.id
-            msg_ = cq.message.id
-            await venom.bot.edit_message_text(chat_id=chat_, message_id=msg_, text=text_, reply_markup=start_button())
-            # await cq.edit_message_text(text_)
-        else:
-            await cq.edit_message_text(text_, reply_markup=start_button())
+        try:
+            msg_id = cq.message.id if cq.message else None
+            chat_id = cq.message.chat.id if cq.message else None
+            if Config.USER_MODE:
+                await cq.edit_message_text(text_, reply_markup=start_button())
+            else:
+                await venom.trail_mode(
+                    "edit_message_text",
+                    chat_id=chat_id,
+                    message_id=msg_id,
+                    text=text_,
+                    reply_markup=start_button()
+                )
+        except MessageNotModified:
+            pass
+        except (TypeError, AttributeError) as e:
+            await cq.answer("Mode changed...\nPlease trigger again and use USER_MODE ihelp.", show_alert=True)
+            print(e)
     else:
         Config.USER_MODE = False
         await cq.answer("STRING_SESSION not valid/found...\nCan't change to USER mode.", show_alert=True)
@@ -123,7 +133,7 @@ async def inline_bot_mode(_, cq: CallbackQuery):
     )
 
 
-@venom.bot.on_callback_query(filters.regex(r"^ihelp_([A-Z_a-z]+)(\d{1,2})_(start|back|next|previous|[A-Z_a-z]+)_(\d{1,2})"), group=6)
+@venom.bot.on_callback_query(filters.regex(r"^ihelp_([A-Za-z]+)(\d{1,2})_(start|back|next|previous|[A-Za-z]+)_(\d{1,2})"), group=6)
 @VenomDecorators.callback_checker(owner=True)
 async def ihelp_callback(_, cq: CallbackQuery):
     """ callback data for ihelp plugin """
@@ -180,15 +190,15 @@ async def ihelp_callback(_, cq: CallbackQuery):
         text_ = start_text
         reply_markup = start_button()
     try:
-        message = cq.message
-        if message is None:
+        if Config.USER_MODE:
             await cq.edit_message_text(
                 text=text_, disable_web_page_preview=True, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN
             )
         else:
             chat_id = cq.message.chat.id
             message_id = cq.message.id
-            await venom.bot.edit_message_text(
+            await venom.trail_mode(
+                "edit_message_text",
                 chat_id=chat_id,
                 message_id=message_id,
                 text=text_,

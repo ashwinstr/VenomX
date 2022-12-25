@@ -1,4 +1,4 @@
-# edit_message_text.py
+# edit_message_texts.py
 
 import asyncio
 from typing import Union
@@ -23,7 +23,7 @@ class EditMessageText(RClient):
                                 reply_markup: InlineKeyboardMarkup = None) -> 'types.message.MyMessage':
         """ custom edit_message_text method for VenomX """
 
-        disable_web_page_preview = dis_preview
+        disable_web_page_preview = True if dis_preview else False
 
         msg = await super().edit_message_text(chat_id=chat_id,
                                               message_id=message_id,

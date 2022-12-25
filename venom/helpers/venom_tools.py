@@ -4,8 +4,7 @@ import json
 import time
 import re
 import os
-from typing import Union
-from telegraph import Telegraph, upload_file
+from telegraph import Telegraph
 from pastypy import Paste
 
 from pymediainfo import MediaInfo
@@ -23,7 +22,6 @@ from pyrogram.raw.functions.account import ReportPeer
 from pyrogram.errors import UserIdInvalid
 
 from venom import logging, Config, MyMessage, Collection
-from venom.core.types.message import MyMessage
 
 _LOG = logging.getLogger(__name__)
 
@@ -69,21 +67,24 @@ async def post_tg_media(message: MyMessage) -> str:
     " upload media to telegraph "
     media = message.replied
     if (not media.photo
-        and not media.animation
-        and (not media.video
-            or not (media.video.file_name).endswith(".mp4", ".mkv"))
+            and not media.animation
+            and (not media.video
+                 or not media.video.file_name.endswith(".mp4"))
             and (not media.document
-                and (not media.document.file_name).endswith(".png", ".jpeg", ".jpg", ".gif", ".mkv", ".mp4"))):
-        return await message.edit("`File not supported.`")
+                 and not media.document.file_name.endswith((".png", ".jpeg", ".jpg", ".gif", ".mp4")))):
+        await message.edit("`File not supported.`")
+        return "Not found."
     await message.edit("`Downloading...`")
     down_ = await media.download(Config.DOWN_PATH)
     await message.edit("`Uploading to telegraph...`")
     try:
-        up_ = upload_file(down_)
+        up_ = Telegraph.upload_file(f=down_)
     except Exception as t_e:
-        return await message.edit(f"<b>ERROR:</b>\n {str(t_e)}")
+        await message.edit(f"<b>ERROR:</b>\n {str(t_e)}")
+        return "Not found."
     os.remove(down_)
     return f"https://telegra.ph{up_[0]}"
+
 
 def get_owner() -> dict:
     file_ = open("venom/xcache/user.txt", "r")
@@ -92,6 +93,7 @@ def get_owner() -> dict:
         _LOG.info("NO USERNAME FOUND!!!")
     user = json.loads(str(data))
     return user
+
 
 def time_format(time: float) -> str:
     " time formatter "
@@ -105,6 +107,7 @@ def time_format(time: float) -> str:
     out_ += f" <b>{int(sec_)}</b>s"
     return out_.strip()
 
+
 def time_stamp(time: float) -> str:
     " time stamp "
     hour_ = time / 60 / 60
@@ -113,6 +116,7 @@ def time_stamp(time: float) -> str:
     out_ = f"{int(hour_):02}:" if int(hour_) >= 1 else ""
     out_ += f"{int(min_):02}:{int(sec_):02}"
     return out_
+
 
 def extract_id(mention):
     if str(mention).isdigit():
@@ -124,9 +128,10 @@ def extract_id(mention):
     except:
         raise UserIdInvalid
     filter = re.search(r"\d+", men)
-    if filter: 
+    if filter:
         return filter.group(0)
     raise UserIdInvalid
+
 
 def report_user(chat: int, user_id: int, msg: dict, msg_id: int, reason: str):
     if ("nsfw" or "NSFW" or "porn") in reason:
@@ -149,8 +154,9 @@ def report_user(chat: int, user_id: int, msg: dict, msg_id: int, reason: str):
     )
     return for_
 
+
 class Media_Info:
-    def data(media: str) -> dict:
+    def data(media: str) -> dict | None:
         "Get downloaded media's information"
         found = False
         media_info = MediaInfo.parse(media)
@@ -170,8 +176,10 @@ class Media_Info:
                 fc_ = track.frame_count
                 media_size_1 = track.stream_size
                 other_media_size_ = track.other_stream_size
-                media_size_2 = [other_media_size_[1], other_media_size_[2], other_media_size_[3], other_media_size_[4]] if other_media_size_ else None
-
+                media_size_2 = [other_media_size_[1], other_media_size_[2], other_media_size_[3],
+                                other_media_size_[4]] if other_media_size_ else None
+        if not found:
+            return None
         dict_ = {
             "media_type": type_,
             "format": format_,
@@ -187,13 +195,14 @@ class Media_Info:
         } if found else None
         return dict_
 
-async def paste_it(msg_content: Union[MyMessage, str]) -> str:
-    " paste content to pasty.lus "
+
+async def paste_it(msg_content: Union['MyMessage', str]) -> str:
+    """ paste content to pasty.lus """
     if isinstance(msg_content, MyMessage):
         reply_ = msg_content.replied
         if reply_.document:
             if "text/" not in str(reply_.document.mime_type):
-                return False
+                return "Failed..."
             await msg_content.edit("`Downloading document...`")
             down_ = await reply_.download()
             with open(down_, "r") as file_:
@@ -202,18 +211,21 @@ async def paste_it(msg_content: Union[MyMessage, str]) -> str:
         elif reply_.text or reply_.caption:
             content_ = reply_.text or reply_.caption
         else:
-            return False
+            return "Failed..."
     elif isinstance(msg_content, str):
         content_ = msg_content
+    else:
+        return "Failed..."
     paste_ = Paste(content=content_)
     paste_.save()
     return paste_.url
+
 
 async def restart_msg(msg: MyMessage, text: str = "") -> None:
     try:
         await Collection.RESTART.insert_one(
             {
-                '_id':'RESTART',
+                '_id': 'RESTART',
                 'chat_id': msg.chat.id,
                 'msg_id': msg.id,
                 'start': time.time(),
@@ -221,4 +233,4 @@ async def restart_msg(msg: MyMessage, text: str = "") -> None:
             }
         )
     except Exception as e:
-        await msg.edit(e)
+        await msg.edit(str(e))
