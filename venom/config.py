@@ -48,8 +48,9 @@ class Config:
 
     ##### fban configs #####
     FBAN_LOG_CHANNEL = int(os.environ.get("FBAN_LOG_CHANNEL", 0))
+    F_DEL: bool = False
 
-    ##### plugins specific #####
+##### plugins specific #####
         ### alive
     ALIVE_PIC = ""
     DEFAULT_ALIVE_PIC = "https://telegra.ph/file/34c891bbd8d21c0564cbc.jpg"

@@ -1,6 +1,7 @@
 # fbans.py
 
 import asyncio
+import traceback
 from asyncio.exceptions import TimeoutError
 
 from pyrogram import filters
@@ -22,6 +23,8 @@ FED_LIST = Collection.FED_LIST
 
 async def _init() -> None:
     tog = await TOGGLES.find_one({"_id": "FBAN_TAG"})
+    found = await TOGGLES.find_one({"_id": "F_DEL"})
+    Config.F_DEL = found["switch"] if found else False
     if tog:
         Config.FBAN_TAG = tog["switch"]
     else:
@@ -46,9 +49,10 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger('fban_tag')
 async def fban_sudo_tags(_, message: MyMessage):
-    " enable/disable fbanner's tag "
+    """ enable/disable fbanner's tag """
     if "-c" in message.flags:
         switch = "ON" if Config.FBAN_TAG else "OFF"
         return await message.edit(f"The switch is currently <b>{switch}</b>.", del_in=5)
@@ -62,11 +66,8 @@ async def fban_sudo_tags(_, message: MyMessage):
         {"_id": "FBAN_TAG"}, {"$set": {"data": Config.FBAN_TAG}}, upsert=True
     )
 
-#############################################################################################################################################################
+########################################################################################################################
 
-async def _init() -> None:
-    found = await TOGGLES.find_one({"_id": "F_DEL"})
-    Config.F_DEL = found["switch"] if found else False
 
 HELP_['commands'].append(
     {
@@ -79,6 +80,7 @@ HELP_['commands'].append(
         'sudo': False
     }
 )
+
 
 @venom.trigger('f_del')
 async def f_delete(_, message: MyMessage):
@@ -104,6 +106,7 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger('addf')
 async def addfed_(_, message: MyMessage):
     """Adds current chat to connected Feds."""
@@ -121,7 +124,7 @@ async def addfed_(_, message: MyMessage):
     await message.edit(msg_, del_in=5)
     await CHANNEL.log(msg_)
 
-#############################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -171,7 +174,7 @@ async def delfed_(_, message: MyMessage):
         )
     await CHANNEL.log(msg_)
 
-#####################################################################################################################################################
+########################################################################################################################
 
 HELP_["commands"].append(
     {
@@ -182,6 +185,7 @@ HELP_["commands"].append(
         'sudo': True
     }
 )
+
 
 @venom.trigger('fban')
 async def fban_(_, message: MyMessage):
@@ -288,7 +292,7 @@ async def fban_(_, message: MyMessage):
         except BaseException:
             failed.append(data["fed_name"])
     if total == 0:
-        return await message.err(
+        return await message.edit(
             "You Don't have any feds connected!\nsee .help addf, for more info."
         )
     await message.edit(fban_arg[2])
@@ -323,9 +327,10 @@ HELP_["commands"].append(
     }
 )
 
+
 @venom.trigger('fbanp')
 async def fban_p(_, message: MyMessage):
-    """Fban user from connected feds with proof."""
+    """ Fban user from connected feds with proof. """
     fban_arg = ["❯", "❯❯", "❯❯❯", "❯❯❯ <b>FBanned {}{}</b>"]
     d_err = ("Failed to detect user **{}**, fban might not work...",)
     if not Config.FBAN_LOG_CHANNEL:
@@ -387,7 +392,7 @@ async def fban_p(_, message: MyMessage):
     else:
         reply = message.reply_to_message
         if not reply:
-            await message.err("Please reply to proof...", del_in=7)
+            await message.edit("Please reply to proof...", del_in=7)
             return
         chat_id = message.chat.id
         user = reply.from_user.id
@@ -404,7 +409,7 @@ async def fban_p(_, message: MyMessage):
     ):
         fps = False
         if not input_:
-            await message.err(
+            await message.edit(
                 "Can't fban replied/specified user because of them being SUDO_USER or OWNER, give user ID...",
                 del_in=5,
             )
@@ -429,7 +434,7 @@ async def fban_p(_, message: MyMessage):
             or user == Config.OWNER_ID
             or user == (await venom.get_me()).id
         ):
-            return await message.err(
+            return await message.edit(
                 "Can't fban user that exists in SUDO or OWNERS...", del_in=5
             )
     try:
@@ -466,7 +471,7 @@ async def fban_p(_, message: MyMessage):
         total += 1
         chat_id = int(data["_id"])
         try:
-            user = f"<a href='tg://user?id={user}'>{user}</a>" if user.isdigit() else user
+            user = f"<a href='tg://user?id={user}'>{user}</a>" if isinstance(user, int) else user
             send_ = await venom.send_message(
                 chat_id,
                 f"/fban {user} {reason}"
@@ -486,10 +491,11 @@ async def fban_p(_, message: MyMessage):
             pass
         except FloodWait as f:
             await asyncio.sleep(f.value + 3)
-        except BaseException:
+        except BaseException as e:
+            await CHANNEL.log(f"{e}\n\n{traceback.format_exc()}")
             failed.append(data["fed_name"])
     if total == 0:
-        return await message.err(
+        return await message.edit(
             "You Don't have any feds connected!\nsee .help addf, for more info."
         )
     await message.edit(fban_arg[2])
