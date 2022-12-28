@@ -18,13 +18,13 @@ TOGGLES = Collection.TOGGLES
 FED_LIST = Collection.FED_LIST
 
 
-#############################################################################################################################################################
+########################################################################################################################
 
 
 async def _init() -> None:
-    tog = await TOGGLES.find_one({"_id": "FBAN_TAG"})
     found = await TOGGLES.find_one({"_id": "F_DEL"})
     Config.F_DEL = found["switch"] if found else False
+    tog = await TOGGLES.find_one({"_id": "FBAN_TAG"})
     if tog:
         Config.FBAN_TAG = tog["switch"]
     else:
@@ -52,7 +52,7 @@ HELP_['commands'].append(
 
 @venom.trigger('fban_tag')
 async def fban_sudo_tags(_, message: MyMessage):
-    """ enable/disable fbanner's tag """
+    """ Enable/disable fbanner's tag """
     if "-c" in message.flags:
         switch = "ON" if Config.FBAN_TAG else "OFF"
         return await message.edit(f"The switch is currently <b>{switch}</b>.", del_in=5)
@@ -94,7 +94,7 @@ async def f_delete(_, message: MyMessage):
     out_ = "ON" if Config.F_DEL else "OFF"
     await message.edit(f"Fban confirmation auto-delete : <b>{out_}</b>.")
 
-#############################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -109,7 +109,7 @@ HELP_['commands'].append(
 
 @venom.trigger('addf')
 async def addfed_(_, message: MyMessage):
-    """Adds current chat to connected Feds."""
+    """ Adds current chat to connected Feds. """
     name = message.input_str or message.chat.title
     chat_id = message.chat.id
     found = await FED_LIST.find_one({"_id": chat_id})
@@ -138,9 +138,10 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger('delf')
 async def delfed_(_, message: MyMessage):
-    """Removes current chat from connected Feds."""
+    """ Removes current chat from connected Feds. """
     if "-all" in message.flags:
         admin_ = message.from_user.id
         reg_ = filters.regex("^(?i)(yes|y)$")
@@ -156,7 +157,6 @@ async def delfed_(_, message: MyMessage):
     try:
         chat_ = await venom.get_chat(message.input_str or message.chat.id)
         chat_id = chat_.id
-        chat_.title
     except (PeerIdInvalid, IndexError):
         chat_id = message.input_str
         id_ = chat_id.replace("-", "")
@@ -427,7 +427,7 @@ async def fban_p(_, message: MyMessage):
             await CHANNEL.log(d_err)
         try:
             reason = split_[1]
-        except BaseException:
+        except IndexError:
             reason = "not specified"
         if (
             user in Config.SUDO_USERS
@@ -533,21 +533,27 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger('unfban')
 async def unfban_(_, message: MyMessage):
     """Unbans a user from connected Feds."""
-    user = (message.extract_user_and_text)[0]
     fban_arg = ["❯", "❯❯", "❯❯❯", "❯❯❯ <b>Un-FBanned {}</b>"]
     await message.edit(fban_arg[0])
     input_ = message.input_str
     if message.reply_to_message:
         reason = input_
+        user = message.replied.from_user.id
     else:
+        if not input_:
+            return await message.edit("`Provide user to unfban...`", del_in=5)
         try:
-            reason = input_.split(" ", 1)[1]
-        except BaseException:
+            split_ = input_.split(" ", 1)
+            user = split_[0]
+            reason = split_[1]
+        except IndexError:
+            user = input_
             reason = "not specified, maybe they solved it out"
-    PROOF_CHANNEL = Config.FBAN_LOG_CHANNEL if Config.FBAN_LOG_CHANNEL else Config.LOG_CHANNEL_ID
+    proof_channel = Config.FBAN_LOG_CHANNEL if Config.FBAN_LOG_CHANNEL else Config.LOG_CHANNEL_ID
     error_msg = "Provide a User ID or reply to a User"
     if user is None:
         return await message.edit(error_msg, del_in=5)
@@ -564,7 +570,7 @@ async def unfban_(_, message: MyMessage):
         total += 1
         chat_id = int(data["_id"])
         try:
-            user = f"<a href='tg://user?id={user}'>{user}</a>" if user.isdigit() else user
+            user = f"<a href='tg://user?id={user}'>{user}</a>" if isinstance(user, int) else user
             send_ = await venom.send_message(chat_id, f"/unfban {user} {reason}")
             response = await send_.wait(filters=(filters.user([609517172]) & ~filters.service))
             resp = response.text
@@ -574,15 +580,14 @@ async def unfban_(_, message: MyMessage):
                 and ("Un-FedBan" not in resp)
             ):
                 failed.append(f"{data['fed_name']}  \n__ID__: `{data['_id']}`")
-
-        except BaseException:
+        except BaseException as e:
+            await CHANNEL.log(str(e))
             failed.append(data["fed_name"])
     if total == 0:
-        return await message.err(
+        return await message.edit(
             "You Don't have any feds connected!\nsee .help addf, for more info."
         )
     await message.edit(fban_arg[2])
-
     if len(failed) != 0:
         status = f"Failed to un-fban in `{len(failed)}/{total}` feds.\n"
         for i in failed:
@@ -594,9 +599,9 @@ async def unfban_(_, message: MyMessage):
         + f"\n<b>ID:</b> <code>{user}</code>\n<b>Reason:</b> {reason}\n**Status:** {status}"
     )
     await message.edit(msg_)
-    await venom.send_message(int(PROOF_CHANNEL), msg_)
+    await venom.send_message(int(proof_channel), msg_)
 
-#################################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -609,6 +614,7 @@ HELP_['commands'].append(
         'sudo': True
     }
 )
+
 
 @venom.trigger('listf')
 async def fban_lst_(_, message: MyMessage):

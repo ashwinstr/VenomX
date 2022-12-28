@@ -34,14 +34,14 @@ async def _init() -> None:
         _LOG.info(_LOG_STR, "Remote upstream exists, using same")
 
 
-########################################################################################################################################################################
+########################################################################################################################
 
 
 HELP['commands'].append(
     {
         'command': 'update',
         'flags': {
-            '-now': 'pull updates',
+            '-pull': 'pull updates',
             '-r': 'update requirements'
         },
         'about': 'bot updater',
@@ -50,13 +50,14 @@ HELP['commands'].append(
     }
 )
 
+
 @venom.trigger('update')
 async def update_r(_, message: MyMessage):
-    " bot updater "
-    START_ = time.time()
+    """ bot updater """
+    start_ = time.time()
     pull_ = False
     up_req = False
-    if "-now" in message.flags:
+    if "-pull" in message.flags:
         pull_ = True
     if "-h" in message.flags:
         up_req = True
@@ -101,7 +102,7 @@ async def update_r(_, message: MyMessage):
             '_id': 'UPDATE',
             'chat_id': message.chat.id,
             'msg_id': message.id,
-            'start': START_
+            'start': start_
         }
     )
     if up_req:
@@ -109,11 +110,9 @@ async def update_r(_, message: MyMessage):
     else:
         asyncio.get_event_loop().create_task(venom.restart())
 
-    
 
-
-def get_update_list(repo: Repo, branch: str) -> str:
-    " get update list "
+def get_update_list(repo: Repo, branch: str) -> str and int:
+    """ get update list """
     repo.remote(Config.UPSTREAM_REMOTE).fetch(branch)
     upst = Config.UPSTREAM_REPO.rstrip("/")
     out = ""
@@ -127,8 +126,9 @@ def get_update_list(repo: Repo, branch: str) -> str:
             return out, total_
     return out, total_
 
-def pull_update(repo: Repo, branch: str) -> str:
-    " pull update from upstream "
+
+def pull_update(repo: Repo, branch: str) -> None:
+    """ pull update from upstream """
     repo.git.checkout(branch, force=True)
     repo.git.reset("--hard", branch)
     repo.remote(Config.UPSTREAM_REMOTE).pull(branch, force=True)
