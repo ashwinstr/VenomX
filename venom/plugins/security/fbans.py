@@ -313,13 +313,14 @@ async def fban_(_, message: MyMessage):
     await message.edit(msg_, del_in=del_)
     await venom.send_message(int(PROOF_CHANNEL), msg_)
 
-###############################################################################################################################################################
+########################################################################################################################
 
 HELP_["commands"].append(
     {
         'command': 'fbanp',
         'flags': {
-            '-r': 'remote fban, use with direct proof link'
+            '-r': 'remote fban, use with direct proof link',
+            '-test': '''for testing purpose, won't report the user'''
         },
         'usage': 'fban users with proof',
         'syntax': '{tr}fbanp [reply to proof] [reason]',
@@ -331,6 +332,7 @@ HELP_["commands"].append(
 @venom.trigger('fbanp')
 async def fban_p(_, message: MyMessage):
     """ Fban user from connected feds with proof. """
+    flags_ = message.flags
     fban_arg = ["❯", "❯❯", "❯❯❯", "❯❯❯ <b>FBanned {}{}</b>"]
     d_err = ("Failed to detect user **{}**, fban might not work...",)
     if not Config.FBAN_LOG_CHANNEL:
@@ -362,7 +364,7 @@ async def fban_p(_, message: MyMessage):
         link_ = link_split[0]
         try:
             reason = " ".join(link_split[1:])
-        except BaseException:
+        except IndexError:
             reason = "Not specified"
         try:
             user_and_message = link_.split("/")
@@ -455,8 +457,8 @@ async def fban_p(_, message: MyMessage):
         message_ids=proof,
     )
     reason = reason or "Not specified"
-    reason += " || {" + f"{log_fwd.link}" + "}"
-    if fps:
+    reason += " || {" + log_fwd.link + "}"
+    if fps and '-test' not in flags_:
         report_user(
             chat=chat_id,
             user_id=user,
@@ -466,7 +468,10 @@ async def fban_p(_, message: MyMessage):
         )
         reported = "</b> and <b>reported "
     else:
-        reported = ""
+        if '-test' in flags_:
+            reported = "</b> and <b>tested with "
+        else:
+            reported = ""
     async for data in FED_LIST.find():
         total += 1
         chat_id = int(data["_id"])
@@ -515,19 +520,19 @@ async def fban_p(_, message: MyMessage):
     )
     if sudo_:
         msg_ += f"**By:** {message.from_user.mention}"
-    del_ = 3 if "-d" in message.flags or Config.F_DEL else -1
+    del_ = 3 if "-d" in flags_ or Config.F_DEL else -1
     await message.edit(msg_, del_in=del_, dis_preview=True)
     await venom.send_message(
         int(Config.FBAN_LOG_CHANNEL), msg_, dis_preview=True
     )
 
-############################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
         'command': 'unfban',
         'flags': None,
-        'usage': "unfban user",
+        'usage': "Unfban user",
         'syntax': '{tr}unfban [username|reply to user|user ID]',
         'sudo': False
     }
