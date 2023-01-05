@@ -36,7 +36,7 @@ def plugin_name(name: str) -> str:
 
 
 def get_import_paths(root: str, path: str) -> Union[str, List[str]]:
-    " get import paths "
+    """ get import paths """
     seperator = "\\" if "\\" in root else "/"
     if isfile(path):
         return '.'.join(relpath(path, root)).split(seperator)[:-3]
@@ -201,13 +201,14 @@ async def paste_it(msg_content: Union['MyMessage', str]) -> str:
     if isinstance(msg_content, MyMessage):
         reply_ = msg_content.replied
         if reply_.document:
-            if "text/" not in str(reply_.document.mime_type):
+            try:
+                await msg_content.edit("`Downloading document...`")
+                down_ = await reply_.download()
+                with open(down_, "r") as file_:
+                    content_ = file_.read()
+                os.remove(down_)
+            except:
                 return "Failed..."
-            await msg_content.edit("`Downloading document...`")
-            down_ = await reply_.download()
-            with open(down_, "r") as file_:
-                content_ = file_.read()
-            os.remove(down_)
         elif reply_.text or reply_.caption:
             content_ = reply_.text or reply_.caption
         else:

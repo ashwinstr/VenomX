@@ -34,7 +34,7 @@ HELP_['commands'].append(
 
 @venom.trigger('dsecrets')
 async def destroy_secrets(_, message: MyMessage):
-    " destroy all secrets "
+    """ destroy all secrets """
     await message.edit("`Destroying secrets...`")
     await Collection.SECRET.drop()
     await message.edit("`All secrets destroyed !!!`", del_in=5)
@@ -42,7 +42,7 @@ async def destroy_secrets(_, message: MyMessage):
 ########################################################################################################################
 
 
-@venom.bot.on_inline_query(filters.regex(r"^(\@\w+) \<s\>(\w+)\<\/s\>$"))
+@venom.bot.on_inline_query(filters.regex(r"^(\@\w+) \<s\>(.*)\<\/s\>$"))
 @VenomDecorators.inline_checker(owner=True)
 async def secret_whisper(_, i_q: InlineQuery):
     """ inline query for secret message """
@@ -58,7 +58,7 @@ async def secret_whisper(_, i_q: InlineQuery):
         InlineQueryResultArticle(
             title="Secret whisper.",
             input_message_content=InputTextMessageContent(
-                message_text="You have sent a secret message."
+                message_text=f"You have sent a secret message.\nfor <b>{user_.mention}</b>..."
             ),
             reply_markup=activate_button(id_)
         )
@@ -115,7 +115,7 @@ async def secret_callback(_, c_q: CallbackQuery):
 
 
 def activate_button(rnd_id: int) -> InlineKeyboardMarkup:
-    " return activate button "
+    """ return activate button """
     btns_ = InlineKeyboardMarkup(
         [
             [
@@ -127,7 +127,7 @@ def activate_button(rnd_id: int) -> InlineKeyboardMarkup:
 
 
 def secret_button(rnd_id: int) -> InlineKeyboardMarkup:
-    " return secret button "
+    """ return secret button """
     btn_ = InlineKeyboardMarkup(
         [
             [

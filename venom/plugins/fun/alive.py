@@ -139,14 +139,13 @@ class AliveInfo:
 
     @staticmethod
     def alive_info(user_) -> str:
-        " alive inline caption "
+        """ alive inline caption """
         info_ = f"""
 <b>[VenomX](https://github.com/ashwinstr/VenomX)</b> is functioning.
 
 {DOT_} <b>User {':':>12}</b> `{user_}`
 {DOT_} <b>Python {':':>7}</b> `{python_ver}`
 {DOT_} <b>Pyro {':':>12}</b> `{ver}`
-{DOT_} <b>Dev {':':>13}</b> [Kakashi](https://t.me/Kakashi_HTK)
 
 <b>Support:</b> [VenomX Support](https://t.me/VenomX_support)
 """
@@ -160,6 +159,10 @@ class AliveInfo:
                 InlineKeyboardButton(text="REPO", url=Config.UPSTREAM_REPO),
                 InlineKeyboardButton(text="INFO", callback_data="INFO")
             ],
+            [
+                InlineKeyboardButton(text="Dev list", callback_data="devs_list"),
+                InlineKeyboardButton(text="Generous Friends", callback_data="helpers_list")
+            ]
         ]
         return InlineKeyboardMarkup(inline_keyboard=btn_)
 
@@ -170,7 +173,7 @@ class AliveInfo:
 @venom.bot.on_inline_query(filters.regex("^alive$"))
 @VenomDecorators.inline_checker(owner=True)
 async def alive_media_inline(_, i_q: InlineQuery):
-    " alive media inline query "
+    """ alive media inline query """
     iq = i_q.query
     results = []
     if iq == "alive":
@@ -202,6 +205,7 @@ async def alive_media_inline(_, i_q: InlineQuery):
                     video_url=Config.ALIVE_PIC,
                     caption=cap_,
                     reply_markup=btns_,
+                    thumb_url=Config.ALIVE_PIC
                 )
             )
         else:
@@ -216,7 +220,7 @@ async def alive_media_inline(_, i_q: InlineQuery):
         await i_q.answer(results=results, cache_time=1)
 
 
-#################################################################################################################################################################
+########################################################################################################################
 
 
 @venom.bot.on_callback_query(filters.regex("^INFO$"))
@@ -228,6 +232,30 @@ async def bot_info(_, cq: CallbackQuery):
 {DOT_} 𝗢𝘄𝗻𝗲𝗿: Kakashi
 {DOT_} 𝗕𝗮𝘀𝗲𝗱 𝗼𝗻:
     USERGE/USERGE-X
-{DOT_} 𝗥𝗲𝗹𝗲𝗮𝘀𝗲 𝗱𝗮𝘁𝗲: NO ETA
+{DOT_} 𝗥𝗲𝗹𝗲𝗮𝘀𝗲 𝗱𝗮𝘁𝗲: 1st January, 2023
 """
     await cq.answer(info_, show_alert=True)
+
+
+@venom.bot.on_callback_query(filters.regex("^(devs|helpers)_list$"))
+async def devs_list_cb(_, cq: CallbackQuery):
+    """ dev list callback query """
+    match_ = cq.matches[0].group(1)
+    if match_ == "devs":
+        list_ = """
+𝗠𝗮𝗶𝗻 𝗗𝗲𝘃: 𝗞𝗮𝗸𝗮𝘀𝗵𝗶
+𝗧𝗲𝗮𝗺 𝗠𝗲𝗺𝗯𝗲𝗿𝘀:
+    Ryuk Shinigami
+    ◢◤ 𝘕𝘰𝘵𝘚𝘩𝘳𝘰𝘶𝘥 家
+"""
+    else:
+        list_ = """
+𝗚𝗲𝗻𝗲𝗿𝗼𝘂𝘀 𝗙𝗿𝗶𝗲𝗻𝗱𝘀:
+    Dheel Patel
+    Fnix
+    ルーク | Luke
+𝗧𝗲𝘀𝘁𝗶𝗻𝗴 𝗘𝘅𝗽𝗲𝗿𝘁𝘀:
+    Bedircan AYAYDIN
+    Billou&Audrey ¯\_(ツ)_/¯
+"""
+    await cq.answer(list_, show_alert=True)

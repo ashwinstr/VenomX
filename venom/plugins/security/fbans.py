@@ -146,9 +146,12 @@ async def delfed_(_, message: MyMessage):
         admin_ = message.from_user.id
         reg_ = filters.regex("^(?i)(yes|y)$")
         try:
-            ask_ = await message.ask("Are you SURE? Reply 'y' or 'yes' to confirm.", filters=(reg_ & filters.user([admin_, Config.OWNER_ID])))
+            ask_ = await message.edit("Are you SURE? Reply 'y' or 'yes' to confirm.")
+            resp = await ask_.wait(filters=(reg_ & filters.user([admin_, Config.OWNER_ID])))
         except TimeoutError:
             return await message.edit("`Reply not found... Aborting.`", del_in=5)
+        if resp.text.upper() not in ["Y", "YES"]:
+            return await message.edit("`Aborting...`", del_in=5)
         return await asyncio.gather(
             FED_LIST.drop(),
             CHANNEL.log("<b>Deleted all groups from FED_LIST.</b>"),
@@ -236,11 +239,11 @@ async def fban_(_, message: MyMessage):
             user = user_.id
         except (PeerIdInvalid, IndexError, UsernameInvalid):
             d_err = f"Failed to detect user **{user}**, fban might not work..."
-            await message.edit_or_send_as_file(f"{d_err}\nType `y` to continue.")
+            await message.edit(f"{d_err}\nType `y` to continue.")
             await CHANNEL.log(d_err)
             try:
                 resp = await venom.listen(message.chat.id, filters=(filters.user(message.from_user.id)))
-            except BaseException:
+            except asyncio.TimeoutError:
                 return await message.edit(
                     f"`Fban terminated...\nReason: Response timeout.`"
                 )
@@ -274,9 +277,9 @@ async def fban_(_, message: MyMessage):
         total += 1
         chat_id = int(data["_id"])
         try:
-            user = f"<a href='tg://user?id={user}'>{user}</a>" if user.isdigit() else user
+            user = f"<a href='tg://user?id={user}'>{user}</a>" if isinstance(user, int) else user
             send_ = await venom.send_message(chat_id, f"/fban {user} {reason}")
-            response = await send_.wait(filters=(filters.user([609517172]) & ~filters.service))
+            response = await send_.wait(filters=(filters.user([609517172, 2059887769]) & ~filters.service))
             resp = response.text
             if not (
                 ("New FedBan" in resp)
@@ -481,7 +484,7 @@ async def fban_p(_, message: MyMessage):
                 chat_id,
                 f"/fban {user} {reason}"
             )
-            response = await send_.wait(filters=(filters.user([609517172]) & ~filters.service))
+            response = await send_.wait(filters=(filters.user([609517172, 2059887769]) & ~filters.service))
             resp = response.text
             if not (
                 ("New FedBan" in resp)
@@ -577,7 +580,7 @@ async def unfban_(_, message: MyMessage):
         try:
             user = f"<a href='tg://user?id={user}'>{user}</a>" if isinstance(user, int) else user
             send_ = await venom.send_message(chat_id, f"/unfban {user} {reason}")
-            response = await send_.wait(filters=(filters.user([609517172]) & ~filters.service))
+            response = await send_.wait(filters=(filters.user([609517172, 2059887769]) & ~filters.service))
             resp = response.text
             if (
                 ("New un-FedBan" not in resp)

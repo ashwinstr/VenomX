@@ -14,7 +14,7 @@ HELP["commands"].extend((
         'flags': {
             "-c": "Set in Config."
         },
-        'about': "Set OS or Config vars.",
+        'usage': "Set OS or Config vars.",
         'syntax': '\n  {tr}setv var value \n  {tr}setv -c var value',
         'sudo': False
     },
@@ -23,7 +23,7 @@ HELP["commands"].extend((
         'flags': {
             "-c": "Delete from Config."
         },
-        'about': "Delete OS or Config Vars.",
+        'usage': "Delete OS or Config Vars.",
         'syntax': '\n  {tr}delv var_name \n  {tr}delv -c var_name',
         'sudo': False
     },
@@ -32,7 +32,7 @@ HELP["commands"].extend((
         'flags': {
             "-c": "Check in Config."
         },
-        'about': "View OS or Config Vars ",
+        'usage': "View OS or Config Vars ",
         'syntax': '\n  {tr}getv var_name \n  {tr}getv -c var_name',
         'sudo': False
     }

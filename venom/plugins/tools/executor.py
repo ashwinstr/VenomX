@@ -1,4 +1,5 @@
 # executor.py
+# taken from USERGE-X
 
 import sys
 import io
@@ -21,7 +22,7 @@ from ..security.hide_vars import secure_cmd
 help_ = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
 
 
-#########################################################################################################################################################
+########################################################################################################################
 
 
 help_['commands'].append(
@@ -39,7 +40,7 @@ help_['commands'].append(
 
 @venom.trigger('eval')
 async def evaluate(_, message: MyMessage):
-    " evaluate your code "
+    """ evaluate your code """
     secure_ = await secure_cmd(message)
     if not secure_:
         return
@@ -84,12 +85,12 @@ async def evaluate(_, message: MyMessage):
     sys.stdout = old_stdout
     sys.stderr = old_stderr
     evaluation = exc or stderr or stdout or ret_val
-    output = f"**>** ```{cmd}```\n\n"
+    output = f"**>** `{cmd}`\n\n"
     if evaluation is not None:
         if isinstance(evaluation, str) and Config.GH_TOKEN:
             evaluation = str(evaluation).replace(Config.GH_TOKEN, "|gh_token|")
         if mono_:
-            output += f"**>>** ```{evaluation}```"
+            output += f"**>>** `{evaluation}`"
             parse_ = ParseMode.MARKDOWN
         else:
             output += f"**>>** {evaluation}"
@@ -105,7 +106,7 @@ async def evaluate(_, message: MyMessage):
         await message.delete()
 
 
-#################################################################################################################################################################
+########################################################################################################################
 
 
 help_['commands'].append(
@@ -117,9 +118,10 @@ help_['commands'].append(
     }
 )
 
+
 @venom.trigger("term")
 async def term_(_, message: MyMessage):
-    " run commands in shell (terminal with live update) "
+    """ run commands in shell (terminal with live update) """
     cmd = await init_func(message)
     if cmd is None:
         return
@@ -156,10 +158,10 @@ async def init_func(message: MyMessage):
     cmd = message.filtered_input
     if not cmd:
         await message.edit("`Input not found...`")
-        return False
+        return ""
     if "config.env" in cmd:
         await message.edit("`That's a dangerous operation! Not Permitted!`")
-        return False
+        return ""
     return cmd
 
 

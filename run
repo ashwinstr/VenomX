@@ -1,8 +1,8 @@
 #!/bin/sh
 
 server() {
-    if test $API_PORT ; then 
-        python3 -c "import asyncio;asyncio.run(asyncio.create_subprocess_shell('python3 server.py'))"
+    if test "$API_PORT" ; then
+        python3 -c "import asyncio; asyncio.run(asyncio.create_subprocess_shell('python3 server.py'))"
         echo "Started API..."
     else
         echo "Skipping API..."

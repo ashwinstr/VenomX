@@ -1,9 +1,11 @@
 # by Ryuk and Kakashi
 
-from venom import *
-from pyrogram.errors import UsernameInvalid
+from pyrogram.errors import UsernameInvalid, PeerIdInvalid
+
+from venom import venom, MyMessage, Config, plugin_name
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'helpful', 'commands': []}
+CHANNEL = venom.getCLogger(__name__)
 
 HELP_['commands'].extend([
     {
@@ -32,7 +34,7 @@ HELP_['commands'].extend([
 @venom.trigger("joinc")
 async def join_chat(_, message: MyMessage):
     reply = message.reply_to_message
-    link = reply.text or message.input_str
+    link = reply.text if reply else message.input_str
     if not link:
         return await message.edit(
             "Bruh, can't Join without a Link...", del_in=3
@@ -100,3 +102,33 @@ async def reply_(_, message: MyMessage):
         await venom.both.send_message(message.chat.id, input_, reply_to_message_id=reply_to)
     else:
         await venom.both.bot.send_message(message.chat.id, input_, reply_to_message_id=reply_to)
+
+########################################################################################################################
+
+HELP_['commands'].append(
+    {
+        'command': 'invite',
+        'flags': None,
+        'usage': 'Invite user to group.',
+        'syntax': '{tr}invite [username|id]',
+        'sudo': True
+    }
+)
+
+
+@venom.trigger('invite')
+async def invite_user(_, message: MyMessage):
+    """ invite user to group """
+    user_ = message.input_str
+    if not user_:
+        return await message.edit("`Provide user to invite...`", del_in=5)
+    try:
+        user_entity = await venom.get_users(user_)
+    except (UsernameInvalid, PeerIdInvalid):
+        return await message.edit("`Invalid user...`", del_in=5)
+    try:
+        await venom.add_chat_members(message.chat.id, user_entity.id)
+    except BaseException as e:
+        await CHANNEL.log(str(e))
+        return await message.edit("`Couldn't invite the user...`", del_in=5)
+    await message.edit("`Invited successfully.`")

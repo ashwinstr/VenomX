@@ -17,7 +17,7 @@ help_ = Config.HELP[plugin_name(__name__)] = {'type': 'utils', 'commands': []}
 help_['commands'].append(
     {
         "command":"repo",
-        "about": "get repo link and details",
+        "usage": "get repo link and details",
         "flags": {
             "-d": " Disables Link preview ",
             "-g": "MyGpack",
@@ -26,9 +26,7 @@ help_['commands'].append(
 )
 
 
-@venom.trigger(
-    "repo"
-)
+@venom.trigger('repo')
 async def see_repo(_,message: MyMessage):
     """see repo"""
     repo_ = (

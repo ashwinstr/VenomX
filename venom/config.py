@@ -27,6 +27,7 @@ class Config:
     HELP: Dict[str, Dict[str, Union[str, List[Dict[str, Union[str, bool, Dict[str, str]]]]]]] = {}
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
     ME: dict = {}
+    NON_PY_FILES = {}
     OWNER_ID = int(os.environ.get("OWNER_ID", 0))
     PAUSE = False
     STRING_SESSION = os.environ.get("STRING_SESSION")
@@ -50,7 +51,7 @@ class Config:
     FBAN_LOG_CHANNEL = int(os.environ.get("FBAN_LOG_CHANNEL", 0))
     F_DEL: bool = False
 
-##### plugins specific #####
+    ##### plugins specific #####
         ### alive
     ALIVE_PIC = ""
     DEFAULT_ALIVE_PIC = "https://telegra.ph/file/34c891bbd8d21c0564cbc.jpg"

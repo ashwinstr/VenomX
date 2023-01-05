@@ -18,9 +18,9 @@ class EditMessageText(RClient):
                                 text: str,
                                 del_in: int = -1,
                                 dis_preview: bool = False,
-                                entities: MessageEntity = None,
                                 parse_mode: ParseMode = ParseMode.DEFAULT,
-                                reply_markup: InlineKeyboardMarkup = None) -> 'types.message.MyMessage':
+                                reply_markup: InlineKeyboardMarkup = None,
+                                **kwargs) -> 'types.message.MyMessage':
         """ custom edit_message_text method for VenomX """
 
         disable_web_page_preview = True if dis_preview else False
@@ -29,9 +29,9 @@ class EditMessageText(RClient):
                                               message_id=message_id,
                                               text=text,
                                               disable_web_page_preview=disable_web_page_preview,
-                                              entities=entities,
                                               parse_mode=parse_mode,
-                                              reply_markup=reply_markup)
+                                              reply_markup=reply_markup,
+                                              **kwargs)
 
         if del_in >= 0:
             await asyncio.sleep(del_in)

@@ -1,4 +1,4 @@
-# venom.plugins.__init__
+# venom.plugins.__init__.py
 
 from os.path import dirname
 

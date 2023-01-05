@@ -1,4 +1,5 @@
 # gen_str.py
+# big thanks to the dev who made it, Krishna
 
 import asyncio
 import traceback
@@ -14,9 +15,21 @@ from pyrogram.errors import (
     SessionPasswordNeeded
 )
 
-from venom import venom, MyMessage, Config
+from venom import venom, MyMessage, Config, plugin_name
 
+HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'essents', 'commands': []}
 CHANNEL = venom.getCLogger(__name__)
+
+
+HELP_['commands'].append(
+    {
+        'command': 'genstr',
+        'flags': None,
+        'usage': 'Generate Session-string with bot mode...',
+        'syntax': '{tr}genstr',
+        'sudo': False
+    }
+)
 
 
 @venom.bot.on_message(
@@ -27,7 +40,7 @@ CHANNEL = venom.getCLogger(__name__)
     group=2
 )
 async def generate_str(_, message: MyMessage):
-    " generate session string in bot mode "
+    """ generate session string in bot mode """
     await message.reply("Are you certain you want to generate session_string?\nReply `y` to continue.")
     try:
         resp = await message.wait()
@@ -51,7 +64,7 @@ async def generate_str(_, message: MyMessage):
         await client.disconnect()
         await client.connect()
     except Exception as e:
-        return await process_.edit(e)
+        return await process_.edit(str(e))
     await process_.edit("`Successfully connected to client.`")
     try:
         code = await client.send_code(num)
@@ -93,9 +106,9 @@ async def generate_str(_, message: MyMessage):
         await two_step_code.delete()
         try:
             await client.check_password(new_code)
-        except Exception as e:
+        except BaseException as e:
             return await two_step_code.reply(f"**ERROR:** `{str(e)}`")
-    except Exception:
+    except BaseException:
         return await otp.reply(f"**ERROR:** `{traceback.format_exc()}`")
     session_string = await client.export_session_string()
     await client.send_message("me", f"#PYROGRAM #STRING_SESSION @UX_xplugin_support\n\n```{session_string}```")

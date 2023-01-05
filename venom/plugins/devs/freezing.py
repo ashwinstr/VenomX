@@ -12,7 +12,7 @@ FROZ_ = Collection.FROZEN
 CHANNEL = venom.getCLogger(__name__)
 
 
-############################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -24,9 +24,10 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger('freeze')
 async def freezer_(_, message: MyMessage):
-    " disable plugin temporarily "
+    """ disable plugin temporarily """
     cmd_name = message.input_str
     if not cmd_name:
         return await message.edit("`Provide a plugin name or command name to disable...`", del_in=5)
@@ -50,7 +51,7 @@ async def freezer_(_, message: MyMessage):
     else:
         await message.edit(f"`The given plugin {plug_name} doesn't exist...`", del_in=5)
 
-##############################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -64,17 +65,12 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger('defreeze')
 async def defreezer_(_, message: MyMessage):
-    " re-enable frozen plugin "
+    """ re-enable frozen plugin """
     if "-all" in message.flags:
-        async for plug in FROZ_.find():
-            old_ = plug["plug_loc"]
-            new_ = f"{old_}.py"
-            try:
-                os.rename(old_, new_)
-            except:
-                pass
+        await defrost_all()
         await FROZ_.drop()
         msg_ = await message.edit("All frozen plugins are <b>re-enabled</b> now.\nRestarting bot...")
         await CHANNEL.log("All frozen plugins are <b>re-enabled</b>.")
@@ -102,7 +98,7 @@ async def defreezer_(_, message: MyMessage):
     else:
         await message.edit(f"`The plugin {plug_name} is not frozen...`", del_in=5)
 
-#########################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -113,6 +109,7 @@ HELP_['commands'].append(
         'sudo': True
     }
 )
+
 
 @venom.trigger('frozen')
 async def frozen_(_, message: MyMessage):
@@ -127,3 +124,13 @@ async def frozen_(_, message: MyMessage):
         return await message.edit("`No plugin is frozen at the moment.`", del_in=5)
     list_ = list_.format(total)
     await message.edit(list_)
+
+
+async def defrost_all() -> None:
+    async for plug in FROZ_.find():
+        old_ = plug["plug_loc"]
+        new_ = f"{old_}.py"
+        try:
+            os.rename(old_, new_)
+        except FileNotFoundError:
+            pass

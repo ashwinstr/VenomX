@@ -1,14 +1,21 @@
 # main.py
 
+import requests
+
 from pyrogram.errors import AuthKeyDuplicated, FloodWait
 
-from venom import logging, venom
+from venom import logging, venom, Config
 
 _ERROR = "##### {} #####"
 _LOG = logging.getLogger(__name__)
+_URL = (
+    f"https://api.telegram.org/bot{Config.BOT_TOKEN}"
+    f"/sendMessage?chat_id={Config.LOG_CHANNEL_ID}&text=`Starting VenomX...`&parse_mode=markdown"
+)
 
 
 if __name__ == "__main__":
+    requests.post(_URL)
     try:
         venom.run()
     except AuthKeyDuplicated:

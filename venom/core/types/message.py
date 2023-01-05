@@ -18,7 +18,7 @@ _CANCEL_PROCESS: List[int] = []
 class MyMessage(Message):
 
     def __init__(self, message: Union[Message, 'MyMessage'], **kwargs) -> None:
-        " testing "
+        """ Modified Message """
         self.msg = message
         self.msg._flags = {}
         self.msg._filtered_input = ""
@@ -59,7 +59,7 @@ class MyMessage(Message):
         return ''
 
     @property
-    def flags(self):
+    def flags(self) -> list:
         input_ = self.input_str
         if not input_:
             return []
@@ -85,7 +85,8 @@ class MyMessage(Message):
         return flags_
 
     @property
-    def filtered_input(self):
+    def filtered_input(self) -> str:
+        """ filter flags out and return string """
         input_ = self.input_str
         if not input_:
             return ""
@@ -133,6 +134,7 @@ class MyMessage(Message):
                                                        file_name=file_name,
                                                        caption=caption,
                                                        reply_to_message_id=reply_to_id)
+        os.remove(file_)
         return self.parse(message)
 
     async def edit(self,
@@ -141,8 +143,9 @@ class MyMessage(Message):
                    del_in: int = -1,
                    parse_mode: ParseMode = ParseMode.DEFAULT,
                    reply_markup: InlineKeyboardMarkup = None,
-                   sudo: bool = True) -> 'MyMessage':
-        " edit or reply message "
+                   sudo: bool = True,
+                   **kwargs) -> 'MyMessage':
+        """ edit or reply message """
         reply_to_id = self.replied.id if self.replied else self.id
         try:
             message = await self.msg._client.edit_message_text(
@@ -152,7 +155,8 @@ class MyMessage(Message):
                 del_in=del_in,
                 parse_mode=parse_mode,
                 dis_preview=dis_preview,
-                reply_markup=reply_markup
+                reply_markup=reply_markup,
+                **kwargs
             )
             return self.parse(message)
         except (MessageAuthorRequired, MessageIdInvalid):
@@ -163,7 +167,8 @@ class MyMessage(Message):
                                                              dis_preview=dis_preview,
                                                              parse_mode=parse_mode,
                                                              reply_markup=reply_markup,
-                                                             reply_to_message_id=reply_to_id)
+                                                             reply_to_message_id=reply_to_id,
+                                                             **kwargs)
                 self.msg = reply_
                 return self.parse(reply_)
             raise MessageAuthorRequired
@@ -196,17 +201,23 @@ class MyMessage(Message):
                                    caption: str = None,
                                    del_in: int = -1,
                                    parse_mode: ParseMode = ParseMode.DEFAULT,
-                                   dis_preview: bool = False) -> 'MyMessage':
+                                   dis_preview: bool = False,
+                                   **kwargs) -> 'MyMessage':
         """ edit or send as file """
         try:
-            return await self.edit(text=text, del_in=del_in, parse_mode=parse_mode, dis_preview=dis_preview)
+            return await self.edit(
+                text=text,
+                del_in=del_in,
+                parse_mode=parse_mode,
+                dis_preview=dis_preview,
+                **kwargs
+            )
         except MessageTooLong:
             reply_to = self.replied.id if self.replied else self.id
             msg_ = await self.send_as_file(text=text,
                                            file_name=file_name,
                                            caption=caption,
                                            reply_to=reply_to)
-            os.remove(file_name)
             return msg_
 
     async def reply_or_send_as_file(self,
@@ -242,5 +253,5 @@ class MyMessage(Message):
         return await self.msg._client.ask(self.chat.id, text, timeout=timeout, filters=filters)
 
     async def wait(self, timeout: int = 15, filters: filters.Filter = None) -> 'MyMessage':
-        """ monkey patching to MyMessage using pyromod.listen """
+        """ monkey patching to MyMessage using pyromod's listen """
         return await self.msg._client.listen(self.chat.id, timeout=timeout, filters=filters)

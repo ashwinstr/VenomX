@@ -7,10 +7,10 @@ import importlib
 from venom import venom, MyMessage, Config, Collection
 from venom.helpers import plugin_name, restart_msg
 
-HELP = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
+HELP = Config.HELP[plugin_name(__name__)] = {'type': 'devs', 'commands': []}
 RESTART = Collection.RESTART
 
-####################################################################################################################################################################
+########################################################################################################################
 
 HELP['commands'].append(
     {
@@ -18,15 +18,16 @@ HELP['commands'].append(
         'flags': {
             '-r': 'rename and load'
         },
-        'about': 'load plugin temporarily',
+        'usage': 'load plugin temporarily',
         'syntax': '{tr}load [reply to .py file]',
         'sudo': False
     }
 )
 
+
 @venom.trigger('load')
 async def load_er(_, message: MyMessage):
-    " load plugin temporarily "
+    """ load plugin temporarily """
     reply_ = message.replied
     flags_ = message.flags
     if not reply_ or not reply_.document:
@@ -52,7 +53,7 @@ async def load_er(_, message: MyMessage):
     await restart_msg(load_conf, text=text_)
     asyncio.get_event_loop().create_task(venom.restart())
 
-##########################################################################################################################################################################
+########################################################################################################################
 
 HELP['commands'].append(
     {
@@ -64,9 +65,10 @@ HELP['commands'].append(
     }
 )
 
+
 @venom.trigger('tload')
 async def text_load(_, message: MyMessage):
-    " load using text message "
+    """ load using text message """
     reply_ = message.replied
     if not reply_:
         return await message.edit("`Reply to code message to load...`", del_in=5)

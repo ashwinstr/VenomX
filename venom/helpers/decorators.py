@@ -16,15 +16,17 @@ from venom import Config
 
 class VenomDecorators:
 
-    def callback_checker(owner: bool = False):
+    def callback_checker(owner: bool = False, sudo: bool = True):
         def function(func):
             async def wrapper(venom, c_q: CallbackQuery):
                 """ callback query owner and tb checker """
                 if owner:
                     "owner check"
                     user_id = c_q.from_user.id
+                    if not sudo and (user_id in Config.SUDO_USERS or user_id in Config.TRUSTED_SUDO_USERS):
+                        return await c_q.answer("Sudo is disabled for this function.", show_alert=True)
                     if not Config.SUDO \
-                            or (not user_id == Config.OWNER_ID
+                            or (user_id != Config.OWNER_ID
                                 and user_id not in Config.SUDO_USERS
                                 and user_id not in Config.TRUSTED_SUDO_USERS):
                         " if not owner "

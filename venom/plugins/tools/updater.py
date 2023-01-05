@@ -21,17 +21,13 @@ async def _init() -> None:
     exists_ = os.popen("git config --get remote.upstream.url").read()
     upstrm = Config.UPSTREAM_REPO
     if not exists_:
-        _LOG.info(_LOG_STR, "Adding remote upstream")
         os.system(
             f"git remote add upstream {upstrm.rstrip('.git')}.git"
         )
     elif str(exists_).strip() != upstrm:
-        _LOG.info(_LOG_STR, "Updating remote upstream")
         os.system(
             f"git remote rm upstream && git remote add upstream {upstrm}"
         )
-    else:
-        _LOG.info(_LOG_STR, "Remote upstream exists, using same")
 
 
 ########################################################################################################################
@@ -116,7 +112,6 @@ def get_update_list(repo: Repo, branch: str) -> str and int:
     repo.remote(Config.UPSTREAM_REMOTE).fetch(branch)
     upst = Config.UPSTREAM_REPO.rstrip("/")
     out = ""
-    upst = Config.UPSTREAM_REPO.rstrip("/")
     limit_ = 100
     total_ = 0
     for i in repo.iter_commits(f"HEAD..{Config.UPSTREAM_REMOTE}/{branch}"):
