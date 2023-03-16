@@ -7,6 +7,8 @@ import re
 from sre_constants import error as sre_err
 
 from pyrogram import filters
+from pyrogram.errors import UserNotParticipant
+
 from venom import Config, MyMessage, venom
 
 
@@ -17,9 +19,9 @@ async def quote_message(_, message: MyMessage):
     flags_ = message.flags
     try:
         await venom.get_chat_member(-1001331162912, from_user_)
-    except BaseException as e:
+    except UserNotParticipant:
         if from_user_ not in Config.TRUSTED_SUDO_USERS:
-            return await message.edit("First join **@UX_xplugin_support** and get approved by Kakashi.")
+            return await message.edit("First join **@UX_xplugin_support** and get approved.")
     reply_ = message.replied
     if not reply_:
         return await message.edit("`Reply to message...`", del_in=5)
@@ -33,7 +35,7 @@ async def quote_message(_, message: MyMessage):
     if "-r" in flags_:
         reply_msg = await venom.get_messages(message.chat.id, reply_.id)
         reply_name = reply_msg.reply_to_message.from_user.first_name
-        reply_text = (reply_msg.reply_to_message.text).splitlines()[0]
+        reply_text = reply_msg.reply_to_message.text.splitlines()[0]
     else:
         reply_name = None
         reply_text = None
@@ -55,7 +57,7 @@ async def quote_message(_, message: MyMessage):
     else:
         req_ = await venom.send_message(bot_, json_)
     try:
-        resp_ = await req_.wait(timeout=20, filters=(filters.bot))
+        resp_ = await req_.wait(timeout=20, filters=filters.bot)
     except TimeoutError:
         return await message.edit("`Bot didn't respond...`", del_in=5)
     resp = resp_.text
@@ -79,10 +81,10 @@ async def quote_message(_, message: MyMessage):
 async def make_tweet(_, message: MyMessage):
     try:
         await venom.get_chat_member(-1001331162912, message.from_user.id)
-    except BaseException:
+    except UserNotParticipant:
         if message.from_user.id not in Config.TRUSTED_SUDO_USERS:
             return await message.edit(
-                "First join **@UX_xplugin_support** and get approved by Kakashi."
+                "First join **@UX_xplugin_support** and get approved."
             )
     reply_ = message.replied
     if not reply_:
@@ -122,7 +124,7 @@ async def make_tweet(_, message: MyMessage):
     else:
         req_ = await venom.send_message(bot_, json_)
     try:
-        response = await req_.wait(timeout=20, filters=(filters.bot))
+        response = await req_.wait(timeout=20, filters=filters.bot)
     except TimeoutError:
         return await message.edit("`Bot didn't respond...`", del_in=5)
     resp = response.text

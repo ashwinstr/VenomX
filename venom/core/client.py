@@ -15,6 +15,8 @@ from .methods import Methods
 from ..plugins import all_plugins
 from .database import _close_db
 
+from init import ChangeInitMessage
+
 from venom import Config, logging
 from venom.helpers import time_format
 
@@ -107,14 +109,6 @@ class Venom(CustomVenom):
         else:
             return self.bot
 
-    # async def trail_mode(self, attr: str, **kwargs):
-    #     try:
-    #         method = getattr(self, attr)
-    #         await method(**kwargs)
-    #     except MessageAuthorRequired:
-    #         method = getattr(self.bot, attr)
-    #         await method(**kwargs)
-
     @property
     def uptime(self):
         time_ = (time.time() - START_)
@@ -167,10 +161,17 @@ class Venom(CustomVenom):
             _LOG.info(_LOG_STR, "Starting bot mode as main interface...")
             Config.STRING_SESSION = ""
             await self.bot.start()
+        # time_3 = time.time()
+        ChangeInitMessage().second_line()
+        # time_checked_3 = time.time() - time_3
         await _init_tasks()
+        # time_4 = time.time()
+        ChangeInitMessage().third_line()
+        # time_checked_4 = time.time() - time_4
         end_ = time.time()
         print(end_ - START_)
-        # await idle()
+        # print(time_checked_1 + Config.time_checked_2 + time_checked_3 + time_checked_4)
+        # await idle()11
 
     async def stop(self):
         try:
@@ -178,10 +179,8 @@ class Venom(CustomVenom):
                 _LOG.info(_LOG_STR, "Stopping bot")
                 await self.bot.stop()
             _close_db()
-            await self.send_message(Config.LOG_CHANNEL_ID, "`Bot stopped...`")
             await super().stop()
         except ConnectionError:
-            await self.bot.send_message(Config.LOG_CHANNEL_ID, "`Bot stopped...`")
             await self.bot.stop()
 
     async def restart(self, hard: bool = False):
@@ -189,5 +188,5 @@ class Venom(CustomVenom):
         if not hard:
             os.execl(sys.executable, sys.executable, '-m', 'venom')
         else:
-            _LOG.info(_LOG_STR, "Installing requirements")
+            # _LOG.info(_LOG_STR, "Installing requirements")
             os.execl("bash", "run")

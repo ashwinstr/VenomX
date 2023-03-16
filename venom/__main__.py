@@ -1,23 +1,24 @@
 # main.py
 
-import requests
+import time
 
 from pyrogram.errors import AuthKeyDuplicated, FloodWait
+
+from init import ChangeInitMessage
 
 from venom import logging, venom, Config
 
 _ERROR = "##### {} #####"
 _LOG = logging.getLogger(__name__)
-_URL = (
-    f"https://api.telegram.org/bot{Config.BOT_TOKEN}"
-    f"/sendMessage?chat_id={Config.LOG_CHANNEL_ID}&text=`Starting VenomX...`&parse_mode=markdown"
-)
 
 
 if __name__ == "__main__":
-    requests.post(_URL)
     try:
+        # time_2 = time.time()
+        ChangeInitMessage().first_line()
+        # Config.time_checked_2 = time.time() - time_2
         venom.run()
+        ChangeInitMessage().exiting()
     except AuthKeyDuplicated:
         msg_ = "STRING EXPIRED, GENERATE NEW SESSION STRING"
         len_ = len(msg_)

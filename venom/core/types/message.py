@@ -244,14 +244,13 @@ class MyMessage(Message):
         try:
             await self.msg.delete()
             return True
-        except Exception as e:
-            await self.msg._client.send_message(Config.LOG_CHANNEL_ID, f"Unable to delete...\nERROR: {e}")
+        except MessageAuthorRequired:
             return False
 
-    async def ask(self, text: str, timeout: int = 15, filters: filters.Filter = None) -> 'MyMessage':
+    async def ask(self, text: str, timeout: int = 15) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod.ask """
-        return await self.msg._client.ask(self.chat.id, text, timeout=timeout, filters=filters)
+        return await self.msg._client.ask((self.chat.id, None, None), text, timeout=timeout)
 
-    async def wait(self, timeout: int = 15, filters: filters.Filter = None) -> 'MyMessage':
+    async def wait(self, user: List[Union[str, int]] = None, timeout: int = 15) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod's listen """
-        return await self.msg._client.listen(self.chat.id, timeout=timeout, filters=filters)
+        return await self.msg._client.listen((self.chat.id, user, None), timeout=timeout)

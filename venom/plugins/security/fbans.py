@@ -296,7 +296,7 @@ async def fban_(_, message: MyMessage):
             failed.append(data["fed_name"])
     if total == 0:
         return await message.edit(
-            "You Don't have any feds connected!\nsee .help addf, for more info."
+            f"You don't have any feds connected!\nSee {Config.CMD_TRIGGER}help addf for more info."
         )
     await message.edit(fban_arg[2])
 
@@ -544,7 +544,7 @@ HELP_['commands'].append(
 
 @venom.trigger('unfban')
 async def unfban_(_, message: MyMessage):
-    """Unbans a user from connected Feds."""
+    """ Unbans a user from connected Feds. """
     fban_arg = ["❯", "❯❯", "❯❯❯", "❯❯❯ <b>Un-FBanned {}</b>"]
     await message.edit(fban_arg[0])
     input_ = message.input_str

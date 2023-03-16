@@ -29,7 +29,7 @@ tele_ = Telegraph()
 
 
 def plugin_name(name: str) -> str:
-    " return plugin name from plugin path "
+    """ return plugin name from plugin path """
     split_ = name.split(".")
     plugin_name_ = split_[-1]
     return plugin_name_
@@ -63,26 +63,35 @@ def post_tg(title: str, content: str) -> str:
     return link_
 
 
-async def post_tg_media(message: MyMessage) -> str:
-    " upload media to telegraph "
-    media = message.replied
-    if (not media.photo
-            and not media.animation
-            and (not media.video
-                 or not media.video.file_name.endswith(".mp4"))
-            and (not media.document
-                 and not media.document.file_name.endswith((".png", ".jpeg", ".jpg", ".gif", ".mp4")))):
-        await message.edit("`File not supported.`")
-        return "Not found."
-    await message.edit("`Downloading...`")
-    down_ = await media.download(Config.DOWN_PATH)
-    await message.edit("`Uploading to telegraph...`")
-    try:
-        up_ = Telegraph.upload_file(f=down_)
-    except Exception as t_e:
-        await message.edit(f"<b>ERROR:</b>\n {str(t_e)}")
-        return "Not found."
-    os.remove(down_)
+async def post_tg_media(content: Union[MyMessage, str]) -> str:
+    """ upload media to telegraph """
+    if isinstance(content, MyMessage):
+        media = content.replied
+        if (not media.photo
+                and not media.animation
+                and (not media.video
+                     or not media.video.file_name.endswith(".mp4"))
+                and (not media.document
+                     and not media.document.file_name.endswith((".png", ".jpeg", ".jpg", ".gif", ".mp4")))):
+            await content.edit("`File not supported.`")
+            return ""
+        await content.edit("`Downloading...`")
+        down_ = await media.download(Config.DOWN_PATH)
+        await content.edit("`Uploading to telegraph...`")
+        try:
+            up_ = Telegraph().upload_file(f=down_)
+        except Exception as t_e:
+            await content.edit(f"<b>ERROR:</b>\n {str(t_e)}")
+            return ""
+        os.remove(down_)
+    elif isinstance(content, str):
+        try:
+            up_ = Telegraph().upload_file(content)
+        except BaseException as t_e:
+            print(t_e)
+            return ""
+    else:
+        return ""
     return f"https://telegra.ph{up_[0]}"
 
 
@@ -108,9 +117,9 @@ def time_format(time: float) -> str:
     return out_.strip()
 
 
-def time_stamp(time: float) -> str:
-    " time stamp "
-    hour_ = time / 60 / 60
+def time_stamp(time_: float) -> str:
+    """ time stamp """
+    hour_ = time_ / 60 / 60
     min_ = (hour_ - int(hour_)) * 60
     sec_ = (min_ - int(min_)) * 60
     out_ = f"{int(hour_):02}:" if int(hour_) >= 1 else ""
@@ -204,18 +213,21 @@ async def paste_it(msg_content: Union['MyMessage', str]) -> str:
             try:
                 await msg_content.edit("`Downloading document...`")
                 down_ = await reply_.download()
-                with open(down_, "r") as file_:
+                with open(down_, "r", encoding="utf8") as file_:
                     content_ = file_.read()
                 os.remove(down_)
-            except:
+            except BaseException as e:
+                print(e)
                 return "Failed..."
         elif reply_.text or reply_.caption:
             content_ = reply_.text or reply_.caption
         else:
+            print("Not document nor message text")
             return "Failed..."
     elif isinstance(msg_content, str):
         content_ = msg_content
     else:
+        print("Not message nor string")
         return "Failed..."
     paste_ = Paste(content=content_)
     paste_.save()

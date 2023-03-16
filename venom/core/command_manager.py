@@ -1,4 +1,5 @@
 # command_manager.py
+
 import os
 import re
 from typing import List, Dict
@@ -13,7 +14,6 @@ class Manager():
 
     plugins: List[str] = []
     commands: List[str] = []
-    tree: Dict[str, Dict[str, List]] = {}
 
     def plugin_loc(self, plug_name: str) -> str | None:
         found = False

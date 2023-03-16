@@ -1,5 +1,7 @@
 # pastes.py
 
+from pyrogram.enums import ParseMode
+
 from venom import venom, MyMessage, Config, plugin_name
 from venom.helpers import paste_it
 
@@ -29,4 +31,4 @@ async def past_es(_, message: MyMessage):
     link_ = await paste_it(msg_content=message)
     if not link_:
         return await message.edit("`Message type not supported...`", del_in=5)
-    await message.edit(f"Pasted to <b>PastyLus</b>\n<b>Link:</b> [URL]({link_})")
+    await message.edit(f"Pasted to <b>PastyLus</b>\n<b>Link:</b> <a href='{link_}'>URL</a>", parse_mode=ParseMode.HTML)

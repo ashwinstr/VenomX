@@ -25,24 +25,24 @@ CHANNEL = venom.getCLogger(__name__)
 
 @venom.trigger('nkang')
 async def new_kang(_, message: MyMessage):
-    " new kang "
+    """ new kang """
     reply_ = message.replied
     if not reply_:
         return await message.edit("`Reply to sticker or potential sticker...`", del_in=5)
     user = await venom.get_me()
     bot_ = await venom.bot.get_me()
-    pack = 1
+    pack_ = 1
     u_name = bot_.username
     u_name = "@" + u_name if u_name else bot_.first_name or bot_.id
-    packname = f"a{bot_.id}_pack{pack}_by_{bot_.username}"
-    custom_packnick = Config.CUSTOM_PACK_NAME or f"{u_name}'s venom pack"
-    packnick = f"{custom_packnick} vol.{pack}"
+    packname = f"a{bot_.id}_pack{pack_}_by_{bot_.username}"
+    custom_packnick = Config.CUSTOM_PACK_NAME or f"{u_name}'s venom pack_"
+    packnick = f"{custom_packnick} vol.{pack_}"
     emoji_ = None
     is_anim = False
     is_video = False
     old_pack = True
     try:
-        pack: StickerSet = await venom.bot.invoke(GetStickerSet(stickerset=InputStickerSetShortName(short_name=packname), hash=0))
+        pack_: StickerSet = await venom.bot.invoke(GetStickerSet(stickerset=InputStickerSetShortName(short_name=packname), hash=0))
     except StickersetInvalid:
         old_pack = False
     if reply_.sticker:

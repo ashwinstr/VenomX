@@ -25,6 +25,7 @@ class Config:
     DOWN_PATH = "downloads"
     GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN")
     HELP: Dict[str, Dict[str, Union[str, List[Dict[str, Union[str, bool, Dict[str, str]]]]]]] = {}
+    START_MESSAGE_DICT: dict = {}
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
     ME: dict = {}
     NON_PY_FILES = {}

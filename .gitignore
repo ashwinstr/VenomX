@@ -21,6 +21,10 @@ venv
 # vscode folder
 .vscode
 
+# git folder
+.git
+.idea
+
 # local temp folders
 logs
 downloads

@@ -1,8 +1,7 @@
 # database.py
+__all__ = ['get_collection', '_close_db']
 
-
-__all__ = ['get_collection']
-
+import re
 import asyncio
 from typing import List
 
@@ -24,7 +23,7 @@ if "VenomX" in _RUN(_MGCLIENT.list_database_names()):
 else:
     _LOGGER.info(_LOG_STR, "VenomX database not found => Creating new database...")
 
-_DATABASE: AgnosticDatabase = _MGCLIENT["venom"]
+_DATABASE: AgnosticDatabase = _MGCLIENT["VenomX"]
 _COL_LIST: List[str] = _RUN(_DATABASE.list_collection_names())
 
 
