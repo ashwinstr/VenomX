@@ -1,7 +1,7 @@
 # mark_read.py
 
-from pyrogram.raw.functions.messages import read_mentions
 from pyrogram.enums import ChatType
+from pyrogram.raw.functions.messages import read_mentions
 
 from venom import venom, MyMessage, Config
 from venom.helpers import plugin_name

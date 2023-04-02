@@ -10,6 +10,7 @@ from pyrogram.errors import (MessageAuthorRequired, MessageDeleteForbidden,
                              MessageIdInvalid, MessageTooLong)
 from pyrogram.types import InlineKeyboardMarkup, Message
 from pyromod import listen
+
 from venom import Config
 
 _CANCEL_PROCESS: List[int] = []
@@ -247,10 +248,10 @@ class MyMessage(Message):
         except MessageAuthorRequired:
             return False
 
-    async def ask(self, text: str, timeout: int = 15) -> 'MyMessage':
+    async def ask(self, text: str, timeout: int = 15, filters_: filters.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod.ask """
-        return await self.msg._client.ask((self.chat.id, None, None), text, timeout=timeout)
+        return await self.msg._client.ask(text, timeout=timeout, filters=filters_)
 
-    async def wait(self, user: List[Union[str, int]] = None, timeout: int = 15) -> 'MyMessage':
+    async def wait(self, timeout: int = 15, filters_: filters.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod's listen """
-        return await self.msg._client.listen((self.chat.id, user, None), timeout=timeout)
+        return await self.msg._client.listen(timeout=timeout, filters=filters_)
