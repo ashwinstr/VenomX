@@ -273,6 +273,7 @@ async def fban_(_, message: MyMessage):
     total = 0
     reason = reason or "Not specified."
     await message.edit(fban_arg[1])
+    once_ = True
     async for data in FED_LIST.find():
         total += 1
         chat_id = int(data["_id"])
@@ -293,6 +294,9 @@ async def fban_(_, message: MyMessage):
         except FloodWait as f:
             await asyncio.sleep(f.value + 3)
         except BaseException:
+            if once_:
+                await CHANNEL.log(traceback.format_exc())
+                once_ = False
             failed.append(data["fed_name"])
     if total == 0:
         return await message.edit(
@@ -475,6 +479,7 @@ async def fban_p(_, message: MyMessage):
             reported = "</b> and <b>tested with "
         else:
             reported = ""
+    once_ = True
     async for data in FED_LIST.find():
         total += 1
         chat_id = int(data["_id"])
@@ -500,7 +505,9 @@ async def fban_p(_, message: MyMessage):
         except FloodWait as f:
             await asyncio.sleep(f.value + 3)
         except BaseException as e:
-            await CHANNEL.log(f"{e}\n\n{traceback.format_exc()}")
+            if once_:
+                await CHANNEL.log(f"{e}\n\n{traceback.format_exc()}")
+                once_ = False
             failed.append(data["fed_name"])
     if total == 0:
         return await message.edit(
@@ -574,6 +581,7 @@ async def unfban_(_, message: MyMessage):
     failed = []
     total = 0
     await message.edit(fban_arg[1])
+    once_ = True
     async for data in FED_LIST.find():
         total += 1
         chat_id = int(data["_id"])
@@ -589,7 +597,9 @@ async def unfban_(_, message: MyMessage):
             ):
                 failed.append(f"{data['fed_name']}  \n__ID__: `{data['_id']}`")
         except BaseException as e:
-            await CHANNEL.log(str(e))
+            if once_:
+                await CHANNEL.log(str(e))
+                once_ = False
             failed.append(data["fed_name"])
     if total == 0:
         return await message.edit(

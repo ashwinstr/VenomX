@@ -22,6 +22,7 @@ class Config:
     CMD_LIST = []
     CMD_TRIGGER = os.environ.get("CMD_TRIGGER", ".")
     DB_URI = os.environ.get("DATABASE_URL")
+    DB_NAME: str = os.environ.get("DB_NAME", "VenomX")
     DOWN_PATH = "downloads"
     GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN")
     HELP: Dict[str, Dict[str, Union[str, List[Dict[str, Union[str, bool, Dict[str, str]]]]]]] = {}
@@ -53,29 +54,29 @@ class Config:
     F_DEL: bool = False
 
     ##### plugins specific #####
-        ### alive
+    ### alive
     ALIVE_PIC = ""
     DEFAULT_ALIVE_PIC = "https://telegra.ph/file/34c891bbd8d21c0564cbc.jpg"
     ALIVE_PIC_TYPE: MessageMediaType = MessageMediaType.PHOTO
-        ### datetime
+    ### datetime
     TIME_ZONE: str = "in"
-        ### kangs
+    ### kangs
     CUSTOM_PACK_NAME = os.environ.get("CUSTOM_PACK_NAME", "")
-        ### pmguard
+    ### pmguard
     ALLOWED_TO_PM: List[int] = []
     DISALLOWED_PM_COUNT: Dict[int, int] = {}
     PM_BLOCK_PIC = ""
     PM_GUARD = False
     PM_WELCOME_PIC = "https://telegra.ph/file/fd58d751f35be55b88073.jpg"
-        ### pm_log
+    ### pm_log
     LAST_CHAT: int = 0
     PM_LOG_CHANNEL = int(os.environ.get("PM_LOG_CHANNEL", 0))
     PM_TOG = False
-        ### spotify
+    ### spotify
     SPOTIFY_ID = os.environ.get("SPOTIFY_ID")
     SPOTIFY_SECRET = os.environ.get("SPOTIFY_SECRET")
     SPOTIFY_TOKEN = os.environ.get("SPOTIFY_TOKEN")
-    
+
     ##### sudo configs #####
     SUDO: bool = False
     SUDO_TRIGGER = os.environ.get("SUDO_TRIGGER", "!")
@@ -84,5 +85,5 @@ class Config:
     SUDO_CMD_LIST: List[str] = []
 
     ##### tokens #####
-        ### github token
+    ### github token
     GH_TOKEN = os.environ.get("GH_TOKEN")

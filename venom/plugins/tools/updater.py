@@ -12,6 +12,8 @@ from git.exc import GitCommandError
 from venom import venom, MyMessage, Config, logging, Collection
 from venom.helpers import plugin_name
 
+CHANNEL = venom.getCLogger(__name__)
+
 HELP = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
 _LOG = logging.getLogger(__name__)
 _LOG_STR = "### %s ###"
@@ -84,6 +86,12 @@ async def update_r(_, message: MyMessage):
     if not total_:
         return await message.edit("<b>VenomX is already UP-TO-DATE with upstream.</b>")
     try:
+        out_ = (
+            "<b>VenomX update found.</b>\n\n"
+            f"<b>Changelog:</b> [<b>{total_}</b>]\n\n"
+            + fetch_
+        )
+        await CHANNEL.log(out_)
         pull_update(repo, branch)
     except Exception as e:
         return await message.edit(f"<b>ERROR:</b> `{e}`")

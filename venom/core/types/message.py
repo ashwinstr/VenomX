@@ -4,7 +4,7 @@ import os
 import re
 from typing import List, Union
 
-from pyrogram import filters
+from pyrogram import filters as flt
 from pyrogram.enums import ChatType, ParseMode
 from pyrogram.errors import (MessageAuthorRequired, MessageDeleteForbidden,
                              MessageIdInvalid, MessageTooLong)
@@ -32,7 +32,6 @@ class MyMessage(Message):
                     setattr(self, one, attr_)
                 except:
                     pass
-        # super().__init__(**kwargs)
 
     @classmethod
     def parse(cls, message, **kwargs):
@@ -248,10 +247,10 @@ class MyMessage(Message):
         except MessageAuthorRequired:
             return False
 
-    async def ask(self, text: str, timeout: int = 15, filters_: filters.Filter = None) -> 'MyMessage':
+    async def ask(self, text: str, timeout: int = 15, filters: flt.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod.ask """
-        return await self.msg._client.ask(text, timeout=timeout, filters=filters_)
+        return await self.msg._client.ask(text, timeout=timeout, filters=filters)
 
-    async def wait(self, timeout: int = 15, filters_: filters.Filter = None) -> 'MyMessage':
+    async def wait(self, timeout: int = 15, filters: flt.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod's listen """
-        return await self.msg._client.listen(timeout=timeout, filters=filters_)
+        return await self.msg._client.listen(self.msg.chat.id, timeout=timeout, filters=filters)
