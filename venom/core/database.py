@@ -1,15 +1,14 @@
 # database.py
 __all__ = ['get_collection', '_close_db']
 
-import re
 import asyncio
 from typing import List
 
-from motor.motor_asyncio import AsyncIOMotorClient
 from motor.core import AgnosticClient, AgnosticDatabase, AgnosticCollection
+from motor.motor_asyncio import AsyncIOMotorClient
 
-from venom.logger import logging
 from venom.config import Config
+from venom.logger import logging
 
 _LOGGER = logging.getLogger(__name__)
 _LOG_STR = "### %s ###"
