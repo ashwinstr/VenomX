@@ -16,7 +16,7 @@ class Filtered:
 
     @classmethod
     def parse(cls, cmd: str, group: int = 0):
-        filter_ = Filter
+        filter_ = Filter()
         bisect.insort(Config.CMD_LIST, cmd)
         return cls(group, cmd, filter_)
 

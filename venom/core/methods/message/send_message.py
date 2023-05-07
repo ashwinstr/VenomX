@@ -8,6 +8,7 @@ from pyrogram.enums import ParseMode
 from pyrogram.types import MessageEntity, ReplyKeyboardMarkup, InlineKeyboardMarkup, ReplyKeyboardRemove
 
 from ... import types
+from ... import client as _client
 
 
 class SendMessage(RClient):
@@ -16,7 +17,7 @@ class SendMessage(RClient):
                            chat_id: Union[str, int],
                            text: str,
                            del_in: int = -1,
-                           dis_preview: Optional[bool] = None,
+                           dis_preview: Optional[bool] = False,
                            entities: List[MessageEntity] = None,
                            parse_mode: Union[str, ParseMode] = ParseMode.DEFAULT,
                            protect_content: Optional[bool] = False,
@@ -25,10 +26,11 @@ class SendMessage(RClient):
                                ReplyKeyboardRemove,
                                ReplyKeyboardMarkup,
                                InlineKeyboardMarkup
-                           ] = None) -> 'types.message.MyMessage':
+                           ] = None,
+                           **kwargs) -> 'types.message.MyMessage':
         """ custom method for VenomX """
 
-        disable_web_page_preview = True if dis_preview else None
+        disable_web_page_preview = dis_preview
 
         msg = await super().send_message(chat_id=chat_id,
                                          text=text,
@@ -43,4 +45,6 @@ class SendMessage(RClient):
             await asyncio.sleep(del_in)
             await msg.delete()
 
-        return types.message.MyMessage.parse(msg)
+        client_ = _client.Venom.parse(self)
+
+        return types.message.MyMessage.parse(client_, msg)

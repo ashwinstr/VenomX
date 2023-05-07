@@ -2,15 +2,32 @@
 
 import os
 import re
-from typing import List, Dict
+from typing import List
 
 from venom import Config
 from venom.helpers import get_import_paths
-
 from venom.plugins import ROOT
 
 
-class Manager():
+def folder_content(folder: str) -> list:
+    print(folder)
+    if os.path.isdir(f"venom/plugins/{folder}"):
+        path_ = f"venom/plugins/{folder}"
+    else:
+        return []
+    return os.listdir(path_)
+
+
+def plugin_parent(plugin: str) -> str:
+    plugins = get_import_paths(ROOT, "/**/")
+    all_plugins = list(plugins)
+    for one in all_plugins:
+        if plugin in one:
+            parent = one.split(".")[0]
+            return parent
+
+
+class Manager:
 
     plugins: List[str] = []
     commands: List[str] = []
@@ -69,22 +86,6 @@ class Manager():
                 if parent != "decorators":
                     parent_list.append(parent)
         return parent_list
-
-    def plugin_parent(self, plugin: str) -> str:
-        plugins = get_import_paths(ROOT, "/**/")
-        all_plugins = list(plugins)
-        for one in all_plugins:
-            if plugin in one:
-                parent = one.split(".")[0]
-                return parent
-
-    def folder_content(self, folder: str) -> list:
-        print(folder)
-        if os.path.isdir(f"venom/plugins/{folder}"):
-            path_ = f"venom/plugins/{folder}"
-        else:
-            return []
-        return os.listdir(path_)
 
 
 manager = Manager()

@@ -17,7 +17,7 @@ from .database import _close_db
 
 from init import ChangeInitMessage
 
-from venom import Config, logging
+from venom import Config, logging, SecureConfig
 from venom.helpers import time_format
 
 _LOG = logging.getLogger(__name__)
@@ -81,26 +81,29 @@ class Venom(CustomVenom):
     logging.info(_LOG_STR, "Processing: Venom client")
 
     def __init__(self):
+        sc = SecureConfig()
         kwargs = {
             'name': 'VenomX',
-            'api_id': Config.API_ID,
-            'api_hash': Config.API_HASH,
+            'api_id': sc.API_ID,
+            'api_hash': sc.API_HASH,
             'plugins': dict(root='venom')
         }
         self.DUAL_MODE = False
-        if Config.BOT_TOKEN:
-            kwargs['bot_token'] = Config.BOT_TOKEN
-        if Config.STRING_SESSION and Config.BOT_TOKEN:
+        if sc.BOT_TOKEN:
+            kwargs['bot_token'] = sc.BOT_TOKEN
+        if sc.STRING_SESSION and sc.BOT_TOKEN:
             self.DUAL_MODE = True
             self.bot = VenomBot(bot=self, **kwargs)
-        if Config.STRING_SESSION:
-            kwargs['session_string'] = Config.STRING_SESSION
+        if sc.STRING_SESSION:
+            kwargs['session_string'] = sc.STRING_SESSION
         else:
             self.bot = VenomBot(bot=self, **kwargs)
         super().__init__(**kwargs)
 
-    def __setattr__(self, __name: str, __value: Any) -> None:
-        return super().__setattr__(__name, __value)
+    @classmethod
+    def parse(cls, client: Union['Venom', 'VenomBot', Client], **kwargs):
+        """ testing """
+        return cls()
 
     @property
     def both(self):
@@ -117,19 +120,19 @@ class Venom(CustomVenom):
 
     @property
     def hasbot(self):
-        if Config.BOT_TOKEN:
+        if SecureConfig.BOT_TOKEN:
             return True
         return False
 
     @property
     def isuser(self):
-        if Config.STRING_SESSION and Config.USER_MODE:
+        if SecureConfig().STRING_SESSION and Config.USER_MODE:
             return True
         return False
 
     @property
     def isbot(self):
-        if Config.BOT_TOKEN and not Config.USER_MODE:
+        if SecureConfig().BOT_TOKEN and not Config.USER_MODE:
             return True
         return False
 
@@ -159,7 +162,7 @@ class Venom(CustomVenom):
                 await self.bot.start()
         except AuthKeyDuplicated:
             _LOG.info(_LOG_STR, "Starting bot mode as main interface...")
-            Config.STRING_SESSION = ""
+            SecureConfig().STRING_SESSION = ""
             await self.bot.start()
         # time_3 = time.time()
         ChangeInitMessage().second_line()

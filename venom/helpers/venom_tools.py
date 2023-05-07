@@ -1,27 +1,25 @@
 # venom tools
-
 import json
-import time
-import re
 import os
-from telegraph import Telegraph
-from pastypy import Paste
-
-from pymediainfo import MediaInfo
-
+import re
+import time
+from glob import glob
 from os.path import isfile, relpath
 from typing import Union, List
-from glob import glob
 
+from pastypy import Paste
+from pymediainfo import MediaInfo
+from pyrogram.errors import UserIdInvalid
+from pyrogram.raw.functions.account import ReportPeer
 from pyrogram.raw.types import (
     InputPeerUserFromMessage,
     InputReportReasonPornography,
     InputReportReasonSpam,
 )
-from pyrogram.raw.functions.account import ReportPeer
-from pyrogram.errors import UserIdInvalid
+from telegraph import Telegraph
 
-from venom import logging, Config, MyMessage, Collection
+from venom import logging, Config, Collection
+from ..core.types import message
 
 _LOG = logging.getLogger(__name__)
 
@@ -63,9 +61,9 @@ def post_tg(title: str, content: str) -> str:
     return link_
 
 
-async def post_tg_media(content: Union[MyMessage, str]) -> str:
+async def post_tg_media(content: Union['message.MyMessage', str]) -> str:
     """ upload media to telegraph """
-    if isinstance(content, MyMessage):
+    if isinstance(content, message.MyMessage):
         media = content.replied
         if (not media.photo
                 and not media.animation
@@ -104,9 +102,9 @@ def get_owner() -> dict:
     return user
 
 
-def time_format(time: float) -> str:
-    " time formatter "
-    days_ = time / 60 / 60 / 24
+def time_format(time_: float) -> str:
+    """ time formatter """
+    days_ = time_ / 60 / 60 / 24
     hour_ = (days_ - int(days_)) * 24
     min_ = (hour_ - int(hour_)) * 60
     sec_ = (min_ - int(min_)) * 60
@@ -205,9 +203,9 @@ class Media_Info:
         return dict_
 
 
-async def paste_it(msg_content: Union['MyMessage', str]) -> str:
+async def paste_it(msg_content: Union['message.MyMessage', str]) -> str:
     """ paste content to pasty.lus """
-    if isinstance(msg_content, MyMessage):
+    if isinstance(msg_content, message.MyMessage):
         reply_ = msg_content.replied
         if reply_.document:
             try:
@@ -234,7 +232,7 @@ async def paste_it(msg_content: Union['MyMessage', str]) -> str:
     return paste_.url
 
 
-async def restart_msg(msg: MyMessage, text: str = "") -> None:
+async def restart_msg(msg: 'message.MyMessage', text: str = "") -> None:
     try:
         await Collection.RESTART.insert_one(
             {
@@ -247,3 +245,70 @@ async def restart_msg(msg: MyMessage, text: str = "") -> None:
         )
     except Exception as e:
         await msg.edit(str(e))
+
+
+def current_time(hour_diff: float = Config.TIME_DIFF) -> dict:
+    """ get current time with time difference in hours as input """
+    time_sec = time.time()
+    diff_in_hour = hour_diff
+    diff_in_seconds = diff_in_hour * 60 * 60
+    current_time_in_seconds = time_sec + diff_in_seconds
+    day_ = current_time_in_seconds / (60 * 60 * 24)
+    hour_ = (day_ - int(day_)) * 24
+    minutes_ = (hour_ - int(hour_)) * 60
+    seconds_ = int((minutes_ - int(minutes_)) * 60)
+    minutes_ = int(minutes_)
+    hour_ = int(hour_)
+    if seconds_ > 59:
+        minutes_ += 1
+        seconds_ -= 60
+    if minutes_ > 59:
+        hour_ += 1
+        minutes_ -= 60
+    if hour_ > 23:
+        hour_ -= 24
+    if hour_ < 12:
+        stamp_ = "AM"
+    else:
+        stamp_ = "PM"
+    minutes_ = f"{minutes_:02}"
+    hour_ = f"{hour_:02}"
+    seconds_ = f"{seconds_:02}"
+    time_dict = {
+        "H": hour_,
+        "M": minutes_,
+        "S": seconds_,
+        "STAMP": stamp_
+    }
+    return time_dict
+
+
+class CurrentTime:
+
+    def __init__(self):
+        self._current_time = current_time()
+
+    @property
+    def h(self) -> str:
+        """ hours """
+        return self._current_time['H']
+
+    @property
+    def m(self) -> str:
+        """ minutes """
+        return self._current_time['M']
+
+    @property
+    def s(self) -> str:
+        """ seconds """
+        return self._current_time['S']
+
+    @property
+    def stamp(self) -> str:
+        """ stamp """
+        return self._current_time['STAMP']
+
+    @property
+    def default_format(self) -> str:
+        """ default format """
+        return f"{self.h}:{self.m}:{self.s} {self.stamp}"

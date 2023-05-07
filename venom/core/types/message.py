@@ -2,57 +2,64 @@
 
 import os
 import re
-from typing import List, Union
+from typing import List, Union, Dict
 
-from pyrogram import filters as flt
+from pyrogram import filters as flt, Client
 from pyrogram.enums import ChatType, ParseMode
 from pyrogram.errors import (MessageAuthorRequired, MessageDeleteForbidden,
-                             MessageIdInvalid, MessageTooLong)
+                             MessageIdInvalid, MessageTooLong, MessageNotModified)
 from pyrogram.types import InlineKeyboardMarkup, Message
-from pyromod import listen
 
+import venom
 from venom import Config
+from .. import client as _client
 
 _CANCEL_PROCESS: List[int] = []
 
 
 class MyMessage(Message):
 
-    def __init__(self, message: Union[Message, 'MyMessage'], **kwargs) -> None:
+    def __init__(self,
+                 client: Union['_client.Venom', '_client.VenomBot', Client],
+                 mvars: Dict[str, object],
+                 **kwargs: Union[str, bool]) -> None:
         """ Modified Message """
-        self.msg = message
-        self.msg._flags = {}
-        self.msg._filtered_input = ""
-        for one in dir(message):
-            if hasattr(self, one):
-                continue
-            if not one.startswith("__"):
-                attr_ = getattr(message, one)
-                try:
-                    setattr(self, one, attr_)
-                except:
-                    pass
+        self._flags = {}
+        self._filtered_input = ""
+        self._kwargs = kwargs
+        self.venom_client = client
+        super().__init__(client=client, **mvars)
 
     @classmethod
-    def parse(cls, message, **kwargs):
+    def parse(cls, client: Union['_client.Venom', '_client.VenomBot'], message: Message, **kwargs):
+        if not message:
+            return
         vars_ = vars(message)
-        for one in ['_flags', '_filtered_input']:
+        for one in ['_client', '_flags', '_filtered_input', '_kwargs', 'venom_client']:
             if one in vars_:
                 del vars_[one]
         if vars_['reply_to_message']:
-            vars_['reply_to_message'] = cls.parse(vars_['reply_to_message'], **kwargs)
-        return cls(message, **kwargs)
+            vars_['reply_to_message'] = cls.parse(client, vars_['reply_to_message'], **kwargs)
+        return cls(client, vars_, **kwargs)
 
     @property
-    def replied(self) -> 'MyMessage':
-        return self.reply_to_message
+    def client(self) -> Client | None:
+        """ return client """
+        return self._client
+
+    @property
+    def replied(self) -> Union['MyMessage', None]:
+        if not hasattr(self, 'reply_to_message'):
+            return None
+        replied_msg = self.reply_to_message
+        return self.parse(self.venom_client, replied_msg)
 
     @property
     def input_str(self) -> str:
-        if not self.msg.text:
+        if not self.text:
             return ""
-        if " " in self.msg.text or "\n" in self.msg.text:
-            text_ = self.msg.text
+        if " " in self.text or "\n" in self.text:
+            text_ = self.text
             split_ = text_.split(maxsplit=1)
             input_ = split_[-1]
             return input_
@@ -101,14 +108,14 @@ class MyMessage(Message):
     @property
     def process_is_cancelled(self) -> bool:
         """ check if process is cancelled """
-        if self.msg.id in _CANCEL_PROCESS:
-            _CANCEL_PROCESS.remove(self.msg.id)
+        if self.id in _CANCEL_PROCESS:
+            _CANCEL_PROCESS.remove(self.id)
             return True
         return False
 
     def cancel_process(self) -> None:
         """ cancel process """
-        _CANCEL_PROCESS.append(self.msg.id)
+        _CANCEL_PROCESS.append(self.id)
 
     async def send_as_file(self,
                            text: str,
@@ -122,20 +129,20 @@ class MyMessage(Message):
             fn.write(str(text))
         if delete_message:
             try:
-                await self.msg.delete()
+                await self.delete()
             except MessageDeleteForbidden:
                 pass
         if reply_to:
             reply_to_id = reply_to
         else:
-            reply_to_id = self.msg.id if not self.msg.reply_to_message else self.msg.reply_to_message.id
-        message = await self.msg._client.send_document(chat_id=self.msg.chat.id,
-                                                       document=file_,
-                                                       file_name=file_name,
-                                                       caption=caption,
-                                                       reply_to_message_id=reply_to_id)
+            reply_to_id = self.id if not self.reply_to_message else self.reply_to_message.id
+        message = await self._client.send_document(chat_id=self.chat.id,
+                                                   document=file_,
+                                                   file_name=file_name,
+                                                   caption=caption,
+                                                   reply_to_message_id=reply_to_id)
         os.remove(file_)
-        return self.parse(message)
+        return self.parse(self.venom_client, message)
 
     async def edit(self,
                    text: str,
@@ -146,11 +153,13 @@ class MyMessage(Message):
                    sudo: bool = True,
                    **kwargs) -> 'MyMessage':
         """ edit or reply message """
+        # if self.reactions is not None and self.reactions != []:
+        #     return
         reply_to_id = self.replied.id if self.replied else self.id
         try:
-            message = await self.msg._client.edit_message_text(
-                chat_id=self.msg.chat.id,
-                message_id=self.msg.id,
+            message = await self._client.edit_message_text(
+                chat_id=self.chat.id,
+                message_id=self.id,
                 text=text,
                 del_in=del_in,
                 parse_mode=parse_mode,
@@ -158,22 +167,34 @@ class MyMessage(Message):
                 reply_markup=reply_markup,
                 **kwargs
             )
-            return self.parse(message)
-        except (MessageAuthorRequired, MessageIdInvalid):
+            return self.parse(self.venom_client, message)
+        except MessageNotModified:
+            return self
+        except (MessageAuthorRequired, MessageIdInvalid) as msg_err:
             if sudo:
-                reply_ = await self.msg._client.send_message(chat_id=self.msg.chat.id,
-                                                             text=text,
-                                                             del_in=del_in,
-                                                             dis_preview=dis_preview,
-                                                             parse_mode=parse_mode,
-                                                             reply_markup=reply_markup,
-                                                             reply_to_message_id=reply_to_id,
-                                                             **kwargs)
-                self.msg = reply_
-                return self.parse(reply_)
-            raise MessageAuthorRequired
+                reply_ = await self._client.send_message(chat_id=self.chat.id,
+                                                         text=text,
+                                                         del_in=del_in,
+                                                         dis_preview=dis_preview,
+                                                         parse_mode=parse_mode,
+                                                         reply_markup=reply_markup,
+                                                         reply_to_message_id=reply_to_id,
+                                                         **kwargs)
+                parsed = self.parse(self.venom_client, reply_)
+                self.old_message = self
+                self.id = parsed.id
+                return parsed
+            raise msg_err
 
     edit_text = try_to_edit = edit
+
+    async def err(self, text: str):
+        """ Method for showing errors """
+        format_ = f"<b>Error</b>:\n{text}"
+        try:
+            return await self.edit(text)
+        except Exception as e:
+            venom.test_print(e)
 
     async def reply(self,
                     text: str,
@@ -181,19 +202,21 @@ class MyMessage(Message):
                     del_in: int = -1,
                     parse_mode: ParseMode = ParseMode.DEFAULT,
                     reply_markup: InlineKeyboardMarkup = None,
-                    quote: bool = True) -> 'MyMessage':
+                    quote: bool = True,
+                    **kwargs) -> 'MyMessage':
         """ reply message """
 
-        reply_to_id = self.msg.reply_to_message.id if (quote and self.msg.reply_to_message) else None
+        reply_to_id = self.replied.id if (quote and self.replied) else None
 
-        reply_ = await self.msg._client.send_message(chat_id=self.msg.chat.id,
-                                                     text=text,
-                                                     del_in=del_in,
-                                                     dis_preview=dis_preview,
-                                                     parse_mode=parse_mode,
-                                                     reply_to_message_id=reply_to_id,
-                                                     reply_markup=reply_markup)
-        return reply_ if self.chat.type != ChatType.PRIVATE else self.parse(reply_)
+        reply_ = await self._client.send_message(chat_id=self.chat.id,
+                                                 text=text,
+                                                 del_in=del_in,
+                                                 dis_preview=dis_preview,
+                                                 parse_mode=parse_mode,
+                                                 reply_to_message_id=reply_to_id,
+                                                 reply_markup=reply_markup,
+                                                 **kwargs)
+        return reply_ if self.chat.type != ChatType.PRIVATE else self.parse(self, reply_)
 
     async def edit_or_send_as_file(self,
                                    text: str,
@@ -239,18 +262,18 @@ class MyMessage(Message):
             os.remove(file_name)
             return msg_
 
-    async def delete(self) -> bool:
+    async def delete(self, revoke: bool = True) -> bool:
         """ message delete method """
         try:
-            await self.msg.delete()
+            await self.delete()
             return True
         except MessageAuthorRequired:
             return False
 
     async def ask(self, text: str, timeout: int = 15, filters: flt.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod.ask """
-        return await self.msg._client.ask(text, timeout=timeout, filters=filters)
+        return await self.venom_client.ask(chat_id=self.chat.id, text=text, timeout=timeout, filters=filters)
 
     async def wait(self, timeout: int = 15, filters: flt.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod's listen """
-        return await self.msg._client.listen(self.msg.chat.id, timeout=timeout, filters=filters)
+        return await self.venom_client.listen(self.chat.id, timeout=timeout, filters=filters)

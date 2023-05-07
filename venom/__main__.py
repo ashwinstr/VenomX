@@ -1,12 +1,10 @@
 # main.py
-
 import time
 
 from pyrogram.errors import AuthKeyDuplicated, FloodWait
 
 from init import ChangeInitMessage
-
-from venom import logging, venom, Config
+from venom import logging, venom
 
 _ERROR = "##### {} #####"
 _LOG = logging.getLogger(__name__)
@@ -14,9 +12,7 @@ _LOG = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     try:
-        # time_2 = time.time()
         ChangeInitMessage().first_line()
-        # Config.time_checked_2 = time.time() - time_2
         venom.run()
         ChangeInitMessage().exiting()
     except AuthKeyDuplicated:

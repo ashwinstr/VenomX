@@ -3,13 +3,14 @@
 from typing import Dict, List
 
 from pyrogram import filters
+from pyrogram.enums import ParseMode
 from pyrogram.errors import MessageEmpty, MessageNotModified
 from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
                             InlineKeyboardMarkup, InlineQuery,
                             InlineQueryResultArticle, InputTextMessageContent)
-from pyrogram.enums import ParseMode
 
-from venom import Config, MyMessage, manager, venom, Collection
+from venom import Collection, Config, MyMessage, SecureConfig, manager, venom
+from venom.core.command_manager import plugin_parent
 from venom.helpers import VenomDecorators, plugin_name
 
 CHANNEL = venom.getCLogger(__name__)
@@ -104,7 +105,7 @@ async def inline_bot_mode(_, cq: CallbackQuery):
     else:
         Config.USER_MODE = True
         text_ = "**Mode changed to USER.**"
-    if Config.STRING_SESSION:
+    if SecureConfig().STRING_SESSION:
         message = cq.message
         if message is not None:
             chat_ = cq.message.chat.id
@@ -150,13 +151,13 @@ async def ihelp_callback(_, cq: CallbackQuery):
             text_ = general_text
             reply_markup = folder_buttons(last_index)
         elif currently_in in plugins:
-            parent_folder = manager.plugin_parent(currently_in)
+            parent_folder = plugin_parent(currently_in)
             text_ = folder_text.format(parent_folder)
             reply_markup = plugin_buttons(parent_folder, last_index)
         elif currently_in in manager.cmd_names():
             parent_plugin = manager.cmd_parent_plugin(currently_in)
             text_ = plugin_text.format(parent_plugin)
-            parent_folder = manager.plugin_parent(parent_plugin)
+            parent_folder = plugin_parent(parent_plugin)
             reply_markup = cmd_buttons(parent_folder, parent_plugin, last_index)
     elif btn_pressed in ["next", "previous"]:
         if currently_in == "folders":
@@ -207,7 +208,7 @@ async def ihelp_callback(_, cq: CallbackQuery):
 ################################################## button functions ####################################################
 
 def start_button() -> InlineKeyboardMarkup:
-    mode_ = "USER" if Config.USER_MODE and Config.STRING_SESSION else "BOT"
+    mode_ = "USER" if Config.USER_MODE and SecureConfig().STRING_SESSION else "BOT"
     btn_ = [
         [
             InlineKeyboardButton(text="Start", callback_data="ihelp_start0_start_0")

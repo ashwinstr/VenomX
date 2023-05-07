@@ -6,7 +6,7 @@ from os.path import exists
 from pathlib import Path
 
 from venom import venom, Config, MyMessage
-from venom.helpers import plugin_name, humanbytes
+from venom.helpers import plugin_name, human_bytes
 
 HELP = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
 
@@ -47,13 +47,13 @@ async def direct_ories(_, message: MyMessage):
                 else:
                     files += "📄"
                 size = os.stat(str(one_path)).st_size
-                files += f" `{one_path.name}` <i>({humanbytes(size)})\n"
+                files += f" `{one_path.name}` <i>({human_bytes(size)})\n"
             else:
                 folders += f"📁 <code>{one_path.name}</code>\n"
         out += (folders + files) or "<code>empty path!</code>"
     else:
         size = os.stat(str(path)).st_size
-        out += f"📄 <code>{path.name}</code> <i>({humanbytes(size)})</i>\n"
+        out += f"📄 <code>{path.name}</code> <i>({human_bytes(size)})</i>\n"
     await message.edit_or_send_as_file(out)
 
 ########################################################################################################################

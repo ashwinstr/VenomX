@@ -1,11 +1,12 @@
 # executor.py
 # taken from USERGE-X
 
-import sys
+import asyncio
 import io
 import keyword
+import sys
 import traceback
-import asyncio
+
 try:
     from os import geteuid
 except ImportError:
@@ -16,7 +17,6 @@ from pyrogram.enums import ParseMode
 
 from venom import venom, Config, MyMessage
 from venom.helpers import post_tg, plugin_name
-from ..security.hide_vars import secure_cmd
 
 
 help_ = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
@@ -41,9 +41,9 @@ help_['commands'].append(
 @venom.trigger('eval')
 async def evaluate(_, message: MyMessage):
     """ evaluate your code """
-    secure_ = await secure_cmd(message)
-    if not secure_:
-        return
+    # secure_ = await secure_cmd(message)
+    # if not secure_:
+    #     return
     cmd = await init_func(message)
     mono_ = True if "-m" not in message.flags else False
     tele_ = True if "-tg" in message.flags else False

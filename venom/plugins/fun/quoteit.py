@@ -52,13 +52,13 @@ async def quote_message(_, message: MyMessage):
     if pfp_:
         down_ = await venom.both.download_media(pfp_, file_name=f"profile_pic_{name_}.jpg")
         req_ = await venom.send_photo(bot_, down_, caption=json_)
-        req_ = MyMessage.parse(req_)
+        req_ = MyMessage.parse(_, req_)
         os.remove(down_)
     else:
         req_ = await venom.send_message(bot_, json_)
     try:
         resp_ = await req_.wait(timeout=20, filters=filters.bot)
-    except TimeoutError:
+    except asyncio.TimeoutError:
         return await message.edit("`Bot didn't respond...`", del_in=5)
     resp = resp_.text
     if resp != "Sticker done.":
@@ -71,7 +71,7 @@ async def quote_message(_, message: MyMessage):
             chat_id=message.chat.id,
             query_id=result.query_id,
             result_id=result.results[0].id,
-            reply_to_message_id=reply_.id,
+            reply_to_message_id=message.id,
         ),
         message.delete(),
     )
@@ -119,13 +119,13 @@ async def make_tweet(_, message: MyMessage):
     if pfp_:
         down_ = await venom.both.download_media(pfp_, file_name=f"profile_pic_{username_}.png")
         req_ = await venom.send_photo(bot_, down_, caption=json_)
-        req_ = MyMessage.parse(req_)
+        req_ = MyMessage.parse(_, req_)
         os.remove(down_)
     else:
         req_ = await venom.send_message(bot_, json_)
     try:
-        response = await req_.wait(timeout=20, filters=filters.bot)
-    except TimeoutError:
+        response = await req_.wait(timeout=20, filters=filters.chat([bot_]))
+    except asyncio.TimeoutError:
         return await message.edit("`Bot didn't respond...`", del_in=5)
     resp = response.text
     if resp != "Sticker done.":
@@ -138,17 +138,18 @@ async def make_tweet(_, message: MyMessage):
             chat_id=message.chat.id,
             query_id=result.query_id,
             result_id=result.results[0].id,
-            reply_to_message_id=reply_.id,
+            reply_to_message_id=message.id,
         ),
         message.delete(),
     )
+
 
 DELIMITERS = ("/", ":", "|", "_")
 
 
 def separate_sed(sed_string):
-    """Separate sed arguments."""
-    
+    """ Separate sed arguments. """
+
     if str(sed_string).endswith(" -n"):
         sed_string = sed_string.replace(" -n", "")
     else:
@@ -175,11 +176,11 @@ def separate_sed(sed_string):
 
         while counter < len(sed_string):
             if (
-                sed_string[counter] == "\{2}"
-                and counter + 1 < len(sed_string)
-                and sed_string[counter + 1] == delim
+                    sed_string[counter] == "\{2}"
+                    and counter + 1 < len(sed_string)
+                    and sed_string[counter + 1] == delim
             ):
-                sed_string = sed_string[:counter] + sed_string[counter + 1 :]
+                sed_string = sed_string[:counter] + sed_string[counter + 1:]
             elif (counter + 1) < len(sed_string) and (sed_string[counter] + sed_string[counter + 1]) == "\/":
                 sed_string = sed_string.replace(sed_string[counter], "")
                 counter += 1
@@ -209,7 +210,7 @@ def send_sed(text_, regex):
         try:
             check = re.match(repl, text_, flags=re.IGNORECASE)
             if check and check.group(0).lower() == text_.lower():
-                 pass
+                pass
             if "i" in flags and "g" in flags:
                 text = re.sub(fr"{repl}", fr"{repl_with}", text_, flags=re.I).strip()
             elif "u" in flags and "g" in flags:
@@ -227,13 +228,19 @@ def send_sed(text_, regex):
             elif "u" in flags:
                 repl_with = bytes(repl_with, "utf-8").decode('unicode_escape')
                 text = re.sub(fr"{repl}", repl_with, text_, count=1).strip()
-#            elif "e" in flags:
-#                text = re.sub(fr"{repl}", repl_with, to_fix, count=1).strip()
+            #            elif "e" in flags:
+            #                text = re.sub(fr"{repl}", repl_with, to_fix, count=1).strip()
             else:
                 text = re.sub(fr"{repl}", fr"{repl_with}", text_, count=1).strip()
         except sre_err as e:
             return f"ERROR: {e}"
-#            return await bot.send_message(message.chat.id, "**[Learn Regex](https://regexone.com)**")
+        #            return await bot.send_message(message.chat.id, "**[Learn Regex](https://regexone.com)**")
         if text:
             return text
         return "ERROR !!!"
+
+
+@venom.trigger('uni')
+async def unicode_print(_, message: MyMessage):
+    """ testing unicodes """
+    link_ = message.replied.link if message.replied else message.link

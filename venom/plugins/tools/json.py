@@ -1,5 +1,4 @@
 # json.py
-
 from pyrogram.enums import ParseMode
 
 from venom import Config, MyMessage, venom
@@ -22,7 +21,7 @@ HELP['commands'].append(
 @venom.trigger('json')
 async def j_son(_, message: MyMessage):
     """ message entity in json format """
-    msg = message.msg.reply_to_message if message.replied else message.msg
+    msg = message.replied if message.replied else message
     await message.edit_or_send_as_file(f"```{str(msg)}```", file_name="json.txt",
                                        caption=f"JSON of message.",
-                                       parse_mode=ParseMode.HTML)
+                                       parse_mode=ParseMode.MARKDOWN)

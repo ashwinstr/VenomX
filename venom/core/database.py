@@ -7,14 +7,14 @@ from typing import List
 from motor.core import AgnosticClient, AgnosticDatabase, AgnosticCollection
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from venom.config import Config
+from venom.config import Config, SecureConfig
 from venom.logger import logging
 
 _LOGGER = logging.getLogger(__name__)
 _LOG_STR = "### %s ###"
 
 
-_MGCLIENT: AgnosticClient = AsyncIOMotorClient(Config.DB_URI)
+_MGCLIENT: AgnosticClient = AsyncIOMotorClient(SecureConfig().DB_URI)
 _RUN = asyncio.get_event_loop().run_until_complete
 
 if Config.DB_NAME in _RUN(_MGCLIENT.list_database_names()):

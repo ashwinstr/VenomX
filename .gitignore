@@ -34,3 +34,6 @@ venom/plugins/test
 
 # session files
 *.session*
+
+# incomplete plugins
+venom/plugins/security/vars

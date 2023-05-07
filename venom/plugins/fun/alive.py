@@ -4,6 +4,7 @@ import asyncio
 import re
 
 from pyrogram import __version__ as ver, filters
+from pyrogram.enums import MessageMediaType
 from pyrogram.types import (
     InlineQuery,
     InlineQueryResultPhoto,
@@ -15,11 +16,9 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
     CallbackQuery
 )
-from pyrogram.enums import MessageMediaType
 
 from venom import venom, Config, Collection, MyMessage, python_ver
 from venom.helpers import plugin_name, post_tg_media, VenomDecorators
-
 
 HELP = Config.HELP[plugin_name(__name__)] = {'type': 'fun', 'commands': []}
 ALIVE_PIC = Collection.ALIVE_MEDIA

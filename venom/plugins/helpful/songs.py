@@ -10,7 +10,7 @@ from time import time
 import yt_dlp
 from wget import download
 
-from venom import MyMessage, venom, plugin_name, Config, logging
+from venom import MyMessage, venom, plugin_name, Config, logging, test_print
 
 LOGGER = logging.getLogger(__name__)
 CHANNEL = venom.getCLogger(__name__)
@@ -50,8 +50,8 @@ async def song_dl(_, message: MyMessage):
     if not query:
         return await message.edit("`Give a song name or link to download.`", del_in=5)
     await message.edit("`Searching...`")
-    starttime = time()
-    dl_path = f"downloads/{starttime}/"
+    start_time = time()
+    dl_path = f"downloads/{start_time}/"
     query_or_search = query if query.startswith("http") else f"ytsearch:{query}"
     if "-m" in message.flags:
         aformat = "mp3"
@@ -75,7 +75,8 @@ async def song_dl(_, message: MyMessage):
             thumb = yt_info["thumbnails"]
             duration = yt_info["formats"][0]["fragments"][0]["duration"]
             artist = yt_info["channel"]
-        except Exception:
+        except Exception as e:
+            test_print(e)
             await CHANNEL.log(str(traceback.format_exc()))
     if thumb:
         try:

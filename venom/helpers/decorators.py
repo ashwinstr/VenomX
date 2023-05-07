@@ -69,15 +69,13 @@ class VenomDecorators:
                                 and user_id not in Config.SUDO_USERS
                                 and user_id not in Config.TRUSTED_SUDO_USERS):
                         " if not owner "
-                        results = []
-                        results.append(
-                            InlineQueryResultArticle(
-                                title="VenomX",
-                                input_message_content=InputTextMessageContent(
-                                    "Only the <b>owner</b> can use this bot. Please deploy your own <b>VenomX</b>, thank you."
-                                ),
-                            )
-                        )
+                        results = [InlineQueryResultArticle(
+                            title="VenomX",
+                            input_message_content=InputTextMessageContent(
+                                "Only the <b>owner</b> can use this bot. Please deploy your own <b>VenomX</b>, "
+                                "thank you."
+                            ),
+                        )]
                         return await iq.answer(results=results, cache_time=5)
                 try:
                     await func(venom, iq)

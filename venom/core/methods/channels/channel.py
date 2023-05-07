@@ -13,6 +13,6 @@ def _plugin_name(name_: str) -> str:
 class GetCLogger(RClient):
 
     def getCLogger(self, name: str):
-        " channel logger "
+        """ channel logger """
         name_ = _plugin_name(name)
         return types.ChannelLogger(self, name_)

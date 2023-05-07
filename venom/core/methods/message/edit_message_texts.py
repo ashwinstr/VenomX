@@ -5,9 +5,10 @@ from typing import Union
 
 from pyrogram import Client as RClient
 from pyrogram.enums import ParseMode
-from pyrogram.types import InlineKeyboardMarkup, MessageEntity
+from pyrogram.types import InlineKeyboardMarkup
 
 from ... import types
+from ... import client as _client
 
 
 class EditMessageText(RClient):
@@ -23,7 +24,7 @@ class EditMessageText(RClient):
                                 **kwargs) -> 'types.message.MyMessage':
         """ custom edit_message_text method for VenomX """
 
-        disable_web_page_preview = True if dis_preview else False
+        disable_web_page_preview = dis_preview
 
         msg = await super().edit_message_text(chat_id=chat_id,
                                               message_id=message_id,
@@ -37,4 +38,6 @@ class EditMessageText(RClient):
             await asyncio.sleep(del_in)
             await msg.delete()
 
-        return types.message.MyMessage.parse(msg)
+        client_ = _client.Venom.parse(self)
+
+        return types.message.MyMessage.parse(client_, msg)

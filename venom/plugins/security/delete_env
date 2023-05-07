@@ -1,0 +1,28 @@
+# delete_env.py
+import inspect
+import os
+import platform
+from typing import Any
+
+from venom import SecureConfig
+
+list_ = dir(SecureConfig)
+
+
+async def _init() -> None:
+    """ delete all import os environment variables for the bot for security """
+    for one in list_:
+        secured_configs()
+        setattr(SecureConfig, one, None)
+        os.environ[one] = ""
+    os.environ["DB_URI"] = ""
+
+
+def secured_configs(var_name: str = None, file_name: str = None, dict_obj: dict = {}) -> Any | None:
+    """ get value of secured configs """
+    stack = inspect.stack()[1]
+    if "temp" in stack.filename:
+        return None
+    for one in list_:
+        dict_obj.update({one, getattr(SecureConfig, one)})
+    return dict_obj.get(var_name)

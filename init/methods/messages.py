@@ -1,15 +1,8 @@
 # init/messages.py
-import time
 
 import requests
 
-from venom import Config
-
-BASE_URL_ = "https://api.telegram.org/bot" + Config.BOT_TOKEN
-
-SEND_URL_ = BASE_URL_ + "/sendMessage?chat_id={}&text={}&parse_mode=markdown"
-EDIT_URL_ = BASE_URL_ + "/editMessageText?chat_id={}&message_id={}&text={}&parse_mode=markdown"
-DEL_URL_ = BASE_URL_ + "/deleteMessage?chat_id={}&message_id={}"
+from venom import Config, SecureConfig
 
 # INITIAL_MESSAGE = """
 # *Progress*:
@@ -68,42 +61,49 @@ LAST_MESSAGE = "*VenomX has been stopped.* ❗❗❗"
 
 class InitMessages:
 
-    def send_message(text: str, chat_id: int = Config.LOG_CHANNEL_ID) -> dict:
-        resp_ = requests.get(SEND_URL_.format(chat_id, text))
+    def __init__(self):
+        base_url = "https://api.telegram.org/bot" + SecureConfig().BOT_TOKEN
+        self.SEND_URL = base_url + "/sendMessage?chat_id={}&text={}&parse_mode=markdown"
+        self.EDIT_URL = base_url + "/editMessageText?chat_id={}&message_id={}&text={}&parse_mode=markdown"
+        self.DEL_URL = base_url + "/deleteMessage?chat_id={}&message_id={}"
+
+    def send_message(self, text: str, chat_id: int = Config.LOG_CHANNEL_ID) -> dict:
+        resp_ = requests.get(self.SEND_URL.format(chat_id, text))
         json_ = resp_.json()
         return json_['result']
 
-    def edit_message(message_id: int, text: str, chat_id: int = Config.LOG_CHANNEL_ID) -> dict:
-        resp_ = requests.get(EDIT_URL_.format(chat_id, message_id, text))
+    def edit_message(self, message_id: int, text: str, chat_id: int = Config.LOG_CHANNEL_ID) -> dict:
+        resp_ = requests.get(self.EDIT_URL.format(chat_id, message_id, text))
         json_ = resp_.json()
         return json_['result']
 
-    def delete_message(message_id: int, chat_id: int = Config.LOG_CHANNEL_ID) -> dict:
-        resp_ = requests.get(DEL_URL_.format(chat_id, message_id))
+    def delete_message(self, message_id: int, chat_id: int = Config.LOG_CHANNEL_ID) -> dict:
+        resp_ = requests.get(self.DEL_URL.format(chat_id, message_id))
         json_ = resp_.json()
         return json_
 
 
-class ChangeInitMessage():
+class ChangeInitMessage:
 
     def __init__(self) -> None:
         self.message_id = Config.START_MESSAGE_DICT['message_id']
+        self.initial = InitMessages()
 
     def first_line(self) -> None:
         """ edit first line in Initial message """
-        InitMessages.edit_message(self.message_id, FIRST_MESSAGE)
+        self.initial.edit_message(self.message_id, FIRST_MESSAGE)
 
     def second_line(self) -> None:
         """ edit second line in Initial message """
-        InitMessages.edit_message(self.message_id, SECOND_MESSAGE)
+        self.initial.edit_message(self.message_id, SECOND_MESSAGE)
 
     def third_line(self) -> None:
         """ edit third line in Initial message """
-        InitMessages.edit_message(self.message_id, THIRD_MESSAGE)
+        self.initial.edit_message(self.message_id, THIRD_MESSAGE)
 
     def exiting(self) -> None:
         """ stopping bot """
-        InitMessages.edit_message(self.message_id, LAST_MESSAGE)
+        self.initial.edit_message(self.message_id, LAST_MESSAGE)
 
 
-Config.START_MESSAGE_DICT = InitMessages.send_message(INITIAL_MESSAGE)
+Config.START_MESSAGE_DICT = InitMessages().send_message(INITIAL_MESSAGE)
