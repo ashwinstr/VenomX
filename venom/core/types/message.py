@@ -265,7 +265,7 @@ class MyMessage(Message):
     async def delete(self, revoke: bool = True) -> bool:
         """ message delete method """
         try:
-            await self.delete()
+            await super().delete()
             return True
         except MessageAuthorRequired:
             return False
