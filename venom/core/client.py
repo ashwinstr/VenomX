@@ -11,14 +11,16 @@ from typing import Any, Optional, Union
 from pyrogram import Client
 from pyrogram.errors import AuthKeyDuplicated
 
+from . import filter
+from .command_manager import manager
 from .methods import Methods
-from ..plugins import all_plugins
+from ..plugins import all_plugins, ROOT
 from .database import _close_db
 
 from init import ChangeInitMessage
 
 from venom import Config, logging, SecureConfig
-from venom.helpers import time_format
+from venom.helpers import time_format, get_import_paths
 
 _LOG = logging.getLogger(__name__)
 _LOG_STR = "### %s ###"
@@ -38,24 +40,31 @@ async def _init_tasks():
         await asyncio.gather(*list_)
     except ConnectionError:
         print(f"Connection error.\n{traceback.format_exc()}")
-    except BaseException:
-        print(traceback.format_exc())
+    except BaseException as e:
+        print(f"Error in init functions: {e}")
     list_.clear()
 
 
 class CustomVenom(Methods, Client):
     """ testing """
 
-    def __int__(self):
-        """ testing """
-        # self.import_all()
+    # def __init__(self, **kwargs):
+    #     """ testing """
+        # plugins = all_plugins()
+        # for plugin in plugins:
+        #     importlib.import_module(f"venom.plugins.{plugin}")
+        # super().__init__(**kwargs)
+
+    _root = ROOT
 
     @classmethod
     def parse(cls, client: Union['Venom', 'VenomBot'], **kwargs):
         pass
 
-    # def import_all(self):
-    #     for one in get_import_paths()
+    def import_all(self):
+        for one in get_import_paths(self._root, "/**/"):
+            test = importlib.import_module(f"venom.plugins.{one}")
+            importlib.reload(test)
 
 
 class VenomBot(CustomVenom):
@@ -63,6 +72,10 @@ class VenomBot(CustomVenom):
     def __init__(self, bot: Optional[Union['VenomBot', 'Venom']] = None, *args, **kwargs) -> None:
         self.bot = bot
         super().__init__(in_memory=True, *args, **kwargs)
+
+    @classmethod
+    def parse(cls, client: Union['Venom', 'VenomBot'], **kwargs):
+        return cls()
 
     @property
     def ubot(self) -> 'Venom':
@@ -120,7 +133,7 @@ class Venom(CustomVenom):
 
     @property
     def hasbot(self):
-        if SecureConfig.BOT_TOKEN:
+        if SecureConfig().BOT_TOKEN:
             return True
         return False
 
@@ -136,22 +149,22 @@ class Venom(CustomVenom):
             return True
         return False
 
-    @property
-    def info(self):
-        if self.isuser and self.hasbot:
-            user_ = True
-            bot_ = True
-            mode_ = "DUAL"
-        elif self.isbot:
-            user_ = False
-            bot_ = True
-            mode_ = "BotMode"
-        dict_ = {
-            'user': user_,
-            'bot': bot_,
-            'mode': mode_
-        }
-        return dict_
+    # @property
+    # def info(self):
+    #     if self.isuser and self.hasbot:
+    #         user_ = True
+    #         bot_ = True
+    #         mode_ = "DUAL"
+    #     elif self.isbot:
+    #         user_ = False
+    #         bot_ = True
+    #         mode_ = "BotMode"
+    #     dict_ = {
+    #         'user': user_,
+    #         'bot': bot_,
+    #         'mode': mode_
+    #     }
+    #     return dict_
 
     async def start(self):
         try:
@@ -160,23 +173,20 @@ class Venom(CustomVenom):
             if hasattr(self, 'bot') and self.bot is not None:
                 _LOG.info(_LOG_STR, "Starting bot")
                 await self.bot.start()
+            # self.import_all()
         except AuthKeyDuplicated:
             _LOG.info(_LOG_STR, "Starting bot mode as main interface...")
             SecureConfig().STRING_SESSION = ""
             await self.bot.start()
-        # time_3 = time.time()
+        except ImportError as IE:
+            print(IE)
         ChangeInitMessage().second_line()
-        # time_checked_3 = time.time() - time_3
         await _init_tasks()
-        # time_4 = time.time()
         ChangeInitMessage().third_line()
-        # time_checked_4 = time.time() - time_4
         end_ = time.time()
         print(end_ - START_)
-        # print(time_checked_1 + Config.time_checked_2 + time_checked_3 + time_checked_4)
-        # await idle()11
 
-    async def stop(self):
+    async def stop(self: 'Venom', block: bool = True):
         try:
             if self.bot:
                 _LOG.info(_LOG_STR, "Stopping bot")

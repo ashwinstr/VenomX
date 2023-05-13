@@ -6,11 +6,10 @@ from asyncio.exceptions import TimeoutError
 
 from pyrogram import filters
 from pyrogram.enums import ChatType
-from pyrogram.errors import FloodWait, PeerIdInvalid, UserBannedInChannel, UsernameInvalid
+from pyrogram.errors import FloodWait, PeerIdInvalid, UserBannedInChannel, UsernameInvalid, MessageIdInvalid
 
 from venom import venom, MyMessage, Config, Collection
 from venom.helpers import plugin_name, extract_id, report_user
-
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'security', 'commands': []}
 CHANNEL = venom.getCLogger(__name__)
@@ -192,7 +191,7 @@ HELP_["commands"].append(
 
 @venom.trigger('fban')
 async def fban_(_, message: MyMessage):
-    """Bans a user from connected Feds."""
+    """ Bans a user from connected Feds. """
     fban_arg = ["❯", "❯❯", "❯❯❯", "❯❯❯ <b>FBanned {}</b>"]
     PROOF_CHANNEL = Config.FBAN_LOG_CHANNEL if Config.FBAN_LOG_CHANNEL else Config.LOG_CHANNEL_ID
     input_ = message.filtered_input
@@ -266,7 +265,7 @@ async def fban_(_, message: MyMessage):
         user_ = await venom.get_users(user)
         u_link = user_.mention
         u_id = user_.id
-    except BaseException:
+    except PeerIdInvalid:
         u_link = user
         u_id = user
     failed = []
@@ -392,7 +391,7 @@ async def fban_p(_, message: MyMessage):
             msg_en = await venom.get_messages(chat_id, int(msg_id))
             user = msg_en.from_user.id
             proof = msg_en.id
-        except BaseException:
+        except MessageIdInvalid:
             await message.edit(
                 "`Provide a proper spam message link to report...`", del_in=5
             )
@@ -450,7 +449,7 @@ async def fban_p(_, message: MyMessage):
         user_ = await venom.get_users(user)
         u_link = user_.mention
         u_id = user_.id
-    except BaseException:
+    except PeerIdInvalid:
         u_link = user
         u_id = user
     await message.edit(fban_arg[0])
@@ -466,10 +465,9 @@ async def fban_p(_, message: MyMessage):
     reason = reason or "Not specified"
     reason += " || {" + log_fwd.link + "}"
     if fps and '-test' not in flags_:
-        report_user(
+        await report_user(
             chat=chat_id,
             user_id=user,
-            msg=msg_en,
             msg_id=proof,
             reason=reason,
         )

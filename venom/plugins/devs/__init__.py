@@ -1,0 +1,32 @@
+# devs/__init__.py
+
+import re
+
+from pyrogram.enums import ParseMode
+
+from venom import Config, get_devs
+from venom.core.types import MyMessage
+
+
+async def init_func(message: MyMessage) -> str | bool | None:
+    if not Config.DEVELOPER_MODE and message.from_user.id not in get_devs():
+        await message.edit(
+            f"`Secured command !!!`\n**Only DEVS can use this command or you can enable by using** "
+            f"`{Config.CMD_TRIGGER}dev_mode true`**.**",
+            parse_mode=ParseMode.MARKDOWN
+        )
+        return None
+    regex_ = re.search(fr"^({Config.CMD_TRIGGER}|{Config.SUDO_TRIGGER})(load)|(freeze)", message.text)
+    print(regex_.group(1), regex_.group(2), sep="\n") if regex_ else None
+    if not bool(regex_):
+        print()
+        cmd = message.filtered_input
+    else:
+        cmd = True
+    if not cmd:
+        await message.edit("`Input not found...`")
+        return None
+    if isinstance(cmd, str) and "config.env" in cmd:
+        await message.edit("`That's a dangerous operation! Not Permitted!`")
+        return None
+    return cmd

@@ -4,11 +4,33 @@ from venom import venom, Config
 
 
 async def _init() -> None:
-    me_ = await venom.both.get_me()
-    dict_ = {
-        'name': me_.first_name,
-        'full_name': ' '.join([me_.first_name, me_.last_name or '']),
-        'username': me_.username,
-        'mention': f'<a href="tg://user?id={me_.id}>{me_.first_name}</a>'
-    }
-    Config.ME = dict_
+    """ save owner's User object """
+    Config.ME = await venom.get_me()
+    Config.BOT = await venom.bot.get_me()
+
+
+class Owner:
+
+    _ME = Config.ME
+    _BOT = Config.BOT
+    _MENTION = "<a href='tg://user?id={}'>{}</a>"
+
+    @property
+    def mention(self) -> str:
+        """ owner's mention """
+        name_ = self._ME.first_name
+        id_ = self._ME.id
+        return self._MENTION.format(id_, name_)
+
+    @property
+    def full_name_mention(self) -> str:
+        """ owner's mention with full name """
+        id_ = self._ME.id
+        return self._MENTION.format(id_, self.full_name)
+
+    @property
+    def full_name(self) -> str:
+        """ full name of user """
+        first_ = self._ME.first_name
+        last_ = self._ME.last_name
+        return f"{first_} {last_}"

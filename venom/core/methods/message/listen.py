@@ -2,12 +2,12 @@
 
 from typing import Union
 
+import pyromod.listen
 from pyrogram import Client as RClient
 from pyrogram import filters as flt
-from pyromod import listen
 
-from ... import types
 from ... import client as _client
+from ... import types
 
 
 class Listen(RClient):

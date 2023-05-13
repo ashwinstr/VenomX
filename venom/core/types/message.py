@@ -216,7 +216,7 @@ class MyMessage(Message):
                                                  reply_to_message_id=reply_to_id,
                                                  reply_markup=reply_markup,
                                                  **kwargs)
-        return reply_ if self.chat.type != ChatType.PRIVATE else self.parse(self, reply_)
+        return self.parse(self.venom_client, reply_)
 
     async def edit_or_send_as_file(self,
                                    text: str,
@@ -265,7 +265,7 @@ class MyMessage(Message):
     async def delete(self, revoke: bool = True) -> bool:
         """ message delete method """
         try:
-            await self.delete()
+            await super().delete()
             return True
         except MessageAuthorRequired:
             return False

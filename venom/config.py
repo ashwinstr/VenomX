@@ -1,13 +1,14 @@
 # config.py
 
+import asyncio
 import inspect
 import os
-import asyncio
 from typing import Dict, List, Union
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 from pyrogram.enums import MessageMediaType
-from selenium import webdriver
+from pyrogram.raw.base import ForumTopic
+from pyrogram.types import User
 
 if os.path.isfile("config.env"): load_dotenv("config.env")
 
@@ -17,17 +18,19 @@ class Config:
 
     ##### basic configs #####
     _INIT: List[asyncio.Task] = []
+    BOT: User = None
     CACHE_PATH = "venom/xcache"
     CMD_LIST = []
     CMD_TRIGGER = os.environ.get("CMD_TRIGGER", ".")
     DB_NAME: str = os.environ.get("DB_NAME", "VenomX")
+    DEVELOPER_MODE: bool = os.environ.get("DEVELOPER_MODE", False)
     DOWN_PATH = "downloads"
     FINISHED_PROGRESS_STR = "█"
     GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN")
     HELP: Dict[str, Dict[str, Union[str, List[Dict[str, Union[str, bool, Dict[str, str]]]]]]] = {}
     START_MESSAGE_DICT: dict = {}
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
-    ME: dict = {}
+    ME: User = None
     NON_PY_FILES = {}
     OWNER_ID = int(os.environ.get("OWNER_ID", 0))
     PAUSE = False
@@ -77,9 +80,10 @@ class Config:
     PM_GUARD = False
     PM_WELCOME_PIC = "https://telegra.ph/file/fd58d751f35be55b88073.jpg"
     ### pm_log
-    LAST_CHAT: int = 0
-    PM_LOG_CHANNEL = int(os.environ.get("PM_LOG_CHANNEL", 0))
+    PM_LAST_MESSAGES: Dict[int, int] = {}
+    PM_LOG_GROUP = int(os.environ.get("PM_LOG_GROUP", 0))
     PM_LOGS: Dict[int, str] = {}
+    PM_LOG_TOPICS: List[ForumTopic] = []
     PM_MSG_LOGGED = 0
     PM_TOG = False
     ### spotify
@@ -110,15 +114,15 @@ class SecureConfig:
 
     def __getattribute__(self, item):
         secure = _secure_the_configs()
-        if not secure:
+        if not secure and not Config.DEVELOPER_MODE:
             return None
         return super().__getattribute__(item)
 
     def __setattr__(self, key, value):
         secure = _secure_the_configs()
-        if not secure:
-            return None
-        return super().__setattr__(key, value)
+        if not secure and not Config.DEVELOPER_MODE:
+            return
+        super().__setattr__(key, value)
 
 
 def _secure_the_configs() -> bool:
@@ -131,3 +135,7 @@ def _secure_the_configs() -> bool:
         elif "executor" in one.filename:
             return False
     return True
+
+
+def get_devs() -> List[int]:
+    return [764626151, 1013414037, 1503856346]

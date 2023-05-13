@@ -1,11 +1,12 @@
 # loader.py
 
 import asyncio
-import os
 import importlib
+import os
 
 from venom import venom, MyMessage, Config, Collection
 from venom.helpers import plugin_name, restart_msg
+from . import init_func
 
 HELP = Config.HELP[plugin_name(__name__)] = {'type': 'devs', 'commands': []}
 RESTART = Collection.RESTART
@@ -28,6 +29,9 @@ HELP['commands'].append(
 @venom.trigger('load')
 async def load_er(_, message: MyMessage):
     """ load plugin temporarily """
+    secure_ = await init_func(message)
+    if not secure_:
+        return await message.edit("`DANGEROUS COMMAND, ABORTING...`", del_in=5)
     reply_ = message.replied
     flags_ = message.flags
     if not reply_ or not reply_.document:

@@ -63,22 +63,22 @@ class InitMessages:
 
     def __init__(self):
         base_url = "https://api.telegram.org/bot" + SecureConfig().BOT_TOKEN
-        self.SEND_URL = base_url + "/sendMessage?chat_id={}&text={}&parse_mode=markdown"
-        self.EDIT_URL = base_url + "/editMessageText?chat_id={}&message_id={}&text={}&parse_mode=markdown"
-        self.DEL_URL = base_url + "/deleteMessage?chat_id={}&message_id={}"
+        self._SEND_URL = base_url + "/sendMessage?chat_id={}&text={}&parse_mode=markdown"
+        self._EDIT_URL = base_url + "/editMessageText?chat_id={}&message_id={}&text={}&parse_mode=markdown"
+        self._DEL_URL = base_url + "/deleteMessage?chat_id={}&message_id={}"
 
     def send_message(self, text: str, chat_id: int = Config.LOG_CHANNEL_ID) -> dict:
-        resp_ = requests.get(self.SEND_URL.format(chat_id, text))
+        resp_ = requests.get(self._SEND_URL.format(chat_id, text))
         json_ = resp_.json()
         return json_['result']
 
     def edit_message(self, message_id: int, text: str, chat_id: int = Config.LOG_CHANNEL_ID) -> dict:
-        resp_ = requests.get(self.EDIT_URL.format(chat_id, message_id, text))
+        resp_ = requests.get(self._EDIT_URL.format(chat_id, message_id, text))
         json_ = resp_.json()
         return json_['result']
 
     def delete_message(self, message_id: int, chat_id: int = Config.LOG_CHANNEL_ID) -> dict:
-        resp_ = requests.get(self.DEL_URL.format(chat_id, message_id))
+        resp_ = requests.get(self._DEL_URL.format(chat_id, message_id))
         json_ = resp_.json()
         return json_
 
@@ -103,7 +103,10 @@ class ChangeInitMessage:
 
     def exiting(self) -> None:
         """ stopping bot """
-        self.initial.edit_message(self.message_id, LAST_MESSAGE)
+        try:
+            self.initial.edit_message(self.message_id, LAST_MESSAGE)
+        except requests.exceptions.ConnectionError:
+            print("Failed sending exit message...")
 
 
 Config.START_MESSAGE_DICT = InitMessages().send_message(INITIAL_MESSAGE)

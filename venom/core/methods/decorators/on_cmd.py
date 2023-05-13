@@ -1,9 +1,10 @@
 # on_cmd.py
 # idea taken from USERGE-X
 
-from .on_triggers import MyDecorator
-from .on_message import NewOnMessage
 from venom.core import filter
+
+from .on_message import NewOnMessage
+from .on_triggers import MyDecorator
 
 
 class Trigger(MyDecorator):

@@ -10,14 +10,14 @@ from typing import Union, List
 from pastypy import Paste
 from pymediainfo import MediaInfo
 from pyrogram.errors import UserIdInvalid
-from pyrogram.raw.functions.account import ReportPeer
+from pyrogram.raw.functions.messages import Report
 from pyrogram.raw.types import (
     InputPeerUserFromMessage,
     InputReportReasonPornography,
-    InputReportReasonSpam,
-)
+    InputReportReasonSpam, InputPeerChat, )
 from telegraph import Telegraph
 
+import venom
 from venom import logging, Config, Collection
 from ..core.types import message
 
@@ -140,36 +140,41 @@ def extract_id(mention):
     raise UserIdInvalid
 
 
-def report_user(chat: int, user_id: int, msg: dict, msg_id: int, reason: str):
+async def report_user(chat: int, user_id: int, msg_id: int, reason: str):
     if ("nsfw" or "NSFW" or "porn") in reason:
         reason_ = InputReportReasonPornography()
         for_ = "pornographic message"
     else:
         reason_ = InputReportReasonSpam()
         for_ = "spam message"
-    peer_ = (
-        InputPeerUserFromMessage(
-            peer=chat,
-            msg_id=msg_id,
-            user_id=user_id,
-        ),
+    peer_ = InputPeerUserFromMessage(
+        peer=InputPeerChat(chat_id=chat),
+        msg_id=msg_id,
+        user_id=user_id,
     )
-    ReportPeer(
+    # ReportPeer(
+    #     peer=peer_,
+    #     reason=reason_,
+    #     message=msg
+    # )
+    reporting = Report(
         peer=peer_,
+        id=[msg_id],
         reason=reason_,
-        message=msg,
+        message=for_
     )
+    reported = await venom.venom.invoke(reporting)
+    venom.test_print(reported)
     return for_
 
 
 class Media_Info:
+
     def data(media: str) -> dict | None:
-        "Get downloaded media's information"
-        found = False
+        """ Get downloaded media's information """
         media_info = MediaInfo.parse(media)
         for track in media_info.tracks:
             if track.track_type == "Video":
-                found = True
                 type_ = track.track_type
                 format_ = track.format
                 duration_1 = track.duration
@@ -185,22 +190,21 @@ class Media_Info:
                 other_media_size_ = track.other_stream_size
                 media_size_2 = [other_media_size_[1], other_media_size_[2], other_media_size_[3],
                                 other_media_size_[4]] if other_media_size_ else None
-        if not found:
-            return None
-        dict_ = {
-            "media_type": type_,
-            "format": format_,
-            "duration_in_ms": duration_1,
-            "duration": duration_2,
-            "pixel_sizes": pixel_ratio_,
-            "aspect_ratio_in_fraction": aspect_ratio_1,
-            "aspect_ratio": aspect_ratio_2,
-            "frame_rate": fps_,
-            "frame_count": fc_,
-            "file_size_in_bytes": media_size_1,
-            "file_size": media_size_2
-        } if found else None
-        return dict_
+                dict_ = {
+                    "media_type": type_,
+                    "format": format_,
+                    "duration_in_ms": duration_1,
+                    "duration": duration_2,
+                    "pixel_sizes": pixel_ratio_,
+                    "aspect_ratio_in_fraction": aspect_ratio_1,
+                    "aspect_ratio": aspect_ratio_2,
+                    "frame_rate": fps_,
+                    "frame_count": fc_,
+                    "file_size_in_bytes": media_size_1,
+                    "file_size": media_size_2
+                }
+                return dict_
+        return None
 
 
 async def paste_it(msg_content: Union['message.MyMessage', str]) -> str:

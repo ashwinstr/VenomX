@@ -26,3 +26,5 @@ from .venom_tools import (
 from .decorators import VenomDecorators
 
 from .filters import MyFilters
+
+from .raw_functions import create_topic, get_topics, lock_topic

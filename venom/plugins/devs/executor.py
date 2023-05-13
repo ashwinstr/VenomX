@@ -7,6 +7,10 @@ import keyword
 import sys
 import traceback
 
+from pyrogram import filters
+
+from . import init_func
+
 try:
     from os import geteuid
 except ImportError:
@@ -15,11 +19,24 @@ from getpass import getuser
 
 from pyrogram.enums import ParseMode
 
-from venom import venom, Config, MyMessage
+from venom import venom, Config, MyMessage, SecureConfig, Collection
 from venom.helpers import post_tg, plugin_name
 
 
 help_ = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
+
+
+async def _init() -> None:
+    found = await Collection.TOGGLES.find_one({"_id": "DEVELOPER_MODE"})
+    if found:
+        SecureConfig().DEVELOPER_MODE = found['switch']
+    else:
+        await Collection.TOGGLES.insert_one(
+            {
+                "_id": "DEVELOPER_MODE",
+                "switch": False
+            }
+        )
 
 
 ########################################################################################################################
@@ -41,9 +58,6 @@ help_['commands'].append(
 @venom.trigger('eval')
 async def evaluate(_, message: MyMessage):
     """ evaluate your code """
-    # secure_ = await secure_cmd(message)
-    # if not secure_:
-    #     return
     cmd = await init_func(message)
     mono_ = True if "-m" not in message.flags else False
     tele_ = True if "-tg" in message.flags else False
@@ -153,16 +167,54 @@ async def term_(_, message: MyMessage):
         out_data, parse_mode=ParseMode.HTML, file_name="term.txt", caption=cmd
     )
 
+########################################################################################################################
 
-async def init_func(message: MyMessage):
-    cmd = message.filtered_input
-    if not cmd:
-        await message.edit("`Input not found...`")
-        return ""
-    if "config.env" in cmd:
-        await message.edit("`That's a dangerous operation! Not Permitted!`")
-        return ""
-    return cmd
+help_['commands'].append(
+    {
+        'command': 'dev_mode',
+        'flags': {
+            '-c': 'check status'
+        },
+        'usage': 'Enable/disable developer mode',
+        'syntax': '{tr}dev_mode true/false',
+        'sudo': False
+    }
+)
+
+
+@venom.trigger('dev_mode')
+async def developer_mode(_, message: MyMessage):
+    """ toggle developer mode """
+    if message.from_user.id != Config.OWNER_ID:
+        return await message.edit("`Only the owner of the bot can use this command.`", del_in=5)
+    flags_ = message.flags
+    if "-c" in flags_:
+        return await message.edit("Developer mode is " + "**ON**" if Config.DEVELOPER_MODE else "**OFF**")
+    input_ = message.filtered_input
+    warn_ = await message.edit(
+        "**Are you sure...? You will be held responsible for future consequences in case your data is stolen.**\n"
+        "Reply `Yes, I'm fully aware of the consequences.` to continue."
+    )
+    try:
+        resp_ = await warn_.wait(filters=filters.user(Config.OWNER_ID))
+    except asyncio.TimeoutError:
+        return await message.reply("`Response not found... Process aborted.`", del_in=5)
+    if resp_.text != "Yes, I'm fully aware of the consequences.":
+        return await message.edit(f"Your response **{resp_.text}** does not match.\n`Aborting process...`", del_in=5)
+    if input_.lower() == "true":
+        Config.DEVELOPER_MODE = True
+    elif input_.lower() == "false":
+        Config.DEVELOPER_MODE = False
+    else:
+        return await message.edit("`Invalid input...`", del_in=5)
+    await message.edit("Developer mode changed to " + "**ON**" if Config.DEVELOPER_MODE else "**OFF**")
+    await Collection.TOGGLES.update_one(
+        {"_id": "DEVELOPER_MODE"},
+        {"$set": {"switch": Config.DEVELOPER_MODE}},
+        upsert=True
+    )
+
+########################################################################################################################
 
 
 class Term:

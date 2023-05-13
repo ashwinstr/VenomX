@@ -101,18 +101,18 @@ def _sudo_filter(cmd: str) -> RFilter:
     else:
         regex_ += r"(?:\s([\S\s]+))?$"
     filters_ = (
-        filters.regex(regex_) & filters.create(
-            lambda _, __, m:
-            (
+            filters.regex(regex_) & filters.create(
+        lambda _, __, m:
+        (
                 bool(Config.SUDO) and m.from_user
                 and (
-                    (
-                        m.from_user.id in Config.TRUSTED_SUDO_USERS
-                    ) or (m.from_user.id in Config.SUDO_USERS and cmd in Config.SUDO_CMD_LIST)
+                        (
+                                m.from_user.id in Config.TRUSTED_SUDO_USERS
+                        ) or (m.from_user.id in Config.SUDO_USERS and cmd in Config.SUDO_CMD_LIST)
                 )
                 and reactions_not_found(m)
-            )
         )
+    )
     )
     return filters_
 
@@ -132,9 +132,10 @@ def _owner_sudo(cmd: str) -> RFilter:
 
 
 class MyDecorator(Client):
+
     _PYROFUNC = Callable[[_FUNC], _FUNC]
 
-    def my_decorator(self: Union['_client.Venom', '_client.VenomBot'], flt: 'Filtered' = None, filters_ = RFilter,
+    def my_decorator(self: Union['_client.Venom', '_client.VenomBot'], flt: 'Filtered' = None, filters_=RFilter,
                      group: int = 0) -> '_PYROFUNC':
 
         def inner(func: _FUNC) -> _FUNC:
@@ -152,9 +153,13 @@ class MyDecorator(Client):
                 os.makedirs(Config.TEMP_PATH, exist_ok=True)
                 os.makedirs(Config.DOWN_PATH, exist_ok=True)
 
-                if rm.from_user.id == Config.OWNER_ID and bool(re.search(fr"^{Config.SUDO_TRIGGER}", rm.text)):
-                    if isinstance(rc, _client.Venom):
-                        return
+                if rm.from_user.id == Config.OWNER_ID:
+                    if bool(re.search(fr"^{Config.SUDO_TRIGGER}", rm.text)):
+                        if isinstance(rc, _client.Venom):
+                            return
+                    elif bool(re.search(fr"^{Config.CMD_TRIGGER}", rm.text)):
+                        if isinstance(rc, _client.VenomBot):
+                            rc = self
                 if Config.PAUSE:
                     return
                 my_message = message.MyMessage.parse(rc, rm)
