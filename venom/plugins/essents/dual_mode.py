@@ -14,7 +14,13 @@ async def _init() -> None:
     found = await Collection.TOGGLES.find_one({'_id': 'USER_MODE'})
     if found:
         Config.USER_MODE = found['switch']
-    Config.USER_MODE = Config.USER_MODE and bool(Config.STRING_SESSION)
+    else:
+        await Collection.TOGGLES.update_one(
+            {
+                '_id': 'USER_MODE',
+                'switch': Config.USER_MODE
+            }
+        )
 
 ########################################################################################################################
 
