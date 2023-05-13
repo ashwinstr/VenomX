@@ -177,6 +177,7 @@ class Venom(CustomVenom):
         except AuthKeyDuplicated:
             _LOG.info(_LOG_STR, "Starting bot mode as main interface...")
             SecureConfig().STRING_SESSION = ""
+            Config.USER_MODE = False
             await self.bot.start()
         except ImportError as IE:
             print(IE)
