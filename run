@@ -1,13 +1,17 @@
 #!/bin/sh
 
-server() {
-    if test "$API_PORT" ; then
-        python3 -c "import asyncio; asyncio.run(asyncio.create_subprocess_shell('python3 server.py'))"
-        echo "Started API..."
-    else
-        echo "Skipping API..."
-    fi
-}
+if [ "$API_PORT" ] ; then
+py_code="
+from aiohttp import web
+app = web.Application()
+app.router.add_get('/', lambda _: web.Response(text='Web Server Running...'))
+web.run_app(app, host='0.0.0.0', port=$API_PORT, reuse_port=True, print=None)
+"
+    python3 -q -c "$py_code" & echo "Web Server Started..."
 
-server
+else
+    echo "Skipping Web Server..."
+
+fi
+
 python3 -m venom
