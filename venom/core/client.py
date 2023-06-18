@@ -173,6 +173,7 @@ class Venom(CustomVenom):
                 upsert=True
             )
             SecureConfig().STRING_SESSION = ""
+            Config.USER_MODE = False
             await self.bot.start()
         except ImportError as IE:
             print(IE)
