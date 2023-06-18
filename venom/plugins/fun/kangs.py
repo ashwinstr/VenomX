@@ -1,8 +1,9 @@
 # kangs.py ported from USERGE-X
 
 import os
-from PIL import Image
 
+from PIL import Image
+from PIL.ImageDraw import ImageDraw
 from pyrogram import emoji
 from pyrogram.enums import ParseMode
 from pyrogram.errors import StickersetInvalid, YouBlockedUser
@@ -16,15 +17,14 @@ CHANNEL = venom.getCLogger(__name__)
 TOG = Collection.TOGGLES
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'fun', 'commands': []}
 
+
 async def _init() -> None:
     found = await TOG.find_one({"_id": "KANGLOG"})
     if found:
         Config.KANGLOG = found["switch"]
-    else:
-        Config.KANGLOG = False
 
 
-####################################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -57,7 +57,7 @@ async def kang_log(_, message: MyMessage):
     out_ = "ON" if Config.KANGLOG else "OFF"
     await message.edit(f"Logging kang in channel is now <b>{out_}</b>.")
 
-####################################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -72,9 +72,10 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger('kang')
 async def kang_ing(_, message: MyMessage):
-    " kang stickers easily with userbot "
+    """ kang stickers easily with userbot """
     user = await venom.get_me()
     replied = message.replied
     if Config.KANGLOG:
@@ -93,10 +94,10 @@ async def kang_ing(_, message: MyMessage):
             resize = True
         elif replied.document and "image" in replied.document.mime_type:
             resize = True
-            replied.document.file_name
+            file_name = replied.document.file_name
         elif replied.document and "tgsticker" in replied.document.mime_type:
             is_anim = True
-            replied.document.file_name
+            file_name = replied.document.file_name
         elif replied.document and "video" in replied.document.mime_type:
             resize = True
             is_video = True
@@ -197,7 +198,7 @@ async def kang_ing(_, message: MyMessage):
             except YouBlockedUser:
                 return await kang_msg.edit("First **unblock** @Stickers bot.", del_in=5)
             except Exception as e:
-                return await kang_msg.edit(("<b>ERROR:</b> %s", e), del_in=5)
+                return await kang_msg.edit(("<b>ERROR:</b> %s" % str(e)), del_in=5)
             await start_.wait()
             await start_.reply(packname)
             resp = await start_.wait()
@@ -294,6 +295,7 @@ async def kang_ing(_, message: MyMessage):
         if os.path.exists(str(media_)):
             os.remove(media_)
 
+
 async def resize_media(media: str, video: bool, fast_forward: bool) -> str:
     """Resize the given photo to 512x512"""
     if video:
@@ -340,3 +342,23 @@ async def resize_media(media: str, video: bool, fast_forward: bool) -> str:
     image.save(resized_photo)
     os.remove(media)
     return resized_photo
+
+########################################################################################################################
+
+
+@venom.trigger('smol')
+async def small_sticker(_, message: MyMessage):
+    """ reduce sticker size """
+    reply_ = message.replied
+    if not reply_ or not reply_.sticker:
+        return await message.edit("`Reply to sticker...`", del_in=5)
+    down_ = await reply_.download(os.path.join(Config.DOWN_PATH, "big_sticker.png"))
+    small_stick = os.path.join(Config.DOWN_PATH, "small_sticker.webp")
+    new_image = Image.new("RGBA", (512, 512), (0, 0, 0, 1))
+    open_image = Image.open(down_)
+    open_image.resize((128, 128))
+    new_image.paste(open_image, (0, 0), mask=open_image)
+    new_image.save(small_stick)
+    await reply_.reply_sticker(small_stick)
+    os.remove(down_)
+    os.remove(small_stick)

@@ -1,21 +1,20 @@
 # kangs_new.py
 
-import os
 import asyncio
 import io
-from PIL import Image
+import os
 
+from PIL import Image
 from pyrogram import filters
 from pyrogram.errors import StickersetInvalid
+from pyrogram.file_id import FileId
 from pyrogram.raw.functions.messages import GetStickerSet
 from pyrogram.raw.functions.stickers import CreateStickerSet, AddStickerToSet
 from pyrogram.raw.types import (
     InputStickerSetShortName,
     InputStickerSetItem,
-    InputDocument,
-    StickerSet
+    InputDocument
 )
-from pyrogram.file_id import FileId
 
 from venom import venom, MyMessage, Config
 from venom.helpers import Media_Info, runcmd
@@ -42,7 +41,7 @@ async def new_kang(_, message: MyMessage):
     is_video = False
     old_pack = True
     try:
-        pack_: StickerSet = await venom.bot.invoke(GetStickerSet(stickerset=InputStickerSetShortName(short_name=packname), hash=0))
+        await venom.bot.invoke(GetStickerSet(stickerset=InputStickerSetShortName(short_name=packname), hash=0))
     except StickersetInvalid:
         old_pack = False
     if reply_.sticker:
@@ -52,16 +51,21 @@ async def new_kang(_, message: MyMessage):
         file_ = FileId.decode(reply_.sticker.file_id)
     elif reply_.video or reply_.animation:
         is_video = True
+        file_ = FileId.decode(reply_.video.file_id) if reply_.video else FileId.decode(reply_.animation.file_id)
     elif reply_.photo or (reply_.document and reply_.document.file_name.endswith((".png", ".webp"))):
         await message.edit("`Downloading...`")
         down_ = await reply_.download(Config.DOWN_PATH)
         resized_ = resize_photo(down_)
         await venom.send_document(bot_.username, resized_, caption="#KANG")
         await asyncio.sleep(3)
-        return await message.edit(f"<i>Sticker will be kanged...</i>\n<i>Check [<b>HERE</b>](t.me/addstickers/{packname}).")
-    elif (reply_.document and reply_.document.file_name.endswith((".mp4", ".webm"))):
+        return await message.edit(
+            f"<i>Sticker will be kanged...</i>\n<i>Check [<b>HERE</b>](t.me/addstickers/{packname})."
+        )
+    elif reply_.document and reply_.document.file_name.endswith((".mp4", ".webm")):
         is_video = True
         file_ = FileId.decode(file_id=reply_.document.file_id)
+    else:
+        return await message.edit("`Reply to media or sticker to kang...`", del_in=5)
     if is_video:
         await message.edit("`Downloading...`")
         down_ = await reply_.download(Config.DOWN_PATH)
@@ -71,7 +75,9 @@ async def new_kang(_, message: MyMessage):
             converted_vid = down_
         await venom.send_document(bot_.username, converted_vid, caption="#KANG")
         await asyncio.sleep(3)
-        return await message.edit(f"<i>Sticker will be kanged...</i>\n<i>Check [<b>HERE</b>](t.me/addstickers/{packname}).")
+        return await message.edit(
+            f"<i>Sticker will be kanged...</i>\n<i>Check [<b>HERE</b>](t.me/addstickers/{packname})."
+        )
     await message.edit("`Kanging...`")
     if old_pack:
         await venom.bot.invoke(
@@ -108,8 +114,8 @@ async def new_kang(_, message: MyMessage):
     await message.edit(f"Sticker <b>kanged</b>.\n<a href='t.me/addstickers/{packname}'>HERE</a>")
 
 
-def resize_photo(media: str) -> str:
-    " resize photo to make sticker "
+def resize_photo(media: str) -> io.BytesIO:
+    """ resize photo to make sticker """
     image = Image.open(media)
     maxsize = 512
     scale = maxsize / max(image.width, image.height)
@@ -122,8 +128,9 @@ def resize_photo(media: str) -> str:
     os.remove(media)
     return resized_photo
 
+
 async def convert_video(media: str, fast_forward: bool = True) -> str:
-    " convert video to make it sticker "
+    """ convert video to make it sticker """
     info_ = Media_Info.data(media)
     width = info_["pixel_sizes"][0]
     height = info_["pixel_sizes"][1]
@@ -157,7 +164,8 @@ async def convert_video(media: str, fast_forward: bool = True) -> str:
         await CHANNEL.log(error)
     return resized_video
 
-############################################################################################################################################
+########################################################################################################################
+
 
 @venom.bot.on_message(
     filters.user(Config.OWNER_ID)
@@ -166,9 +174,8 @@ async def convert_video(media: str, fast_forward: bool = True) -> str:
     & filters.document,
     group=3
 )
-async def kang_bot(_, message):
-    " kang with bot's help in pm "
-    message: MyMessage = MyMessage.parse(message)
+async def kang_bot(_, message: MyMessage):
+    """ kang with bot's help in pm """
     doc_ = message.document
     file_ = FileId.decode(file_id=doc_.file_id)
     bot_ = await venom.bot.get_me()

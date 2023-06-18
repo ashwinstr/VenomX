@@ -5,7 +5,6 @@ import asyncio
 import traceback
 
 from pyrogram import filters, Client
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import (
     FloodWait,
     ApiIdInvalid,
@@ -14,8 +13,9 @@ from pyrogram.errors import (
     PhoneCodeExpired,
     SessionPasswordNeeded
 )
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from venom import venom, MyMessage, Config, plugin_name
+from venom import venom, MyMessage, Config, plugin_name, SecureConfig
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'essents', 'commands': []}
 CHANNEL = venom.getCLogger(__name__)
@@ -48,8 +48,9 @@ async def generate_str(_, message: MyMessage):
         return await message.reply("`Response not found !!!\nTerminating process...`")
     if resp.text.upper() != 'YES' and resp.text.upper() != 'Y':
         return await message.reply("`Wrong response.\nTerminating the process...`")
-    api_id = Config.API_ID
-    api_hash = Config.API_HASH
+    secure_vars = SecureConfig()
+    api_id = secure_vars.API_ID
+    api_hash = secure_vars.API_HASH
     num = (await venom.get_users(Config.OWNER_ID)).phone_number
     if num is None:
         return await message.reply("`First allow me in phone number privacy setting...`")
@@ -95,7 +96,8 @@ async def generate_str(_, message: MyMessage):
     except SessionPasswordNeeded:
         try:
             two_step_code = await message.ask( 
-                f"`This account have two-step verification code.\nPlease enter your second factor authentication code.`\nPress {Config.CMD_TRIGGER}cancel to cancel.",
+                f"`This account have two-step verification code.\nPlease enter your second factor authentication code.`"
+                f"\nPress {Config.CMD_TRIGGER}cancel to cancel.",
                 timeout=300
             )
         except TimeoutError:
@@ -118,4 +120,3 @@ async def generate_str(_, message: MyMessage):
         [[InlineKeyboardButton(text="Click Me", url=f"tg://openmessage?user_id={Config.OWNER_ID}")]]
     )
     await message.reply(text, reply_markup=reply_markup)
-        

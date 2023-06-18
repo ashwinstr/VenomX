@@ -22,3 +22,4 @@ if __name__ == "__main__":
         _LOG.error(f"\n{hash_}\n{_ERROR.format(msg_)}\n{hash_}\n")
     except FloodWait as e:
         print(f"Please wait for {e.value} seconds...")
+        time.sleep(e.value)

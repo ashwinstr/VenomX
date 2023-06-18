@@ -3,9 +3,8 @@
 from pyrogram.errors import PeerIdInvalid
 
 from venom import venom, Config, MyMessage, Collection
-from venom.helpers import plugin_name
 from venom.core import client as _client
-
+from venom.helpers import plugin_name
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'essents', 'commands': []}
 
@@ -14,7 +13,13 @@ async def _init() -> None:
     found = await Collection.TOGGLES.find_one({'_id': 'USER_MODE'})
     if found:
         Config.USER_MODE = found['switch']
-    Config.USER_MODE = Config.USER_MODE and bool(Config.STRING_SESSION)
+    else:
+        await Collection.TOGGLES.update_one(
+            {
+                '_id': 'USER_MODE',
+                'switch': Config.USER_MODE
+            }
+        )
 
 ########################################################################################################################
 

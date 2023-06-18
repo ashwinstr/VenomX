@@ -49,7 +49,7 @@ def get_import_paths(root: str, path: str) -> Union[str, List[str]]:
 
 
 def post_tg(title: str, content: str) -> str:
-    " post to telegraph "
+    """ post to telegraph """
     auth_name = tele_.create_account(short_name="VenomX")
     resp = tele_.create_page(
         title=title,
@@ -316,3 +316,22 @@ class CurrentTime:
     def default_format(self) -> str:
         """ default format """
         return f"{self.h}:{self.m}:{self.s} {self.stamp}"
+
+
+def dict2obj(d):
+    """ dictionary to object """
+    if isinstance(d, list):
+        d = [dict2obj(one) for one in d]
+
+    if not isinstance(d, dict):
+        return d
+
+    class Obj:
+        pass
+
+    obj = Obj()
+
+    for k in d:
+        obj.__dict__[k] = dict2obj(d[k])
+
+    return obj

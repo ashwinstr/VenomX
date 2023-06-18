@@ -3,7 +3,8 @@
 from .ux_tools import (
     human_bytes,
     runcmd,
-    progress
+    progress,
+    get_file_id
 )
 
 from .venom_tools import (
@@ -20,7 +21,8 @@ from .venom_tools import (
                         restart_msg,
                         time_stamp,
                         current_time,
-                        CurrentTime
+                        CurrentTime,
+                        dict2obj
                         )
 
 from .decorators import VenomDecorators

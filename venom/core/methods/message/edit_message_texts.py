@@ -1,6 +1,7 @@
 # edit_message_texts.py
 
 import asyncio
+import inspect
 from typing import Union
 
 from pyrogram import Client as RClient
@@ -8,7 +9,6 @@ from pyrogram.enums import ParseMode
 from pyrogram.types import InlineKeyboardMarkup
 
 from ... import types
-from ... import client as _client
 
 
 class EditMessageText(RClient):
@@ -21,7 +21,7 @@ class EditMessageText(RClient):
                                 dis_preview: bool = False,
                                 parse_mode: ParseMode = ParseMode.DEFAULT,
                                 reply_markup: InlineKeyboardMarkup = None,
-                                **kwargs) -> 'types.message.MyMessage':
+                                **kwargs) -> Union['types.message.MyMessage', bool]:
         """ custom edit_message_text method for VenomX """
 
         disable_web_page_preview = dis_preview
@@ -36,8 +36,8 @@ class EditMessageText(RClient):
 
         if del_in >= 0:
             await asyncio.sleep(del_in)
-            await msg.delete()
+            return bool(await msg.delete())
 
-        client_ = _client.Venom.parse(self)
+        module = inspect.currentframe().f_back.f_globals['__name__']
 
-        return types.message.MyMessage.parse(client_, msg)
+        return types.message.MyMessage.parse(self, msg, module=module)

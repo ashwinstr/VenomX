@@ -9,18 +9,18 @@ import traceback
 
 from pyrogram import filters
 
-from . import init_func
-
 try:
     from os import geteuid
 except ImportError:
-    pass
+    def geteuid() -> int:
+        return 1
 from getpass import getuser
 
 from pyrogram.enums import ParseMode
 
 from venom import venom, Config, MyMessage, SecureConfig, Collection
 from venom.helpers import post_tg, plugin_name
+from . import init_func
 
 
 help_ = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
@@ -46,13 +46,15 @@ help_['commands'].append(
     {
         'command': 'eval',
         'flags': {
-            'tg': 'telegraph',
-            'm': 'markdown',
+            '-tg': 'telegraph',
+            '-m': 'markdown',
         },
         'about': 'evaluate your code',
         'sudo': False
     }
 )
+
+# todo: Take working eval code from Ryuk
 
 
 @venom.trigger('eval')
@@ -72,7 +74,7 @@ async def evaluate(_, message: MyMessage):
 
     async def aexec(code):
         head = (
-            "async def __aexec(_, message):\n "
+            "async def __aexec(venom, message):\n "
         )
         if "\n" in code:
             rest_code = "\n ".join(iter(code.split("\n")))
@@ -101,10 +103,11 @@ async def evaluate(_, message: MyMessage):
     evaluation = exc or stderr or stdout or ret_val
     output = f"**>** `{cmd}`\n\n"
     if evaluation is not None:
-        if isinstance(evaluation, str) and Config.GH_TOKEN:
-            evaluation = str(evaluation).replace(Config.GH_TOKEN, "|gh_token|")
         if mono_:
-            output += f"**>>** `{evaluation}`"
+            try:
+                output += f"**>>** `{evaluation}`"
+            except RecursionError:
+                output += "**>>** `None`"
             parse_ = ParseMode.MARKDOWN
         else:
             output += f"**>>** {evaluation}"
@@ -119,6 +122,28 @@ async def evaluate(_, message: MyMessage):
     else:
         await message.delete()
 
+########################################################################################################################
+
+
+@venom.trigger('exec')
+async def executor_(_, message: MyMessage):
+    code = message.input_str
+    if not code:
+        return await message.edit("`Code not found...`")
+    await message.edit("`Executing...`")
+    sys.stdout = codeOut = io.StringIO()
+    sys.stderr = codeErr = io.StringIO()
+    formatted_code = "".join(["\n    "+i for i in code.split("\n")])
+    try:
+        exec(f"async def exec_(venom, message):{formatted_code}")
+        func_out = await locals().get("exec_")(venom, message)
+    except Exception as e:
+        print(e)
+        func_out = str(traceback.format_exc())
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
+    output = codeOut.getvalue().strip() or codeErr.getvalue().strip() or func_out or ""
+    await message.edit(f"> `{code}`\n\n>> `{output}`", parse_mode=ParseMode.MARKDOWN)
 
 ########################################################################################################################
 
@@ -146,10 +171,7 @@ async def term_(_, message: MyMessage):
         await message.edit(str(t_e))
         return
     curruser = getuser()
-    try:
-        uid = geteuid()
-    except:
-        uid = 1
+    uid = geteuid()
     output = f"{curruser}:~# {cmd}\n" if uid == 0 else f"{curruser}:~$ {cmd}\n"
     count = 0
     while not t_obj.finished:

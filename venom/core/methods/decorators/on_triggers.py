@@ -9,7 +9,7 @@ from typing import Any, Callable, Union, Dict
 import pyrogram
 from pyrogram import Client, filters
 from pyrogram.errors import MessageTooLong
-from pyrogram.filters import Filter as RFilter
+from pyrogram.filters import Filter as RawFilter
 from pyrogram.types import Message
 
 from venom import Config
@@ -76,7 +76,7 @@ def _client_check(client: Union['_client.Venom', '_client.VenomBot', 'Client']) 
         return True
 
 
-def _owner_filter(cmd: str) -> RFilter:
+def _owner_filter(cmd: str) -> RawFilter:
     """ owner filters """
     trig_ = Config.CMD_TRIGGER
     regex_ = fr"^(?:\{trig_}){cmd.strip('^')}" if trig_ else fr"^{cmd.strip('^')}"
@@ -92,7 +92,7 @@ def _owner_filter(cmd: str) -> RFilter:
     return filters_
 
 
-def _sudo_filter(cmd: str) -> RFilter:
+def _sudo_filter(cmd: str) -> RawFilter:
     """ sudo filters """
     trig_ = Config.SUDO_TRIGGER
     regex_ = fr"^(?:\{trig_}){cmd.strip('^')}"
@@ -117,7 +117,7 @@ def _sudo_filter(cmd: str) -> RFilter:
     return filters_
 
 
-def _owner_sudo(cmd: str) -> RFilter:
+def _owner_sudo(cmd: str) -> RawFilter:
     """ bot filters with owner account """
     trig_ = Config.SUDO_TRIGGER
     regex_ = fr"^(?:\{trig_}){cmd.strip('^')}"
@@ -132,11 +132,10 @@ def _owner_sudo(cmd: str) -> RFilter:
 
 
 class MyDecorator(Client):
-
     _PYROFUNC = Callable[[_FUNC], _FUNC]
 
-    def my_decorator(self: Union['_client.Venom', '_client.VenomBot'], flt: 'Filtered' = None, filters_=RFilter,
-                     group: int = 0) -> '_PYROFUNC':
+    def my_decorator(self: Union['_client.Venom', '_client.VenomBot'], flt: 'Filtered' = None, filters_=RawFilter,
+                     group: int = 0, **kwargs: Union[str, bool]) -> _PYROFUNC:
 
         def inner(func: _FUNC) -> _FUNC:
 
@@ -162,7 +161,8 @@ class MyDecorator(Client):
                             rc = self
                 if Config.PAUSE:
                     return
-                my_message = message.MyMessage.parse(rc, rm)
+
+                my_message = message.MyMessage.parse(rc, rm, module=func.__module__, **kwargs)
                 try:
                     await func(rc, my_message)
                 except Exception as e:

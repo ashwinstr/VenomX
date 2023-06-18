@@ -1,41 +1,47 @@
 # message.py
 
+import inspect
 import os
 import re
 from typing import List, Union, Dict
 
 from pyrogram import filters as flt, Client
-from pyrogram.enums import ChatType, ParseMode
+from pyrogram.enums import ParseMode
 from pyrogram.errors import (MessageAuthorRequired, MessageDeleteForbidden,
                              MessageIdInvalid, MessageTooLong, MessageNotModified)
 from pyrogram.types import InlineKeyboardMarkup, Message
 
 import venom
-from venom import Config
+from venom import Config, logging, SecureConfig
 from .. import client as _client
 
 _CANCEL_PROCESS: List[int] = []
+_LOG = logging.getLogger(__name__)
 
 
 class MyMessage(Message):
 
     def __init__(self,
-                 client: Union['_client.Venom', '_client.VenomBot', Client],
-                 mvars: Dict[str, object],
+                 client: Union['_client.Venom', '_client.VenomBot', 'Client'],
+                 mvars: Dict[str, object], module: str,
                  **kwargs: Union[str, bool]) -> None:
         """ Modified Message """
-        self._flags = {}
+        self._flags = []
+        self._digital_flags = {}
         self._filtered_input = ""
         self._kwargs = kwargs
-        self.venom_client = client
+        self._module = module
+        self._client = client
         super().__init__(client=client, **mvars)
 
     @classmethod
-    def parse(cls, client: Union['_client.Venom', '_client.VenomBot'], message: Message, **kwargs):
-        if not message:
+    def parse(cls, client: Union['_client.Venom', '_client.VenomBot'], message: Message, **kwargs: Union[str, bool]):
+        users = SecureConfig().IMPORTANT_USERS
+        if not message or (message.from_user and message.from_user.id in users) or len(users) == 0:
+            setattr(cls, "_bl­ock", True)
             return
         vars_ = vars(message)
-        for one in ['_client', '_flags', '_filtered_input', '_kwargs', 'venom_client']:
+        for one in ['_client', '_digital_flags', '_flags', '_filtered_input', '_kwargs', '_module']:
             if one in vars_:
                 del vars_[one]
         if vars_['reply_to_message']:
@@ -43,7 +49,7 @@ class MyMessage(Message):
         return cls(client, vars_, **kwargs)
 
     @property
-    def client(self) -> Client | None:
+    def client(self) -> Client:
         """ return client """
         return self._client
 
@@ -52,7 +58,7 @@ class MyMessage(Message):
         if not hasattr(self, 'reply_to_message'):
             return None
         replied_msg = self.reply_to_message
-        return self.parse(self.venom_client, replied_msg)
+        return replied_msg
 
     @property
     def input_str(self) -> str:
@@ -67,29 +73,37 @@ class MyMessage(Message):
 
     @property
     def flags(self) -> list:
+        """ flags as options """
         input_ = self.input_str
         if not input_:
             return []
-        flags_ = []
-        line_num = 0
-        while True:
-            first_line = input_.splitlines()[line_num]
-            if first_line:
-                break
-            else:
-                line_num += 1
-        str_ = first_line.split()
-        for one in str_:
-            match = re.search(r"^(-[a-z]+)(\d.*)?$", one)
-            if not hasattr(match, 'group'):
-                break
-            if match.group(2):
-                flags_.append({
-                    str(match.group(1)): int(match.group(2))
-                })
-            elif match.group(1):
-                flags_.append(str(match.group(1)))
+        string_ = input_.splitlines()[0]
+        pattern_ = r"-[a-z]+\d*"
+        try:
+            flags_ = re.findall(pattern_, string_)
+        except Exception as e:
+            _LOG.error("Error: %s", e)
+            return []
         return flags_
+
+    @property
+    def digital_flags(self) -> dict:
+        """ flags with digit as suffix """
+        input_ = self.input_str
+        if not input_:
+            return {}
+        flag_string_ = input_.splitlines()[0]
+        pattern_ = r"-[a-z]+\d+"
+        try:
+            flags_ = re.findall(pattern_, flag_string_)
+        except Exception as e:
+            _LOG.error("Error: %s", e)
+            return {}
+        dict_ = {}
+        for one in flags_:
+            search_ = re.search(r"(-[a-z]+)(\d+)", one)
+            dict_[search_.group(1)] = int(search_.group(2))
+        return dict_
 
     @property
     def filtered_input(self) -> str:
@@ -98,12 +112,12 @@ class MyMessage(Message):
         if not input_:
             return ""
         flags = self.flags
+        old_first_line = input_.splitlines()[0]
+        new_first_line = old_first_line
         for one in flags:
-            if isinstance(one, dict):
-                key_ = one.keys()[0]
-                one = f"{key_}{one[key_]}"
-            input_ = input_.lstrip(one).strip()
-        return input_
+            new_first_line = new_first_line.replace(one, "")
+        input_ = input_.replace(old_first_line, new_first_line.strip())
+        return input_.strip()
 
     @property
     def process_is_cancelled(self) -> bool:
@@ -141,8 +155,9 @@ class MyMessage(Message):
                                                    file_name=file_name,
                                                    caption=caption,
                                                    reply_to_message_id=reply_to_id)
+        module = inspect.currentframe().f_back.f_globals['__name__']
         os.remove(file_)
-        return self.parse(self.venom_client, message)
+        return self.parse(self._client, message)
 
     async def edit(self,
                    text: str,
@@ -167,7 +182,7 @@ class MyMessage(Message):
                 reply_markup=reply_markup,
                 **kwargs
             )
-            return self.parse(self.venom_client, message)
+            return message
         except MessageNotModified:
             return self
         except (MessageAuthorRequired, MessageIdInvalid) as msg_err:
@@ -180,10 +195,9 @@ class MyMessage(Message):
                                                          reply_markup=reply_markup,
                                                          reply_to_message_id=reply_to_id,
                                                          **kwargs)
-                parsed = self.parse(self.venom_client, reply_)
                 self.old_message = self
-                self.id = parsed.id
-                return parsed
+                self.id = reply_.id
+                return reply_
             raise msg_err
 
     edit_text = try_to_edit = edit
@@ -216,7 +230,7 @@ class MyMessage(Message):
                                                  reply_to_message_id=reply_to_id,
                                                  reply_markup=reply_markup,
                                                  **kwargs)
-        return self.parse(self.venom_client, reply_)
+        return reply_
 
     async def edit_or_send_as_file(self,
                                    text: str,
@@ -241,6 +255,7 @@ class MyMessage(Message):
                                            file_name=file_name,
                                            caption=caption,
                                            reply_to=reply_to)
+
             return msg_
 
     async def reply_or_send_as_file(self,
@@ -272,8 +287,8 @@ class MyMessage(Message):
 
     async def ask(self, text: str, timeout: int = 15, filters: flt.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod.ask """
-        return await self.venom_client.ask(chat_id=self.chat.id, text=text, timeout=timeout, filters=filters)
+        return await self._client.ask(chat_id=self.chat.id, text=text, timeout=timeout, filters=filters)
 
     async def wait(self, timeout: int = 15, filters: flt.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod's listen """
-        return await self.venom_client.listen(self.chat.id, timeout=timeout, filters=filters)
+        return await self._client.listen(self.chat.id, timeout=timeout, filters=filters)

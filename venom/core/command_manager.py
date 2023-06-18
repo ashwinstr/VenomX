@@ -4,7 +4,7 @@ import os
 import re
 from typing import List
 
-from venom import Config
+import venom
 from venom.helpers import get_import_paths
 from venom.plugins import ROOT
 
@@ -72,7 +72,7 @@ class Manager:
         return parent
     
     def gh_link(self, cmd_name: str, branch: str = 'main') -> str:
-        link_ = f"{Config.UPSTREAM_REPO}/tree/{branch}"
+        link_ = f"{venom.Config.UPSTREAM_REPO}/tree/{branch}"
         cmd_loc = self.cmd_plugin_loc(cmd_name)
         return f"{link_}/{cmd_loc}.py"
 
@@ -89,3 +89,19 @@ class Manager:
 
 
 manager = Manager()
+
+
+# class Help(object):
+#
+#     command: str = None
+#     flags: dict | None = None
+#     usage: str = None
+#     syntax: str = None
+#     sudo: bool = None
+#
+#     def __init__(self, plugin_):
+#         plugin = venom.plugin_name(plugin_)
+#         setattr(self, plugin, self.command)
+#
+#     def __setattr__(self, key, value):
+#         setattr(self.command, key, value)

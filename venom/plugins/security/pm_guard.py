@@ -162,15 +162,15 @@ async def guard_(_, message: MyMessage):
         disallowed_count = Config.DISALLOWED_PM_COUNT[pm_by] = Config.DISALLOWED_PM_COUNT[pm_by] + 1
     if disallowed_count == 1:
         pm_user = await venom.get_users(pm_by)
-        await message.reply_photo(Config.PM_WELCOME_PIC, caption=WELCOME_MSG.format(pm_user.first_name, Config.ME['name']))
-    elif disallowed_count > 1 and disallowed_count < 4:
+        await message.reply_photo(Config.PM_WELCOME_PIC, caption=WELCOME_MSG.format(pm_user.first_name, Config.ME.first_name))
+    elif 1 < disallowed_count < 4:
         await message.reply(f"You have been warned!\n<b>Number of spam messages:</b> {disallowed_count}")
     elif disallowed_count == 4:
         await message.reply("<b>This is the last warning to you. Next message you'll be blocked and reported.</b>")
     elif disallowed_count >= 5:
         await message.reply("`Enough is ENOUGH!\nYou have been blocked and reported for spam!")
         await message.from_user.block()
-        report_user(pm_by, pm_by, message, message.id, "Unsocialated private messages.")
+        await report_user(pm_by, pm_by, message, message.id, "Unsocialated private messages.")
     await Collection.DISALLOWED_PM_COUNT.update_one(
         {'_id': pm_by}, {'$set': {'count': disallowed_count}}, upsert=True
     )

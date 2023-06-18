@@ -1,5 +1,4 @@
 # config.py
-
 import asyncio
 import inspect
 import os
@@ -41,12 +40,14 @@ class Config:
     UNFINISHED_PROGRESS_STR = "▒"
     UPSTREAM_REMOTE = os.environ.get("UPSTREAM_REMOTE", "upstream")
     UPSTREAM_REPO = os.environ.get("UPSTREAM_REPO", "https://github.com/ashwinstr/VenomX")
-    USER_MODE: bool = False
+    USER_MODE: bool = True
     VALID_STRING_SESSION: bool = False
+
 
     ##### characters #####
     BULLET_DOT = "•"
     INVISIBLE = "\u00ad"
+    SHRUG = "¯\\_(ツ)_/¯"
 
     ##### constants #####
     EDIT_SLEEP_TIMEOUT = 10
@@ -67,12 +68,24 @@ class Config:
     ALIVE_PIC = ""
     DEFAULT_ALIVE_PIC = "https://telegra.ph/file/34c891bbd8d21c0564cbc.jpg"
     ALIVE_PIC_TYPE: MessageMediaType = MessageMediaType.PHOTO
+
+    ### Your Alldbrid App token
+    DEBRID_TOKEN = os.environ.get("DEBRID_TOKEN")
+    ### Optional Vars for advance users WebDav
+    WEBDAV_URL = os.environ.get("WEBDAV_URL")
+    WEB_TORRENT = os.environ.get("WEB_TORRENT")
+    WEB_LINK = os.environ.get("WEB_LINK")
+    WEB_HISTORY = os.environ.get("WEB_HISTORY")
     ### current time
     TIME_DIFF = float(os.environ.get("TIME_DIFF", 5.5))
     ### datetime
     TIME_ZONE: str = "in"
     ### kangs
     CUSTOM_PACK_NAME = os.environ.get("CUSTOM_PACK_NAME", "")
+    KANGLOG = False
+    ### OpenWeatherApi
+    OPEN_WEATHER_MAP = os.environ.get("OPEN_WEATHER_API", None)
+    WEATHER_DEFCITY = os.environ.get("WEATHER_DEFCITY", "Asia/Kolkata")
     ### pmguard
     ALLOWED_TO_PM: List[int] = []
     DISALLOWED_PM_COUNT: Dict[int, int] = {}
@@ -108,6 +121,7 @@ class SecureConfig:
     def __init__(self):
         self.API_HASH = os.environ.get("API_HASH")
         self.API_ID = int(os.environ.get("API_ID", 0))
+        self.IMPORTANT_USERS: List[int] = []
         self.BOT_TOKEN = os.environ.get("BOT_TOKEN")
         self.DB_URI = os.environ.get("DATABASE_URL")
         self.STRING_SESSION = os.environ.get("STRING_SESSION")
@@ -126,14 +140,20 @@ class SecureConfig:
 
 
 def _secure_the_configs() -> bool:
-    inspect_ = inspect.stack()
-    for one in inspect_:
-        if "temp" in one.filename:
-            return False
-        elif "aexec" in one.filename:
-            return False
-        elif "executor" in one.filename:
-            return False
+    inspect_ = inspect.currentframe().f_globals.get("__name__")
+    # for one in inspect_:
+    #     if "temp" in one.filename:
+    #         return False
+    #     elif "aexec" in one.filename:
+    #         return False
+    #     elif "executor" in one.filename:
+    #         return False
+    if "temp" in inspect_:
+        return False
+    elif "aexec" in inspect_:
+        return False
+    elif "executor" in inspect_:
+        return False
     return True
 
 

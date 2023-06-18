@@ -19,7 +19,6 @@ async def init_func(message: MyMessage) -> str | bool | None:
     regex_ = re.search(fr"^({Config.CMD_TRIGGER}|{Config.SUDO_TRIGGER})(load)|(freeze)", message.text)
     print(regex_.group(1), regex_.group(2), sep="\n") if regex_ else None
     if not bool(regex_):
-        print()
         cmd = message.filtered_input
     else:
         cmd = True

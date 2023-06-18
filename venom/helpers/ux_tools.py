@@ -4,7 +4,7 @@ import asyncio
 import math
 import shlex
 import time
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Optional
 
 from pyrogram.errors import FloodWait
 from pyrogram.types import CallbackQuery
@@ -115,3 +115,20 @@ async def progress(
                 await message.try_to_edit(progress_str)
         except FloodWait as f_e:
             await asyncio.sleep(f_e.value)
+
+
+def get_file_id(message: 'venom.MyMessage') -> Optional[str]:
+    """ get file id from message """
+    if message is None:
+        return
+    file_ = (
+        message.audio
+        or message.animation
+        or message.photo
+        or message.sticker
+        or message.voice
+        or message.video_note
+        or message.video
+        or message.document
+    )
+    return file_.file_id if file_ else None

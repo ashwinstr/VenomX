@@ -1,6 +1,7 @@
 # send_message.py
 
 import asyncio
+import inspect
 from typing import Optional, List, Union
 
 from pyrogram import Client as RClient
@@ -8,7 +9,6 @@ from pyrogram.enums import ParseMode
 from pyrogram.types import MessageEntity, ReplyKeyboardMarkup, InlineKeyboardMarkup, ReplyKeyboardRemove
 
 from ... import types
-from ... import client as _client
 
 
 class SendMessage(RClient):
@@ -27,7 +27,7 @@ class SendMessage(RClient):
                                ReplyKeyboardMarkup,
                                InlineKeyboardMarkup
                            ] = None,
-                           **kwargs) -> 'types.message.MyMessage':
+                           **kwargs) -> Union['types.message.MyMessage', bool]:
         """ custom method for VenomX """
 
         disable_web_page_preview = dis_preview
@@ -43,8 +43,8 @@ class SendMessage(RClient):
 
         if del_in >= 0:
             await asyncio.sleep(del_in)
-            await msg.delete()
+            return bool(await msg.delete())
 
-        client_ = _client.Venom.parse(self)
+        module = inspect.currentframe().f_back.f_globals['__name__']
 
-        return types.message.MyMessage.parse(client_, msg)
+        return types.message.MyMessage.parse(self, msg, module=module)
