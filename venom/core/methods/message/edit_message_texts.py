@@ -38,6 +38,6 @@ class EditMessageText(RClient):
             await asyncio.sleep(del_in)
             return bool(await msg.delete())
 
-        module = inspect.currentframe().f_back.f_globals['__name__']
+        # module = inspect.currentframe().f_back.f_globals['__name__']
 
-        return types.message.MyMessage.parse(self, msg, module=module)
+        return types.message.MyMessage.parse(self, msg)

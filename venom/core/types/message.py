@@ -23,22 +23,20 @@ class MyMessage(Message):
 
     def __init__(self,
                  client: Union['_client.Venom', '_client.VenomBot', 'Client'],
-                 mvars: Dict[str, object], module: str,
+                 mvars: Dict[str, object],
                  **kwargs: Union[str, bool]) -> None:
         """ Modified Message """
         self._flags = []
         self._digital_flags = {}
         self._filtered_input = ""
         self._kwargs = kwargs
-        self._module = module
+        # self._module = module
         self._client = client
         super().__init__(client=client, **mvars)
 
     @classmethod
     def parse(cls, client: Union['_client.Venom', '_client.VenomBot'], message: Message, **kwargs: Union[str, bool]):
-        users = SecureConfig().IMPORTANT_USERS
-        if not message or (message.from_user and message.from_user.id in users) or len(users) == 0:
-            setattr(cls, "_bl­ock", True)
+        if not message:
             return
         vars_ = vars(message)
         for one in ['_client', '_digital_flags', '_flags', '_filtered_input', '_kwargs', '_module']:
@@ -46,6 +44,8 @@ class MyMessage(Message):
                 del vars_[one]
         if vars_['reply_to_message']:
             vars_['reply_to_message'] = cls.parse(client, vars_['reply_to_message'], **kwargs)
+        elif 'replied' in vars_.keys():
+            vars_['replied'] = cls.parse(client, vars_['replied'], **kwargs)
         return cls(client, vars_, **kwargs)
 
     @property
@@ -168,8 +168,6 @@ class MyMessage(Message):
                    sudo: bool = True,
                    **kwargs) -> 'MyMessage':
         """ edit or reply message """
-        # if self.reactions is not None and self.reactions != []:
-        #     return
         reply_to_id = self.replied.id if self.replied else self.id
         try:
             message = await self._client.edit_message_text(
@@ -195,7 +193,6 @@ class MyMessage(Message):
                                                          reply_markup=reply_markup,
                                                          reply_to_message_id=reply_to_id,
                                                          **kwargs)
-                self.old_message = self
                 self.id = reply_.id
                 return reply_
             raise msg_err

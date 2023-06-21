@@ -162,7 +162,7 @@ class MyDecorator(Client):
                 if Config.PAUSE:
                     return
 
-                my_message = message.MyMessage.parse(rc, rm, module=func.__module__, **kwargs)
+                my_message = message.MyMessage.parse(rc, rm, **kwargs)
                 try:
                     await func(rc, my_message)
                 except Exception as e:

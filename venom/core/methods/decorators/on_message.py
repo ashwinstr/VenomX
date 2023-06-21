@@ -27,7 +27,7 @@ class NewOnMessage(RClient):
                             return
                     else:
                         return
-                new_message = message.MyMessage.parse(rc, rm, module=func.__module__)
+                new_message = message.MyMessage.parse(rc, rm)
                 try:
                     await func(rc, new_message)
                 except Exception as e:

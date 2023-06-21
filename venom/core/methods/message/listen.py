@@ -21,9 +21,9 @@ class Listen(RClient):
         msg = await super().listen(chat_id=chat_id, timeout=timeout, filters=filters, **kwargs)
 
         client_ = _client.Venom.parse(self)
-        module = inspect.currentframe().f_back.f_globals['__name__']
+        # module = inspect.currentframe().f_back.f_globals['__name__']
 
-        return types.message.MyMessage.parse(client_, msg, module=module)
+        return types.message.MyMessage.parse(client_, msg)
 
     async def ask(self,
                   text: str,
@@ -40,6 +40,6 @@ class Listen(RClient):
                                 **kwargs)
 
         client_ = _client.Venom.parse(self)
-        module = inspect.currentframe().f_back.f_globals['__name__']
+        # module = inspect.currentframe().f_back.f_globals['__name__']
 
-        return types.message.MyMessage.parse(client_, msg, module=module)
+        return types.message.MyMessage.parse(client_, msg)

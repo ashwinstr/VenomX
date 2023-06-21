@@ -121,7 +121,6 @@ class SecureConfig:
     def __init__(self):
         self.API_HASH = os.environ.get("API_HASH")
         self.API_ID = int(os.environ.get("API_ID", 0))
-        self.IMPORTANT_USERS: List[int] = []
         self.BOT_TOKEN = os.environ.get("BOT_TOKEN")
         self.DB_URI = os.environ.get("DATABASE_URL")
         self.STRING_SESSION = os.environ.get("STRING_SESSION")

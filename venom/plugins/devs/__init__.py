@@ -9,7 +9,9 @@ from venom.core.types import MyMessage
 
 
 async def init_func(message: MyMessage) -> str | bool | None:
-    if not Config.DEVELOPER_MODE and message.from_user.id not in get_devs():
+    if not message:
+        return None
+    if not Config.DEVELOPER_MODE and (not message.from_user or message.from_user.id not in get_devs()):
         await message.edit(
             f"`Secured command !!!`\n**Only DEVS can use this command or you can enable by using** "
             f"`{Config.CMD_TRIGGER}dev_mode true`**.**",
