@@ -158,7 +158,7 @@ async def report_user(chat: int, user_id: int, msg_id: int, reason: str):
     #     message=msg
     # )
     reporting = Report(
-        peer=peer_,
+        peer=(await venom.venom.resolve_peer(peer_)),
         id=[msg_id],
         reason=reason_,
         message=for_
