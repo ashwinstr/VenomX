@@ -12,9 +12,8 @@ from pymediainfo import MediaInfo
 from pyrogram.errors import UserIdInvalid
 from pyrogram.raw.functions.messages import Report
 from pyrogram.raw.types import (
-    InputPeerUserFromMessage,
     InputReportReasonPornography,
-    InputReportReasonSpam, InputPeerChat, )
+    InputReportReasonSpam, )
 from telegraph import Telegraph
 
 import venom
