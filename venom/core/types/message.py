@@ -6,7 +6,7 @@ import re
 from typing import List, Union, Dict
 
 from pyrogram import filters as flt, Client
-from pyrogram.enums import ParseMode
+from pyrogram.enums import ParseMode, ChatType
 from pyrogram.errors import (MessageAuthorRequired, MessageDeleteForbidden,
                              MessageIdInvalid, MessageTooLong, MessageNotModified)
 from pyrogram.types import InlineKeyboardMarkup, Message
@@ -193,7 +193,8 @@ class MyMessage(Message):
                                                          reply_markup=reply_markup,
                                                          reply_to_message_id=reply_to_id,
                                                          **kwargs)
-                self.id = reply_.id
+                if isinstance(reply_, MyMessage):
+                    self.id = reply_.id
                 return reply_
             raise msg_err
 
@@ -287,5 +288,20 @@ class MyMessage(Message):
         return await self._client.ask(chat_id=self.chat.id, text=text, timeout=timeout, filters=filters)
 
     async def wait(self, timeout: int = 15, filters: flt.Filter = None) -> 'MyMessage':
-        """ monkey patching to MyMessage using pyromod's listen """
+        """ monkey patching to MyMessage using pyromod.listen """
         return await self._client.listen(self.chat.id, timeout=timeout, filters=filters)
+
+    async def copy_content(self, chat_id: Union[int, str] = "me") -> 'MyMessage':
+        """ copy content in restricted chat """
+        if self.chat.type == ChatType.PRIVATE:
+            return await self.edit("`This method is for groups only...`", del_in=5)
+        msg_link = self.link
+        pattern_ = re.compile(r"https://t.me/(\w+)/(\d+)")
+        match_ = re.search(pattern_, msg_link)
+        from_chat = match_.group(1) or None
+        msg_id = match_.group(2) or None
+        if from_chat.isdigit():
+            from_chat = int("-100" + from_chat)
+        content_ = (await self._client.get_messages(from_chat, [int(msg_id)]))[0]
+        un_parsed_ = await content_.copy(chat_id=chat_id)
+        return self.parse(self._client, un_parsed_)

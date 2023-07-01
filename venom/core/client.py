@@ -179,16 +179,16 @@ class Venom(CustomVenom):
         try:
             if self.bot:
                 _LOG.info(_LOG_STR, "Stopping bot")
-                await self.bot.stop()
+                await self.bot.stop(block)
             _close_db()
-            await super().stop()
+            await super().stop(block=block)
         except ConnectionError:
-            await self.bot.stop()
+            await self.bot.stop(block)
 
     async def restart(self, hard: bool = False):
         _LOG.info(_LOG_STR, "Restarting VenomX")
         if not hard:
-            os.execl(sys.executable, sys.executable, '-m', 'venom')
+            await super().restart(block=hard)
         else:
             # _LOG.info(_LOG_STR, "Installing requirements")
             os.execl("bash", "run")

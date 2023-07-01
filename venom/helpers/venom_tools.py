@@ -134,9 +134,9 @@ def extract_id(mention):
         men = mention.html
     except:
         raise UserIdInvalid
-    filter = re.search(r"\d+", men)
-    if filter:
-        return filter.group(0)
+    filter_ = re.search(r"\d+", men)
+    if filter_:
+        return filter_.group(0)
     raise UserIdInvalid
 
 
@@ -147,18 +147,13 @@ async def report_user(chat: int, user_id: int, msg_id: int, reason: str):
     else:
         reason_ = InputReportReasonSpam()
         for_ = "spam message"
-    peer_ = InputPeerUserFromMessage(
-        peer=InputPeerChat(chat_id=chat),
-        msg_id=msg_id,
-        user_id=user_id,
-    )
-    # ReportPeer(
-    #     peer=peer_,
-    #     reason=reason_,
-    #     message=msg
+    # peer_ = InputPeerUserFromMessage(
+    #     peer=InputPeerChat(chat_id=chat),
+    #     msg_id=msg_id,
+    #     user_id=user_id,
     # )
     reporting = Report(
-        peer=peer_,
+        peer=(await venom.venom.resolve_peer(user_id)),
         id=[msg_id],
         reason=reason_,
         message=for_
@@ -170,6 +165,7 @@ async def report_user(chat: int, user_id: int, msg_id: int, reason: str):
 
 class Media_Info:
 
+    @staticmethod
     def data(media: str) -> dict | None:
         """ Get downloaded media's information """
         media_info = MediaInfo.parse(media)

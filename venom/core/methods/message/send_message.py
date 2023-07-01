@@ -43,7 +43,7 @@ class SendMessage(RClient):
 
         if del_in >= 0:
             await asyncio.sleep(del_in)
-            return bool(await msg.delete())
+            return await msg.delete()
 
         # module = inspect.currentframe().f_back.f_globals['__name__']
 
