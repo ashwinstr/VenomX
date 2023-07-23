@@ -1,13 +1,15 @@
 # config.py
+
 import asyncio
 import inspect
 import os
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Tuple
 
 from dotenv import load_dotenv
 from pyrogram.enums import MessageMediaType
 from pyrogram.raw.base import ForumTopic
 from pyrogram.types import User
+from pyrogram.handlers import MessageHandler, EditedMessageHandler
 
 if os.path.isfile("config.env"): load_dotenv("config.env")
 
@@ -17,23 +19,24 @@ class Config:
 
     ##### basic configs #####
     _INIT: List[asyncio.Task] = []
-    BOT: User = None
+    BOT: User | None = None
     CACHE_PATH = "venom/xcache"
     CMD_LIST = []
     CMD_TRIGGER = os.environ.get("CMD_TRIGGER", ".")
     DB_NAME: str = os.environ.get("DB_NAME", "VenomX")
-    DEVELOPER_MODE: bool = os.environ.get("DEVELOPER_MODE", False)
+    DEVELOPER_MODE = bool(os.environ.get("DEVELOPER_MODE", False))
     DOWN_PATH = "downloads"
     FINISHED_PROGRESS_STR = "█"
     GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN")
     HELP: Dict[str, Dict[str, Union[str, List[Dict[str, Union[str, bool, Dict[str, str]]]]]]] = {}
     START_MESSAGE_DICT: dict = {}
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
-    ME: User = None
+    ME: User | None = None
     NON_PY_FILES = {}
     OWNER_ID = int(os.environ.get("OWNER_ID", 0))
     PAUSE = False
     TEMP_PATH = "venom/plugins/temp/"
+    HANDLERS: Dict[str, Tuple[Tuple[MessageHandler, EditedMessageHandler], Tuple[MessageHandler, EditedMessageHandler]]]= {}
     THUMB_PATH = DOWN_PATH + "thumb_image.jpg"
     TRACEBACK = {'id': int}
     EXECUTOR_TB = {'id': int}
@@ -147,11 +150,11 @@ def _secure_the_configs() -> bool:
     #         return False
     #     elif "executor" in one.filename:
     #         return False
-    if "temp" in inspect_:
+    if "temp" in str(inspect_):
         return False
-    elif "aexec" in inspect_:
+    elif "aexec" in str(inspect_):
         return False
-    elif "executor" in inspect_:
+    elif "executor" in str(inspect_):
         return False
     return True
 

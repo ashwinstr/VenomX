@@ -1,6 +1,5 @@
-# message.py
+""" message.py """
 
-import inspect
 import os
 import re
 from typing import List, Union, Dict
@@ -12,14 +11,15 @@ from pyrogram.errors import (MessageAuthorRequired, MessageDeleteForbidden,
 from pyrogram.types import InlineKeyboardMarkup, Message
 
 import venom
-from venom import Config, logging, SecureConfig
-from .. import client as _client
+from venom import Config, logging
+from .. import client as _client # pylint:disable=E0402
 
 _CANCEL_PROCESS: List[int] = []
 _LOG = logging.getLogger(__name__)
 
 
 class MyMessage(Message):
+    """ Custom Message object """
 
     def __init__(self,
                  client: Union['_client.Venom', '_client.VenomBot', 'Client'],
@@ -35,7 +35,12 @@ class MyMessage(Message):
         super().__init__(client=client, **mvars)
 
     @classmethod
-    def parse(cls, client: Union['_client.Venom', '_client.VenomBot'], message: Message, **kwargs: Union[str, bool]):
+    def parse(
+        cls,
+        client: Union['_client.Venom', '_client.VenomBot'],
+        message: Message, **kwargs: Union[str, bool]
+    ) -> 'MyMessage':
+        """ message parser """
         if not message:
             return
         vars_ = vars(message)
@@ -55,6 +60,7 @@ class MyMessage(Message):
 
     @property
     def replied(self) -> Union['MyMessage', None]:
+        """ short for reply_to_message """
         if not hasattr(self, 'reply_to_message'):
             return None
         replied_msg = self.reply_to_message
@@ -62,6 +68,7 @@ class MyMessage(Message):
 
     @property
     def input_str(self) -> str:
+        """ input string """
         if not self.text:
             return ""
         if " " in self.text or "\n" in self.text:
@@ -79,11 +86,7 @@ class MyMessage(Message):
             return []
         string_ = input_.splitlines()[0]
         pattern_ = r"-[a-z]+\d*"
-        try:
-            flags_ = re.findall(pattern_, string_)
-        except Exception as e:
-            _LOG.error("Error: %s", e)
-            return []
+        flags_ = re.findall(pattern_, string_)
         return flags_
 
     @property
@@ -94,11 +97,7 @@ class MyMessage(Message):
             return {}
         flag_string_ = input_.splitlines()[0]
         pattern_ = r"-[a-z]+\d+"
-        try:
-            flags_ = re.findall(pattern_, flag_string_)
-        except Exception as e:
-            _LOG.error("Error: %s", e)
-            return {}
+        flags_ = re.findall(pattern_, flag_string_)
         dict_ = {}
         for one in flags_:
             search_ = re.search(r"(-[a-z]+)(\d+)", one)
@@ -139,8 +138,8 @@ class MyMessage(Message):
                            reply_to: int = None) -> 'MyMessage':
         """ send text as file """
         file_ = os.path.join(Config.TEMP_PATH, file_name)
-        with open(file_, "w+", encoding='utf-8') as fn:
-            fn.write(str(text))
+        with open(file_, "w+", encoding='utf-8') as f_n:
+            f_n.write(str(text))
         if delete_message:
             try:
                 await self.delete()
@@ -155,7 +154,7 @@ class MyMessage(Message):
                                                    file_name=file_name,
                                                    caption=caption,
                                                    reply_to_message_id=reply_to_id)
-        module = inspect.currentframe().f_back.f_globals['__name__']
+        # module = inspect.currentframe().f_back.f_globals['__name__']
         os.remove(file_)
         return self.parse(self._client, message)
 
@@ -204,9 +203,9 @@ class MyMessage(Message):
         """ Method for showing errors """
         format_ = f"<b>Error</b>:\n{text}"
         try:
-            return await self.edit(text)
-        except Exception as e:
-            venom.test_print(e)
+            return await self.edit(format_)
+        except BaseException as b_e: #pylint:disable=W0718
+            venom.test_print(b_e)
 
     async def reply(self,
                     text: str,
@@ -265,7 +264,10 @@ class MyMessage(Message):
                                     dis_preview: bool = False) -> 'MyMessage':
         """ reply or send as file """
         try:
-            return await self.reply(text=text, del_in=del_in, parse_mode=parse_mode, dis_preview=dis_preview)
+            return await self.reply(text=text,
+                                    del_in=del_in,
+                                    parse_mode=parse_mode,
+                                    dis_preview=dis_preview)
         except MessageTooLong:
             reply_to = self.replied.id if self.replied else self.id
             msg_ = await self.send_as_file(text=text,
@@ -285,7 +287,10 @@ class MyMessage(Message):
 
     async def ask(self, text: str, timeout: int = 15, filters: flt.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod.ask """
-        return await self._client.ask(chat_id=self.chat.id, text=text, timeout=timeout, filters=filters)
+        return await self._client.ask(chat_id=self.chat.id,
+                                      text=text,
+                                      timeout=timeout,
+                                      filters=filters)
 
     async def wait(self, timeout: int = 15, filters: flt.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod.listen """

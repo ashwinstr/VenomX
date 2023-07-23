@@ -1,4 +1,5 @@
-# database.py
+""" database.py """
+
 __all__ = ['get_collection', '_close_db']
 
 import asyncio

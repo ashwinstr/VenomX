@@ -1,61 +1,16 @@
 # loader.py
 
-import asyncio
 import importlib
 import os
+import traceback
+import sys
 
 from venom import venom, MyMessage, Config, Collection
-from venom.helpers import plugin_name, restart_msg
+from venom.helpers import plugin_name
 from . import init_func
 
 HELP = Config.HELP[plugin_name(__name__)] = {'type': 'devs', 'commands': []}
 RESTART = Collection.RESTART
-
-########################################################################################################################
-
-HELP['commands'].append(
-    {
-        'command': 'load',
-        'flags': {
-            '-r': 'rename and load'
-        },
-        'usage': 'load plugin temporarily',
-        'syntax': '{tr}load [reply to .py file]',
-        'sudo': False
-    }
-)
-
-
-@venom.trigger('load')
-async def load_er(_, message: MyMessage):
-    """ load plugin temporarily """
-    secure_ = await init_func(message)
-    if not secure_:
-        return await message.edit("`DANGEROUS COMMAND, ABORTING...`", del_in=5)
-    reply_ = message.replied
-    flags_ = message.flags
-    if not reply_ or not reply_.document:
-        return await message.edit("`Reply to python plugin...`")
-    await message.edit("`Trying to load...`")
-    f_name = reply_.document.file_name
-    plug_path = os.path.join(Config.TEMP_PATH, f_name)
-    import_path = plug_path.replace("/", ".")[:-3] if f_name.endswith('.py') else plug_path.replace("/", ".")
-    if os.path.exists(plug_path):
-        os.remove(plug_path)
-    msg = "<b>Loaded</b> {},\nRestarting now.".format(f_name)
-    down_ = await reply_.download(plug_path)
-    try:
-        if '-r' in flags_:
-            new_path = f"{down_.rstrip('.py')}.py"
-            os.rename(down_, new_path)
-        importlib.import_module(import_path)
-    except (SyntaxError, ImportError, NameError) as e:
-        os.remove(down_)
-        return await message.edit(f"`{e}`")
-    load_conf = await message.edit(msg)
-    text_ = f"<b>Reloaded temp plugin {f_name} successfully.</b>"
-    await restart_msg(load_conf, text=text_)
-    asyncio.get_event_loop().create_task(venom.restart())
 
 ########################################################################################################################
 
@@ -92,3 +47,47 @@ async def text_load(_, message: MyMessage):
         os.remove(path_)
         return await message.edit(f"`{e}`")
     await message.edit(f"Loaded temp plugin <b>{plug_name}.py</b> successfully.")
+
+#############################################################################################
+
+HELP['commands'].append(
+    {
+        'command': 'load',
+        'flags': None,
+        'usage': 'new plugin loader',
+        'syntax': '{tr}load [reply to plugin file]',
+        'sudo': False
+    }
+)
+
+
+@venom.trigger('load')
+async def loader(_, message: MyMessage):
+    """ new loader plugin """
+    secure_ = await init_func(message)
+    if not secure_:
+        return await message.edit("**DANGEROUS PLUGIN...** `ABORTING.`", del_in=5)
+    reply_ = message.replied
+    if not reply_ \
+        or not reply_.document \
+            or not reply_.document.file_name.endswith(".py"):
+        return await message.edit("`Reply to plugin file...`", del_in=5)
+    await message.edit("`Loading...`")
+    file_name = reply_.document.file_name
+    reload_ = False
+    action = "loaded"
+    path_ = f"venom/plugins/temp/{file_name}"
+    if os.path.exists(path_):
+        reload_ = True
+        action = "reloaded"
+        os.remove(path_)
+    import_path_ = f"venom.plugins.temp.{file_name.split('.')[0]}"
+    sys.modules.pop(import_path_, None) if reload_ else None
+    await reply_.download(path_)
+    try:
+        module_ = importlib.import_module(import_path_)
+        importlib.reload(module_)
+    except ImportError as i_e:
+        print(i_e)
+        return await message.edit(traceback.format_exc())
+    await message.edit(f"Temp plugin **{file_name.split('.')[0]}** {action}.")

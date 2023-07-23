@@ -23,6 +23,7 @@ venv
 
 # git folder
 .git
+.gitconfig
 .idea
 
 # local temp folders

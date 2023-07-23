@@ -1,4 +1,4 @@
-# command_manager.py
+""" command_manager.py """
 
 import os
 import re
@@ -10,6 +10,7 @@ from venom.plugins import ROOT
 
 
 def folder_content(folder: str) -> list:
+    """ folder content """
     print(folder)
     if os.path.isdir(f"venom/plugins/{folder}"):
         path_ = f"venom/plugins/{folder}"

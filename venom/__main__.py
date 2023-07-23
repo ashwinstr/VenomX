@@ -1,4 +1,5 @@
 # main.py
+
 import time
 
 from pyrogram.errors import AuthKeyDuplicated, FloodWait
@@ -23,3 +24,4 @@ if __name__ == "__main__":
     except FloodWait as e:
         print(f"Please wait for {e.value} seconds...")
         time.sleep(e.value)
+        

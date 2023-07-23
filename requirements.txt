@@ -2,13 +2,13 @@ aiofiles>=0.6.0
 aiohttp
 asyncurban
 booru
-cryptography
+#cryptography
 dnspython>=2.0.0
-fastapi
-futures>=3.0.5
+futures==3.0.5
 gitpython>=3.1.11
-google-api-python-client
+#google-api-python-client
 googletrans
+httpcore==0.9.*
 httplib2
 motor
 oauth2client
@@ -26,7 +26,6 @@ pytz
 requests==2.31.0
 selenium
 setuptools>=60.0.4
-spotipy
 telegraph
 tgcrypto>=1.2.3
 wget

@@ -6,18 +6,18 @@ import re
 import traceback
 from typing import Any, Callable, Union, Dict
 
-import pyrogram
-from pyrogram import Client, filters
+from pyrogram import Client, filters # pyright:ignore
 from pyrogram.errors import MessageTooLong
 from pyrogram.filters import Filter as RawFilter
 from pyrogram.types import Message
+from pyrogram.handlers import MessageHandler, EditedMessageHandler # pyright:ignore
 
 from venom import Config
 from venom.core import client as _client
 from venom.core.filter import Filtered
 from venom.core.types import message
 from venom.helpers import paste_it
-from ...command_manager import manager
+from ...command_manager import manager # pylint:disable=E0402
 
 _FUNC = Callable[[Client, Message], Any]
 
@@ -132,10 +132,12 @@ def _owner_sudo(cmd: str) -> RawFilter:
 
 
 class MyDecorator(Client):
+    """ custom decorator """
+
     _PYROFUNC = Callable[[_FUNC], _FUNC]
 
-    def my_decorator(self: Union['_client.Venom', '_client.VenomBot'], flt: 'Filtered' = None, filters_=RawFilter,
-                     group: int = 0, **kwargs: Union[str, bool]) -> _PYROFUNC:
+    def my_decorator(self: Union['_client.Venom', '_client.VenomBot'], flt: 'Filtered' | None = None, filters_=RawFilter, 
+                     **kwargs: Union[str, bool]) -> _PYROFUNC:
 
         def inner(func: _FUNC) -> _FUNC:
 
@@ -192,8 +194,30 @@ class MyDecorator(Client):
 
             if not hasattr(func, "handlers"):
                 func.handlers = []
-            func.handlers.append((pyrogram.handlers.MessageHandler(template, filtered), group))
-            func.handlers.append((pyrogram.handlers.EditedMessageHandler(template, filtered), group))
+            # func.handlers.append((pyrogram.handlers.MessageHandler(template, filtered), flt.group))
+            # func.handlers.append((pyrogram.handlers.EditedMessageHandler(template, filtered), flt.group))
+            if func.__name__ in Config.HANDLERS.keys():
+                handlers = Config.HANDLERS[func.__name__]
+                for one in handlers[0]:
+                    self.remove_handler(*one)
+                for one in handlers[1]:
+                    self.bot.remove_handler(*one)
+            m_h = self.add_handler(MessageHandler(template, filtered), flt.group)
+            e_m_h = self.add_handler(EditedMessageHandler(template, filtered), flt.group)
+            b_m_h = self.bot.add_handler(MessageHandler(template, filtered), flt.group)
+            b_e_m_h = self.bot.add_handler(EditedMessageHandler(template, filtered), flt.group)
+            Config.HANDLERS[func.__name__] = ((m_h, e_m_h), (b_m_h, b_e_m_h))
             return func
-
+            
         return inner
+
+
+def _add_handler(client: Client, template: Callable, filter_: RawFilter, group: int = 0):
+    """ adds handler """
+    #message_handler = pyrogram.handlers.MessageHandler(template, filter_)
+    #edited_message_handler = pyrogram.handlers.EditedMessageHandler(template, filter_)
+    #client.add_handler(message_handler, group)
+    #client.add_handler(edited_message_handler, group)
+    #client.bot.add_handler(message_handler, group)
+    #client.bot.add_handler(edited_message_handler, group)
+    #Config.HA

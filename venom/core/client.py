@@ -7,6 +7,8 @@ import sys
 import time
 import traceback
 from typing import Optional, Union
+import inspect
+import glob
 
 from pyrogram import Client
 from pyrogram.errors import AuthKeyDuplicated, BotResponseTimeout
@@ -17,6 +19,7 @@ from venom import Config, logging, SecureConfig
 from venom.helpers import time_format, get_import_paths
 from .database import _close_db, get_collection
 from .methods import Methods
+from .ext import pool
 from ..plugins import all_plugins, ROOT
 
 _LOG = logging.getLogger(__name__)
@@ -39,7 +42,7 @@ async def _init_tasks():
     except ConnectionError:
         print(f"Connection error.\n{traceback.format_exc()}")
     except BaseException as e:
-        print(f"Error in init functions: {e}")
+        print(f"Error in init functions: {e}\n{inspect.currentframe().f_globals.get('__name__')}")
     init_list_.clear()
 
 
@@ -76,11 +79,6 @@ class VenomBot(CustomVenom):
     def parse(cls, client: Union['Venom', 'VenomBot'], **kwargs):
         return cls()
 
-    @property
-    def ubot(self) -> 'Venom':
-        """ returns userbot """
-        return self._bot
-
     # async def start(self):
     #     await super(VenomBot, self).start()
     #     try:
@@ -98,7 +96,7 @@ class Venom(CustomVenom):
             'name': 'VenomX',
             'api_id': sc.API_ID,
             'api_hash': sc.API_HASH,
-            'plugins': dict(root='venom')
+            # 'plugins': dict(root='venom')
         }
         self.DUAL_MODE = False
         if sc.BOT_TOKEN:
@@ -111,6 +109,8 @@ class Venom(CustomVenom):
         else:
             self.bot = VenomBot(bot=self, **kwargs)
         super().__init__(**kwargs)
+        # self.executor.shutdown()
+        # self.executor = pool._get()
 
     @classmethod
     def parse(cls, client: Union['Venom', 'VenomBot', Client], **kwargs):
@@ -148,18 +148,30 @@ class Venom(CustomVenom):
             return True
         return False
 
+    def import_plugins(self):
+        modules_ = glob.glob("venom/**/*.py", recursive=True)
+        for module in modules_:
+            try:
+                import_path = "".join(module[:-3]).replace("/", ".")
+                importlib.import_module(import_path)
+            except ImportError as i_e:
+                print(i_e)
+            except BaseException as e:
+                print(e)
+
     async def start(self):
+        self.import_plugins()
         try:
             await super().start()
             Config.VALID_STRING_SESSION = True
             if hasattr(self, 'bot') and self.bot is not None:
                 _LOG.info(_LOG_STR, "Starting bot")
                 await self.bot.start()
-            # self.import_all()
+            self.import_plugins()
         except AuthKeyDuplicated:
             _LOG.info(_LOG_STR, "AuthKeyDuplicated !!!\nStarting bot mode as main interface...")
             Config.USER_MODE = False
-            await TOGGLES.update_one(
+            await TOGGLES.update_one( # disable
                 {'_id': 'USER_MODE'},
                 {'$set': {'switch': False}},
                 upsert=True
