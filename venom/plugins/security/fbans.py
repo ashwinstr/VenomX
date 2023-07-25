@@ -326,7 +326,7 @@ HELP_["commands"].append(
         'command': 'fbanp',
         'flags': {
             '-r': 'remote fban, use with direct proof link',
-            '-test': '''for testing purpose, won't report the user'''
+            '-test': "for testing purpose, won't report the user"
         },
         'usage': 'fban users with proof',
         'syntax': '{tr}fbanp [reply to proof] [reason]',
@@ -485,7 +485,8 @@ async def fban_p(_, message: MyMessage):
             user = f"<a href='tg://user?id={user}'>{user}</a>" if isinstance(user, int) else user
             send_ = await venom.send_message(
                 chat_id,
-                f"/fban {user} {reason}"
+                f"/fban {user} {reason}",
+                dis_preview=True
             )
             response = await send_.wait(filters=(filters.user([609517172, 2059887769]) & ~filters.service))
             resp = response.text
@@ -509,7 +510,7 @@ async def fban_p(_, message: MyMessage):
             failed.append(data["fed_name"])
     if total == 0:
         return await message.edit(
-            "You Don't have any feds connected!\nsee .help addf, for more info."
+            f"You Don't have any feds connected!\nSee help {Config.CMD_TRIGGER}addf, for more info."
         )
     await message.edit(fban_arg[2])
 

@@ -9,11 +9,10 @@ from typing import Union, List
 
 from pastypy import Paste
 from pymediainfo import MediaInfo
+from pyrogram.raw.types.input_report_reason_spam import InputReportReasonSpam
+from pyrogram.raw.types.input_report_reason_pornography import InputReportReasonPornography
 from pyrogram.errors import UserIdInvalid
-from pyrogram.raw.functions.messages import Report
-from pyrogram.raw.types import (
-    InputReportReasonPornography,
-    InputReportReasonSpam, )
+from pyrogram.raw.functions.messages.report import Report
 from telegraph import Telegraph
 
 import venom
@@ -63,7 +62,7 @@ def post_tg(title: str, content: str) -> str:
 async def post_tg_media(content: Union['message.MyMessage', str]) -> str:
     """ upload media to telegraph """
     if isinstance(content, message.MyMessage):
-        media = content.replied
+        media = content.replied if content.replied else content
         if (not media.photo
                 and not media.animation
                 and (not media.video
@@ -146,19 +145,22 @@ async def report_user(chat: int, user_id: int, msg_id: int, reason: str):
     else:
         reason_ = InputReportReasonSpam()
         for_ = "spam message"
-    # peer_ = InputPeerUserFromMessage(
-    #     peer=InputPeerChat(chat_id=chat),
-    #     msg_id=msg_id,
-    #     user_id=user_id,
-    # )
+    #resolved = await venom.venom.resolve_peer(peer_id=user_id)
+    #if not isinstance(resolved, InputUser):
+        #return
+    #user_ = await venom.venom.invoke(GetUsers(id=[resolved]))
+    #if not isinstance(user_, User) or not isinstance(user_.access_hash, int):
+        #return
+    #input_peer_user = InputPeerUser(user_id=user_id, access_hash=user_.access_hash)
+    resolved_chat = await venom.venom.resolve_peer(chat)
+    # chat_ = input_peer_chat.InputPeerChat(chat_id=resolved_chat.channel_id)
     reporting = Report(
-        peer=(await venom.venom.resolve_peer(user_id)),
+        peer=resolved_chat,
         id=[msg_id],
         reason=reason_,
         message=for_
     )
     reported = await venom.venom.invoke(reporting)
-    venom.test_print(reported)
     return for_
 
 
@@ -205,7 +207,7 @@ class Media_Info:
 async def paste_it(msg_content: Union['message.MyMessage', str]) -> str:
     """ paste content to pasty.lus """
     if isinstance(msg_content, message.MyMessage):
-        reply_ = msg_content.replied
+        reply_ = msg_content.replied if msg_content.replied else msg_content
         if reply_.document:
             try:
                 await msg_content.edit("`Downloading document...`")

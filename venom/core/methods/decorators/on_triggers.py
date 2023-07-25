@@ -136,7 +136,7 @@ class MyDecorator(Client):
 
     _PYROFUNC = Callable[[_FUNC], _FUNC]
 
-    def my_decorator(self: Union['_client.Venom', '_client.VenomBot'], flt: 'Filtered' | None = None, filters_=RawFilter, 
+    def my_decorator(self: Union['_client.Venom', '_client.VenomBot'], flt: 'Filtered' = None, filters_=RawFilter, 
                      **kwargs: Union[str, bool]) -> _PYROFUNC:
 
         def inner(func: _FUNC) -> _FUNC:

@@ -85,7 +85,7 @@ class MyMessage(Message):
         if not input_:
             return []
         string_ = input_.splitlines()[0]
-        pattern_ = r"-[a-z]+\d*"
+        pattern_ = r"(?:^|\s)(-[a-z]+\d*)"
         flags_ = re.findall(pattern_, string_)
         return flags_
 
