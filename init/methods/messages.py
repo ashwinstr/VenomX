@@ -62,7 +62,7 @@ LAST_MESSAGE = "*VenomX has been stopped.* ❗❗❗"
 class InitMessages:
 
     def __init__(self):
-        base_url = "https://api.telegram.org/bot" + SecureConfig().BOT_TOKEN
+        base_url = "https://api.telegram.org/bot" + str(SecureConfig().BOT_TOKEN)
         self._SEND_URL = base_url + "/sendMessage?chat_id={}&text={}&parse_mode=markdown"
         self._EDIT_URL = base_url + "/editMessageText?chat_id={}&message_id={}&text={}&parse_mode=markdown"
         self._DEL_URL = base_url + "/deleteMessage?chat_id={}&message_id={}"

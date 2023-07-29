@@ -160,7 +160,6 @@ class Venom(CustomVenom):
                 print(e)
 
     async def start(self):
-        self.import_plugins()
         try:
             await super().start()
             Config.VALID_STRING_SESSION = True

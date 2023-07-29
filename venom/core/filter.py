@@ -16,8 +16,6 @@ class Filtered:
         self.cmd = cmd
         self.filters = filters
         self.temp = temp
-        if cmd not in manager.commands:
-            manager.commands.append(cmd)
 
     @classmethod
     def parse(cls, cmd: str, group: int = 0, temp: bool = False):

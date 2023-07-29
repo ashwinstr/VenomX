@@ -57,7 +57,7 @@ class Manager:
             list_.append(one.split(".")[-1])
         return sorted(list_)
 
-    def cmd_plugin_loc(self, cmd_name: str) -> str:
+    def cmd_plugin_loc(self, cmd_name: str) -> str | None:
         loc_ = None
         for one in self.commands:
             if one.endswith(cmd_name):
@@ -65,7 +65,7 @@ class Manager:
                 break
         return loc_
     
-    def cmd_parent_plugin(self, cmd_name: str) -> str:
+    def cmd_parent_plugin(self, cmd_name: str) -> str | None:
         parent = None
         cmd_loc = self.cmd_plugin_loc(cmd_name)
         if cmd_loc:

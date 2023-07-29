@@ -21,6 +21,7 @@ from ...command_manager import manager # pylint:disable=E0402
 
 _FUNC = Callable[[Client, Message], Any]
 
+
 _CURRENT_MODULE = ""
 
 
@@ -164,7 +165,7 @@ class MyDecorator(Client):
                 if Config.PAUSE:
                     return
 
-                my_message = message.MyMessage.parse(rc, rm, **kwargs)
+                my_message: message.MyMessage = message.MyMessage.parse(rc, rm, **kwargs)
                 try:
                     await func(rc, my_message)
                 except Exception as e:

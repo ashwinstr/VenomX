@@ -1,6 +1,7 @@
 # fbans.py
 
 import asyncio
+import collections
 import traceback
 from asyncio.exceptions import TimeoutError
 
@@ -9,6 +10,7 @@ from pyrogram.enums import ChatType
 from pyrogram.errors import FloodWait, PeerIdInvalid, UserBannedInChannel, UsernameInvalid, MessageIdInvalid
 
 from venom import venom, MyMessage, Config, Collection
+from venom.core.database import get_collection
 from venom.helpers import plugin_name, extract_id, report_user
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'security', 'commands': []}
@@ -492,7 +494,7 @@ async def fban_p(_, message: MyMessage):
             resp = response.text
             if not (
                 ("New FedBan" in resp)
-                or ("FedBan Reason update" in resp)
+                or ("FedBan reason updated" in resp)
                 or ("starting a federation ban" in resp)
                 or ("start a federation ban" in resp)
             ):
@@ -648,4 +650,30 @@ async def fban_lst_(_, message: MyMessage):
         if out
         else "**You haven't connected to any federations yet!**",
         caption="Connected Fed List",
+    )
+
+##################################################################################
+
+
+@venom.trigger('fedmig')
+async def fed_migrate(_, message: MyMessage):
+    """ migrate fedlist from USERGE-X to VenomX """
+    await message.edit("`Migrating federation list...`")
+    new_feds = []
+    success_ = False
+    del_in = 5
+    async for one in FED_LIST.find():
+        if "chat_type" in one.keys():
+            chat_id = one.get("chat_id")
+            fed_name = one.get("fed_name")
+            new_feds.append({'_id': chat_id, 'fed_name': fed_name})
+    for one in new_feds:
+        await FED_LIST.insert_one(one)
+        success_ = True
+        del_in = -1
+    await message.edit(
+        f"`Migration successful...`\n**Feds migrated:** {len(new_feds)}"
+        if success_
+        else "`Nothing to migrate...`",
+        del_in=del_in
     )
