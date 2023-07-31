@@ -5,6 +5,7 @@
 import os
 import time
 import asyncio
+from typing import Tuple
 
 from git import Repo
 from git.exc import GitCommandError
@@ -115,7 +116,7 @@ async def update_r(_, message: MyMessage):
         asyncio.get_event_loop().create_task(venom.restart())
 
 
-def get_update_list(repo: Repo, branch: str) -> str and int:
+def get_update_list(repo: Repo, branch: str) -> Tuple[str, int]:
     """ get update list """
     repo.remote(Config.UPSTREAM_REMOTE).fetch(branch)
     upst = Config.UPSTREAM_REPO.rstrip("/")

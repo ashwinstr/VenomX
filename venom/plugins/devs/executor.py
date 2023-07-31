@@ -54,8 +54,6 @@ help_['commands'].append(
     }
 )
 
-# todo: Take working eval code from Ryuk
-
 
 @venom.trigger('eval')
 async def evaluate(_, message: MyMessage):
@@ -93,9 +91,14 @@ async def evaluate(_, message: MyMessage):
         return await locals()["__aexec"](venom, message)
 
     try:
-        ret_val = await aexec(cmd)
+        proc_ = aexec(cmd)
+        task_ = Config._TASKS[message.unique_id] = asyncio.Task(proc_)
+        ret_val = await task_
+        Config._TASKS.pop(message.unique_id)
     except Exception:  # pylint: disable=broad-except
         exc = traceback.format_exc().strip()
+    except asyncio.CancelledError:
+        exc = "Eval cancelled..."
     stdout = redirected_output.getvalue().strip()
     stderr = redirected_error.getvalue().strip()
     sys.stdout = old_stdout

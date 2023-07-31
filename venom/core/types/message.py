@@ -126,6 +126,11 @@ class MyMessage(Message):
             return True
         return False
 
+    @property
+    def unique_id(self) -> str:
+        """ unique id of message """
+        return f"{self.chat.id}.{self.id}"
+
     def cancel_process(self) -> None:
         """ cancel process """
         _CANCEL_PROCESS.append(self.id)

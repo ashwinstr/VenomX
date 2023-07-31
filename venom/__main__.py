@@ -6,6 +6,7 @@ from pyrogram.errors import AuthKeyDuplicated, FloodWait
 
 from init import ChangeInitMessage
 from venom import logging, venom
+from venom.core.database import _close_db
 
 _ERROR = "##### {} #####"
 _LOG = logging.getLogger(__name__)
@@ -24,4 +25,6 @@ if __name__ == "__main__":
     except FloodWait as e:
         print(f"Please wait for {e.value} seconds...")
         time.sleep(e.value)
+    except TimeoutError:
+        _close_db()
         

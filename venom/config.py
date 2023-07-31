@@ -19,10 +19,12 @@ class Config:
 
     ##### basic configs #####
     _INIT: List[asyncio.Task] = []
+    _TASKS: Dict[str, asyncio.Task] = {}
     BOT: User | None = None
     CACHE_PATH = "venom/xcache"
-    CMD_LIST = []
+    CMD_LIST: List[str] = []
     CMD_TRIGGER = os.environ.get("CMD_TRIGGER", ".")
+    DANGEROUS_CMDS: List[str] = []
     DB_NAME: str = os.environ.get("DB_NAME", "VenomX")
     DEVELOPER_MODE = bool(os.environ.get("DEVELOPER_MODE", False))
     DOWN_PATH = "downloads"

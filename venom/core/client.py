@@ -35,14 +35,14 @@ async def _init_tasks():
         imported = importlib.import_module(f"venom.plugins.{task}")
         if not hasattr(imported, "_init"):
             continue
-        init_func = getattr(imported, "_init")
+        init_func = imported.__getattr__("_init")
         init_list_.append(init_func())
     try:
         await asyncio.gather(*init_list_)
     except ConnectionError:
         print(f"Connection error.\n{traceback.format_exc()}")
     except BaseException as e:
-        print(f"Error in init functions: {e}\n{inspect.currentframe().f_globals.get('__name__')}")
+        print(f"Error in init functions: {e}\n{inspect.currentframe().f_back.f_globals.get('__name__')}")
     init_list_.clear()
 
 
@@ -198,8 +198,9 @@ class Venom(CustomVenom):
 
     async def restart(self, hard: bool = False):
         _LOG.info(_LOG_STR, "Restarting VenomX")
+        await self.stop(block=False)
         if not hard:
-            await super().restart(block=hard)
+            os.execl(sys.executable, sys.executable, "-m", "venom")
         else:
             # _LOG.info(_LOG_STR, "Installing requirements")
             os.execl("bash", "run")

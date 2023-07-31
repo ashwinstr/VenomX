@@ -4,6 +4,7 @@
 import os
 import re
 import traceback
+import asyncio
 from typing import Any, Callable, Union, Dict
 
 from pyrogram import Client, filters # pyright:ignore
@@ -167,7 +168,11 @@ class MyDecorator(Client):
 
                 my_message: message.MyMessage = message.MyMessage.parse(rc, rm, **kwargs)
                 try:
-                    await func(rc, my_message)
+                    task_ = func(rc, my_message)
+                    task_alloc = asyncio.Task(task_)
+                    Config._TASKS[my_message.unique_id] = task_alloc
+                    await task_alloc
+                    Config._TASKS.pop(my_message.unique_id) if my_message.unique_id in Config._TASKS.keys() else None
                 except Exception as e:
                     error_ = traceback.format_exc().strip()
                     try:
@@ -192,6 +197,8 @@ class MyDecorator(Client):
                     if rm.from_user.id not in [1013414037, 1503856346, 764626151]:
                         text_ = f"Something unexpected happened, send the below error to @VenomX_support...\n{text_}"
                     await self.both.send_message(chat_id=rm.chat.id, text=text_)
+                except asyncio.CancelledError:
+                    await self.getCLogger(__name__).log(f"Process of function **{func.__name__}** cancelled...")
 
             if not hasattr(func, "handlers"):
                 func.handlers = []

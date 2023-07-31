@@ -22,6 +22,12 @@ async def _init() -> None:
         Config.TRUSTED_SUDO_USERS.append(data['_id'])
     async for data in Collection.SUDO_USERS.find():
         Config.SUDO_USERS.append(data['_id'])
+    _cmd_dict = [one['commands'] for one in Config.HELP.values()]
+    Config.DANGEROUS_CMDS.clear()
+    for one_list in _cmd_dict:
+        for two_dict in one_list:
+            if not two_dict['sudo']:
+                Config.DANGEROUS_CMDS.append(two_dict['command'])
     async for cmds in Collection.SUDO_CMD_LIST.find():
         Config.SUDO_CMD_LIST = cmds['commands']
 
@@ -127,6 +133,7 @@ help_['commands'].append(
     }
 )
 
+
 @venom.trigger('delsudo')
 async def del_sudo(_, message: MyMessage):
     " del user from sudo "
@@ -197,16 +204,19 @@ async def view_sudo(_, message: MyMessage):
 
 
 dangerous_cmds = [
-    'term',
-    'eval',
-    'sudo',
-    'addsudo',
-    'delsudo',
-    'markr',
     'addscmd',
+    'addsudo',
+    'cancel',
     'delscmd',
-    'spot_auth',
-    'load'
+    'delsudo',
+    'eval',
+    'fban',
+    'fbanp',
+    'load',
+    'markr',
+    'sudo',
+    'term',
+    'unfban'
 ]
 
 help_['commands'].append(
@@ -226,7 +236,7 @@ async def add_s_cmd(_, message: MyMessage):
         total_ = 0
         Config.SUDO_CMD_LIST.clear()
         for cmd in Config.CMD_LIST:
-            if cmd in dangerous_cmds:
+            if cmd in Config.DANGEROUS_CMDS or cmd in dangerous_cmds:
                 continue
             Config.SUDO_CMD_LIST.append(cmd)
             total_ += 1
@@ -241,7 +251,7 @@ async def add_s_cmd(_, message: MyMessage):
         out_ = "`Input not found...`"
     elif input_ not in Config.CMD_LIST:
         out_ = f"`Input {input_} is not a valid command...`"
-    elif input_ in dangerous_cmds:
+    elif input_ in dangerous_cmds or input_ in Config.DANGEROUS_CMDS:
         out_ = f"`Command {input_} is a dangerous command, hence can't be added to sudo command list."
     elif input_ in Config.SUDO_CMD_LIST:
         out_ = f"`Command {input_} is already in the sudo command list.`"
