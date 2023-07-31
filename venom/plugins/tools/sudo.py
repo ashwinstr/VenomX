@@ -2,10 +2,11 @@
 
 import asyncio
 import bisect
+import itertools
 
 from pyrogram.errors import PeerIdInvalid, UsernameNotOccupied
 
-from venom import venom, Config, Collection, MyMessage
+from venom import venom, Config, Collection, MyMessage, test_print
 
 
 help_ = Config.HELP['sudo'] = {'type': 'tools', 'commands': []}
@@ -24,10 +25,9 @@ async def _init() -> None:
         Config.SUDO_USERS.append(data['_id'])
     _cmd_dict = [one['commands'] for one in Config.HELP.values()]
     Config.DANGEROUS_CMDS.clear()
-    for one_list in _cmd_dict:
-        for two_dict in one_list:
-            if not two_dict['sudo']:
-                Config.DANGEROUS_CMDS.append(two_dict['command'])
+    list_ = list(itertools.chain.from_iterable(_cmd_dict))
+    for one in list_:
+        Config.DANGEROUS_CMDS.append(one['command']) if ('sudo' in one.keys() and not one['sudo']) or 'sudo' not in one.keys() else None
     async for cmds in Collection.SUDO_CMD_LIST.find():
         Config.SUDO_CMD_LIST = cmds['commands']
 
