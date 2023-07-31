@@ -128,7 +128,7 @@ def get_update_list(repo: Repo, branch: str) -> Tuple[str, int]:
         out += f"🔨 **#{i.count()}** : [{i.summary}]({upst}/commit/{i}) 👤 __{i.author}__\n"
         if total_ == limit_:
             return out, total_
-    return out, total_
+    return (out, total_)
 
 
 def pull_update(repo: Repo, branch: str) -> None:

@@ -35,7 +35,7 @@ async def _init_tasks():
         imported = importlib.import_module(f"venom.plugins.{task}")
         if not hasattr(imported, "_init"):
             continue
-        init_func = imported.__getattr__("_init")
+        init_func = getattr(imported, "_init")
         init_list_.append(init_func())
     try:
         await asyncio.gather(*init_list_)
