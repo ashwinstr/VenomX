@@ -36,7 +36,7 @@ HELP_['commands'].append(
 
 @venom.trigger('mode')
 async def dual_mode(_, message: MyMessage):
-    " toggle mode [user/bot] "
+    """ toggle mode [user/bot] """
     Config.FIRST = True
     input_ = message.input_str or ""
     if input_.lower() == "user":

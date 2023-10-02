@@ -88,15 +88,16 @@ class VenomBot(CustomVenom):
 
 
 class Venom(CustomVenom):
+
     logging.info(_LOG_STR, "Processing: Venom client")
+    failed_imports = ""
 
     def __init__(self):
         sc = SecureConfig()
         kwargs = {
             'name': 'VenomX',
             'api_id': sc.API_ID,
-            'api_hash': sc.API_HASH,
-            # 'plugins': dict(root='venom')
+            'api_hash': sc.API_HASH
         }
         self.DUAL_MODE = False
         if sc.BOT_TOKEN:
@@ -155,9 +156,10 @@ class Venom(CustomVenom):
                 import_path = "".join(module[:-3]).replace("/", ".")
                 importlib.import_module(import_path)
             except ImportError as i_e:
-                print(i_e)
+                self.failed_imports += f"[{i_e.name}] - {i_e.msg}\n"
             except BaseException as e:
                 print(e)
+        _LOG.info(self.failed_imports)
 
     async def start(self):
         try:
@@ -170,7 +172,7 @@ class Venom(CustomVenom):
         except AuthKeyDuplicated:
             _LOG.info(_LOG_STR, "AuthKeyDuplicated !!!\nStarting bot mode as main interface...")
             Config.USER_MODE = False
-            await TOGGLES.update_one( # disable
+            await TOGGLES.update_one(
                 {'_id': 'USER_MODE'},
                 {'$set': {'switch': False}},
                 upsert=True
@@ -178,8 +180,6 @@ class Venom(CustomVenom):
             SecureConfig().STRING_SESSION = ""
             Config.USER_MODE = False
             await self.bot.start()
-        except ImportError as IE:
-            print(IE)
         ChangeInitMessage().second_line()
         await _init_tasks()
         ChangeInitMessage().third_line()

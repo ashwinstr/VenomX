@@ -15,6 +15,15 @@ _LOGGER = logging.getLogger(__name__)
 _LOG_STR = "### %s ###"
 
 
+def dns_resolver():
+    import dns.resolver
+    dns.resolver.default_resolver = dns.resolver.Resolver(configure=False)
+    dns.resolver.default_resolver.nameservers = ["8.8.8.8"]
+
+
+dns_resolver()
+
+
 _MGCLIENT: AgnosticClient = AsyncIOMotorClient(SecureConfig().DB_URI)
 _RUN = asyncio.get_event_loop().run_until_complete
 

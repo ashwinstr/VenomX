@@ -1,5 +1,6 @@
 # owner.py
 
+from pyrogram.types import User
 from venom import venom, Config
 
 
@@ -11,8 +12,8 @@ async def _init() -> None:
 
 class Owner:
 
-    _ME = Config.ME
-    _BOT = Config.BOT
+    _ME: User = Config.ME
+    _BOT: User = Config.BOT
     _MENTION = "<a href='tg://user?id={}'>{}</a>"
 
     @property

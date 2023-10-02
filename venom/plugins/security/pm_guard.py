@@ -49,7 +49,7 @@ HELP_['commands'].append(
 
 @venom.trigger('pmguard')
 async def pm_guard(_, message: MyMessage):
-    " secure your PMs "
+    """ secure your PMs """
     if '-c' in message.flags:
         switch_ = "ON" if Config.PM_GUARD else "OFF"
         return await message.edit(f"<b>PM_GUARD</b> is currently <b>{switch_}</b>.", del_in=5)
@@ -74,7 +74,7 @@ HELP_['commands'].append(
 
 @venom.trigger('allow')
 async def allow_pm(_, message: MyMessage):
-    " allow user to pm you "
+    """ allow user to pm you """
     if message.chat.type in [ChatType.SUPERGROUP, ChatType.GROUP]:
         reply_ = message.replied
         if not reply_:
@@ -114,7 +114,7 @@ HELP_['commands'].append(
 
 @venom.trigger('nopm')
 async def dis_allow_pm(_, message: MyMessage):
-    " disallow user to pm you "
+    """ disallow user to pm you """
     if message.chat.type in [ChatType.SUPERGROUP, ChatType.GROUP]:
         reply_ = message.replied
         if not reply_:
@@ -154,7 +154,7 @@ NOT_ALLOWED = filters.create(lambda _, __, m: (m.from_user and m.from_user.id no
     group=4
 )
 async def guard_(_, message: MyMessage):
-    " guard on duty "
+    """ guard on duty """
     pm_by = message.from_user.id
     if pm_by not in Config.DISALLOWED_PM_COUNT.keys():
         disallowed_count = Config.DISALLOWED_PM_COUNT[pm_by] = 1
@@ -170,7 +170,7 @@ async def guard_(_, message: MyMessage):
     elif disallowed_count >= 5:
         await message.reply("`Enough is ENOUGH!\nYou have been blocked and reported for spam!")
         await message.from_user.block()
-        await report_user(pm_by, pm_by, message, message.id, "Unsocialated private messages.")
+        await report_user(pm_by, pm_by, message, message.id)
     await Collection.DISALLOWED_PM_COUNT.update_one(
         {'_id': pm_by}, {'$set': {'count': disallowed_count}}, upsert=True
     )
@@ -184,7 +184,7 @@ async def guard_(_, message: MyMessage):
     group=2
 )
 async def auto_allow(_, message: MyMessage):
-    " automatic allow on first message "
+    """ automatic allow on first message """
     user_ = message.chat.id
     if user_ not in Config.DISALLOWED_PM_COUNT.keys():
         Config.ALLOWED_TO_PM.append(user_)

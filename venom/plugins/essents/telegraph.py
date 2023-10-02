@@ -7,7 +7,7 @@ from venom.helpers import plugin_name, post_tg_media, post_tg
 HELP = Config.HELP[plugin_name(__name__)] = {'type': 'essents', 'commands': []}
 
 
-##############################################################################################################################################
+########################################################################################################################
 
 HELP['commands'].append(
     {
@@ -17,6 +17,7 @@ HELP['commands'].append(
         'sudo': True
     }
 )
+
 
 @venom.trigger('tgmedia')
 async def tg_media(_, message: MyMessage):
@@ -28,7 +29,7 @@ async def tg_media(_, message: MyMessage):
     await message.edit(link_)
 
 
-##############################################################################################################################################
+########################################################################################################################
 
 HELP['commands'].append(
     {
@@ -38,6 +39,7 @@ HELP['commands'].append(
         'sudo': True
     }
 )
+
 
 @venom.trigger('tgtext')
 async def tg_text(_, message: MyMessage):
