@@ -1,7 +1,6 @@
 # fbans.py
 
 import asyncio
-import collections
 import traceback
 from asyncio.exceptions import TimeoutError
 
@@ -10,8 +9,7 @@ from pyrogram.enums import ChatType
 from pyrogram.errors import FloodWait, PeerIdInvalid, UserBannedInChannel, UsernameInvalid, MessageIdInvalid
 
 from venom import venom, MyMessage, Config, Collection
-from venom.core.database import get_collection
-from venom.helpers import plugin_name, extract_id, report_user
+from venom.helpers import plugin_name, extract_id, report_user, userfriendly
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'security', 'commands': []}
 CHANNEL = venom.getCLogger(__name__)
@@ -412,9 +410,7 @@ async def fban_p(_, message: MyMessage):
         proof = msg_en.id
     fps = True
     if (
-        user in Config.SUDO_USERS
-        or user in Config.TRUSTED_SUDO_USERS
-        or user == Config.OWNER_ID
+        userfriendly(user)
         or user == (await venom.get_me()).id
     ):
         fps = False
@@ -440,8 +436,7 @@ async def fban_p(_, message: MyMessage):
         except IndexError:
             reason = "not specified"
         if (
-            user in Config.SUDO_USERS
-            or user == Config.OWNER_ID
+            userfriendly(user)
             or user == (await venom.get_me()).id
         ):
             return await message.edit(

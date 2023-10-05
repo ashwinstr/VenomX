@@ -170,7 +170,7 @@ async def guard_(_, message: MyMessage):
     elif disallowed_count >= 5:
         await message.reply("`Enough is ENOUGH!\nYou have been blocked and reported for spam!")
         await message.from_user.block()
-        await report_user(pm_by, pm_by, message, message.id)
+        await report_user(pm_by, pm_by, message.id, "Unsolicited message...")
     await Collection.DISALLOWED_PM_COUNT.update_one(
         {'_id': pm_by}, {'$set': {'count': disallowed_count}}, upsert=True
     )

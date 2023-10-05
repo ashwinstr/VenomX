@@ -11,11 +11,16 @@ from pyrogram.raw.base import ForumTopic
 from pyrogram.types import User
 from pyrogram.handlers import MessageHandler, EditedMessageHandler
 
+
 if os.path.isfile("config.env"): load_dotenv("config.env")
 
 
 class Config:
     """ Configs """
+
+    ##### Must have configs #####
+    LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID"))
+    OWNER_ID = int(os.environ.get("OWNER_ID"))
 
     ##### basic configs #####
     _INIT: List[asyncio.Task] = []
@@ -32,13 +37,12 @@ class Config:
     GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN")
     HELP: Dict[str, Dict[str, Union[str, List[Dict[str, Union[str, bool, Dict[str, str]]]]]]] = {}
     START_MESSAGE_DICT: dict = {}
-    LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
     ME: User | None = None
     NON_PY_FILES = {}
-    OWNER_ID = int(os.environ.get("OWNER_ID", 0))
     PAUSE = False
     TEMP_PATH = "venom/plugins/temp/"
-    HANDLERS: Dict[str, Tuple[Tuple[MessageHandler, EditedMessageHandler], Tuple[MessageHandler, EditedMessageHandler]]]= {}
+    HANDLERS: Dict[
+        str, Tuple[Tuple[MessageHandler, EditedMessageHandler], Tuple[MessageHandler, EditedMessageHandler]]] = {}
     THUMB_PATH = DOWN_PATH + "thumb_image.jpg"
     TRACEBACK = {'id': int}
     EXECUTOR_TB = {'id': int}
@@ -47,7 +51,6 @@ class Config:
     UPSTREAM_REPO = os.environ.get("UPSTREAM_REPO", "https://github.com/ashwinstr/VenomX")
     USER_MODE: bool = True
     VALID_STRING_SESSION: bool = False
-
 
     ##### characters #####
     BULLET_DOT = "•"

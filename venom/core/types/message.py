@@ -299,7 +299,8 @@ class MyMessage(Message):
 
     async def wait(self, timeout: int = 15, filters: flt.Filter = None) -> 'MyMessage':
         """ monkey patching to MyMessage using pyromod.listen """
-        return await self._client.listen(self.chat.id, timeout=timeout, filters=filters)
+        response = await self._client.listen(self.chat.id, timeout=timeout, filters=filters)
+        return self.parse(self._client, response)
 
     async def copy_content(self, chat_id: Union[int, str] = "me") -> 'MyMessage':
         """ copy content in restricted chat """

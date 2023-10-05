@@ -49,7 +49,7 @@ HELP_['commands'].append(
 @venom.trigger('ihelp')
 async def i_help(_, message: MyMessage):
     """ help command """
-    if venom.isuser:
+    if Config.USER_MODE:
         await inline_help(message)
     else:
         await bot_help(message)

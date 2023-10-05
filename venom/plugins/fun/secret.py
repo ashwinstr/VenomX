@@ -54,11 +54,12 @@ async def secret_whisper(_, i_q: InlineQuery):
         return
     msg_ = i_q.matches[0].group(2)
     id_ = venom.rnd_id()
+    user_mention = "@" + user_.username if user_.username else user_.mention
     results.append(
         InlineQueryResultArticle(
             title="Secret whisper.",
             input_message_content=InputTextMessageContent(
-                message_text=f"You have sent a secret message.\nfor <b>{user_.mention}</b>..."
+                message_text=f"You have sent a secret message.\nFor <b>{user_mention}</b>..."
             ),
             reply_markup=activate_button(id_)
         )
