@@ -16,6 +16,7 @@ from venom import Config
 
 class VenomDecorators:
 
+    @staticmethod
     def callback_checker(owner: bool = False, sudo: bool = True):
         def function(func):
             async def wrapper(venom, c_q: CallbackQuery):
@@ -57,22 +58,25 @@ class VenomDecorators:
     #         await func(venom, message)
     #     return wrapper
 
+    @staticmethod
     def inline_checker(owner: bool = False):
         def function(func):
             async def wrapper(venom, iq: InlineQuery):
                 """ inline query owner and tb checker """
                 if owner:
-                    "owner check"
+                    " owner check "
                     user_id = iq.from_user.id
-                    if not Config.SUDO \
-                            or (not user_id == Config.OWNER_ID
-                                and user_id not in Config.SUDO_USERS
-                                and user_id not in Config.TRUSTED_SUDO_USERS):
+                    if (
+                        user_id != Config.OWNER_ID
+                        and user_id not in Config.SUDO_USERS
+                        and user_id not in Config.TRUSTED_SUDO_USERS
+                    ):
                         " if not owner "
                         results = [InlineQueryResultArticle(
                             title="VenomX",
                             input_message_content=InputTextMessageContent(
-                                "Only the <b>owner</b> can use this bot. Please deploy your own <b>VenomX</b>, "
+                                "Only the <b>owner and sudo users</b> can use this bot. Please deploy your own "
+                                "<b>VenomX</b>,"
                                 "thank you."
                             ),
                         )]

@@ -53,7 +53,7 @@ async def generate_str(_, message: MyMessage):
     api_hash = secure_vars.API_HASH
     num = (await venom.get_users(Config.OWNER_ID)).phone_number
     if num is None:
-        return await message.reply("`First allow me in phone number privacy setting...`")
+        return await message.reply("`First allow me(bot) in phone number privacy setting...`")
     process_ = await resp.reply("`Generating session string...`")
     try:
         client = Client(name="MyAccount", api_hash=api_hash, api_id=api_id)
@@ -71,7 +71,7 @@ async def generate_str(_, message: MyMessage):
         code = await client.send_code(num)
         await asyncio.sleep(1)
     except FloodWait as e:
-        return await process_.edit(f"`You have floodwait of {e.value} seconds.`", del_in=5)
+        return await process_.edit(f"`You have FloodWait of {e.value} seconds.`", del_in=5)
     except ApiIdInvalid:
         return await process_.edit("`API_ID and API_HASH are invalid.`", del_in=5)
     except PhoneNumberInvalid:
@@ -81,7 +81,8 @@ async def generate_str(_, message: MyMessage):
             "`An otp is sent to your phone number.`\n"
             "Please enter otp in `1 2 3 4 5` format."
         )
-        otp = await process_.ask(msg_, timeout=300)
+        ask_otp = await process_.reply(msg_)
+        otp = await ask_otp.wait(timeout=300)
     except TimeoutError:
         return await process_.edit("`Time limit reached of 5 min.\nPlease try again later.`", del_in=5)
     if otp.text == f"{Config.CMD_TRIGGER}cancel":
@@ -95,11 +96,11 @@ async def generate_str(_, message: MyMessage):
         return await otp.reply("`Code is expired.`")
     except SessionPasswordNeeded:
         try:
-            two_step_code = await message.ask( 
+            ask_two_step_code = await otp.reply(
                 f"`This account have two-step verification code.\nPlease enter your second factor authentication code.`"
-                f"\nPress {Config.CMD_TRIGGER}cancel to cancel.",
-                timeout=300
+                f"\nPress {Config.CMD_TRIGGER}cancel to cancel."
             )
+            two_step_code = await ask_two_step_code.wait(300)
         except TimeoutError:
             return await otp.reply("`Time limit reached of 5 min.\nTry again.`")
         if two_step_code.text == f"{Config.CMD_TRIGGER}cancel":

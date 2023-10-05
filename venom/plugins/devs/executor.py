@@ -287,7 +287,7 @@ class Term:
                 break
 
     async def worker(self) -> None:
-        await asyncio.wait([self._read_stdout(), self._read_stderr()])
+        await asyncio.wait([asyncio.Task(self._read_stdout()), asyncio.Task(self._read_stderr())])
         await self._process.wait()
         self._finished = True
 

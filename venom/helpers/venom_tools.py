@@ -17,6 +17,7 @@ from telegraph import Telegraph
 
 import venom
 from venom import logging, Config, Collection
+from .exceptions import VarNotFoundException
 from ..core.types import message
 
 _LOG = logging.getLogger(__name__)
@@ -145,13 +146,13 @@ async def report_user(chat: int, user_id: int, msg_id: int, reason: str):
     else:
         reason_ = InputReportReasonSpam()
         for_ = "spam message"
-    #resolved = await venom.venom.resolve_peer(peer_id=user_id)
-    #if not isinstance(resolved, InputUser):
-        #return
-    #user_ = await venom.venom.invoke(GetUsers(id=[resolved]))
-    #if not isinstance(user_, User) or not isinstance(user_.access_hash, int):
-        #return
-    #input_peer_user = InputPeerUser(user_id=user_id, access_hash=user_.access_hash)
+    # resolved = await venom.venom.resolve_peer(peer_id=user_id)
+    # if not isinstance(resolved, InputUser):
+    # return
+    # user_ = await venom.venom.invoke(GetUsers(id=[resolved]))
+    # if not isinstance(user_, User) or not isinstance(user_.access_hash, int):
+    # return
+    # input_peer_user = InputPeerUser(user_id=user_id, access_hash=user_.access_hash)
     resolved_chat = await venom.venom.resolve_peer(chat)
     # chat_ = input_peer_chat.InputPeerChat(chat_id=resolved_chat.channel_id)
     reporting = Report(
@@ -315,20 +316,17 @@ class CurrentTime:
         return f"{self.h}:{self.m}:{self.s} {self.stamp}"
 
 
-def dict2obj(d):
-    """ dictionary to object """
-    if isinstance(d, list):
-        d = [dict2obj(one) for one in d]
+def userfriendly(id: int) -> bool:
+    """ check user is owner or sudo user """
+    if id == Config.OWNER_ID:
+        return True
+    elif id in Config.TRUSTED_SUDO_USERS or id in Config.SUDO_USERS:
+        return True
+    else:
+        return False
 
-    if not isinstance(d, dict):
-        return d
 
-    class Obj:
-        pass
-
-    obj = Obj()
-
-    for k in d:
-        obj.__dict__[k] = dict2obj(d[k])
-
-    return obj
+def check_none(**kwargs) -> None:
+    for one in kwargs.keys():
+        if one is None:
+            raise VarNotFoundException(one)
