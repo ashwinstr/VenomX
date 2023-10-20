@@ -14,4 +14,8 @@ else
 
 fi
 
+if ! [ -d ".git" ] ; then
+    git init 
+fi
+
 python3 -m venom
