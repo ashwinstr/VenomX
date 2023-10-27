@@ -8,15 +8,17 @@ from typing import Dict, List, Union, Tuple
 from dotenv import load_dotenv
 from pyrogram.enums import MessageMediaType
 from pyrogram.raw.base import ForumTopic
-from pyrogram.types import User
+from pyrogram.types import User, Message
+from pyrogram.filters import Filter
 from pyrogram.handlers import MessageHandler, EditedMessageHandler
 
 
-if os.path.isfile("config.env"): load_dotenv("config.env")
+if os.path.isfile("config.env"):
+    load_dotenv("config.env")
 
 
 class Config:
-    """ Configs """
+    """Configs"""
 
     ##### Must have configs #####
     LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID"))
@@ -29,26 +31,36 @@ class Config:
     CACHE_PATH = "venom/xcache"
     CMD_LIST: List[str] = []
     CMD_TRIGGER = os.environ.get("CMD_TRIGGER", ".")
+    CONVO_DICT: dict[int, dict[str | int, Message | Filter | None]] = {}
     DANGEROUS_CMDS: List[str] = []
     DB_NAME: str = os.environ.get("DB_NAME", "VenomX")
     DEVELOPER_MODE = bool(os.environ.get("DEVELOPER_MODE", False))
     DOWN_PATH = "downloads"
-    FINISHED_PROGRESS_STR = "█"
+    FINISHED_PROGRESS_STR = ""
     GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN")
-    HELP: Dict[str, Dict[str, Union[str, List[Dict[str, Union[str, bool, Dict[str, str]]]]]]] = {}
+    HELP: Dict[
+        str, Dict[str, Union[str, List[Dict[str, Union[str, bool, Dict[str, str]]]]]]
+    ] = {}
     START_MESSAGE_DICT: dict = {}
     ME: User | None = None
     NON_PY_FILES = {}
     PAUSE = False
     TEMP_PATH = "venom/plugins/temp/"
     HANDLERS: Dict[
-        str, Tuple[Tuple[MessageHandler, EditedMessageHandler], Tuple[MessageHandler, EditedMessageHandler]]] = {}
+        str,
+        Tuple[
+            Tuple[MessageHandler, EditedMessageHandler],
+            Tuple[MessageHandler, EditedMessageHandler],
+        ],
+    ] = {}
     THUMB_PATH = DOWN_PATH + "thumb_image.jpg"
-    TRACEBACK = {'id': int}
-    EXECUTOR_TB = {'id': int}
+    TRACEBACK = {"id": int}
+    EXECUTOR_TB = {"id": int}
     UNFINISHED_PROGRESS_STR = "▒"
     UPSTREAM_REMOTE = os.environ.get("UPSTREAM_REMOTE", "upstream")
-    UPSTREAM_REPO = os.environ.get("UPSTREAM_REPO", "https://github.com/ashwinstr/VenomX")
+    UPSTREAM_REPO = os.environ.get(
+        "UPSTREAM_REPO", "https://github.com/ashwinstr/VenomX"
+    )
     USER_MODE: bool = True
     VALID_STRING_SESSION: bool = False
 
@@ -125,7 +137,6 @@ class Config:
 
 
 class SecureConfig:
-
     def __init__(self):
         self.API_HASH = os.environ.get("API_HASH")
         self.API_ID = int(os.environ.get("API_ID", 0))

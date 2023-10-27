@@ -42,12 +42,14 @@ async def _init_tasks():
     except ConnectionError:
         print(f"Connection error.\n{traceback.format_exc()}")
     except BaseException as e:
-        print(f"Error in init functions: {e}\n{inspect.currentframe().f_back.f_globals.get('__name__')}")
+        print(
+            f"Error in init functions: {e}\n{inspect.currentframe().f_back.f_globals.get('__name__')}"
+        )
     init_list_.clear()
 
 
 class CustomVenom(Methods, Client):
-    """ testing """
+    """testing"""
 
     # def __init__(self, **kwargs):
     #     """ testing """
@@ -59,7 +61,7 @@ class CustomVenom(Methods, Client):
     _root = ROOT
 
     @classmethod
-    def parse(cls, client: Union['Venom', 'VenomBot'], **kwargs):
+    def parse(cls, client: Union["Venom", "VenomBot"], **kwargs):
         pass
 
     def import_all(self):
@@ -70,13 +72,14 @@ class CustomVenom(Methods, Client):
 
 
 class VenomBot(CustomVenom):
-
-    def __init__(self, bot: Optional[Union['VenomBot', 'Venom']] = None, *args, **kwargs) -> None:
+    def __init__(
+        self, bot: Optional[Union["VenomBot", "Venom"]] = None, *args, **kwargs
+    ) -> None:
         self.bot = bot
         super().__init__(in_memory=True, *args, **kwargs)
 
     @classmethod
-    def parse(cls, client: Union['Venom', 'VenomBot'], **kwargs):
+    def parse(cls, client: Union["Venom", "VenomBot"], **kwargs):
         return cls()
 
     # async def start(self):
@@ -88,25 +91,20 @@ class VenomBot(CustomVenom):
 
 
 class Venom(CustomVenom):
-
     logging.info(_LOG_STR, "Processing: Venom client")
     failed_imports = ""
 
     def __init__(self):
         sc = SecureConfig()
-        kwargs = {
-            'name': 'VenomX',
-            'api_id': sc.API_ID,
-            'api_hash': sc.API_HASH
-        }
+        kwargs = {"name": "VenomX", "api_id": sc.API_ID, "api_hash": sc.API_HASH}
         self.DUAL_MODE = False
         if sc.BOT_TOKEN:
-            kwargs['bot_token'] = sc.BOT_TOKEN
+            kwargs["bot_token"] = sc.BOT_TOKEN
         if sc.STRING_SESSION and sc.BOT_TOKEN:
             self.DUAL_MODE = True
             self.bot = VenomBot(bot=self, **kwargs)
         if sc.STRING_SESSION:
-            kwargs['session_string'] = sc.STRING_SESSION
+            kwargs["session_string"] = sc.STRING_SESSION
         else:
             self.bot = VenomBot(bot=self, **kwargs)
         super().__init__(**kwargs)
@@ -114,8 +112,8 @@ class Venom(CustomVenom):
         # self.executor = pool._get()
 
     @classmethod
-    def parse(cls, client: Union['Venom', 'VenomBot', Client], **kwargs):
-        """ testing """
+    def parse(cls, client: Union["Venom", "VenomBot", Client], **kwargs):
+        """testing"""
         return cls()
 
     @property
@@ -127,7 +125,7 @@ class Venom(CustomVenom):
 
     @property
     def uptime(self):
-        time_ = (time.time() - _START)
+        time_ = time.time() - _START
         formatted_ = time_format(time_)
         return formatted_
 
@@ -165,17 +163,18 @@ class Venom(CustomVenom):
         try:
             await super().start()
             Config.VALID_STRING_SESSION = True
-            if hasattr(self, 'bot') and self.bot is not None:
+            if hasattr(self, "bot") and self.bot is not None:
                 _LOG.info(_LOG_STR, "Starting bot")
                 await self.bot.start()
             self.import_plugins()
         except AuthKeyDuplicated:
-            _LOG.info(_LOG_STR, "AuthKeyDuplicated !!!\nStarting bot mode as main interface...")
+            _LOG.info(
+                _LOG_STR,
+                "AuthKeyDuplicated !!!\nStarting bot mode as main interface...",
+            )
             Config.USER_MODE = False
             await TOGGLES.update_one(
-                {'_id': 'USER_MODE'},
-                {'$set': {'switch': False}},
-                upsert=True
+                {"_id": "USER_MODE"}, {"$set": {"switch": False}}, upsert=True
             )
             SecureConfig().STRING_SESSION = ""
             Config.USER_MODE = False
@@ -186,7 +185,7 @@ class Venom(CustomVenom):
         end_ = time.time()
         print(end_ - _START)
 
-    async def stop(self: 'Venom', block: bool = True):
+    async def stop(self: "Venom", block: bool = True):
         try:
             if self.bot:
                 _LOG.info(_LOG_STR, "Stopping bot")

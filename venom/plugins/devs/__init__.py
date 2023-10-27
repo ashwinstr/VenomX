@@ -4,21 +4,25 @@ import re
 
 from pyrogram.enums import ParseMode
 
-from venom import Config, get_devs
+from venom import Config, get_devs, SecureConfig
 from venom.core.types import MyMessage
 
 
 async def init_func(message: MyMessage) -> str | bool | None:
     if not message:
         return None
-    if not Config.DEVELOPER_MODE and (not message.from_user or message.from_user.id not in get_devs()):
+    if not SecureConfig().DEVELOPER_MODE and (
+        not message.from_user or message.from_user.id not in get_devs()
+    ):
         await message.edit(
             f"`Secured command !!!`\n**Only DEVS can use this command or you can enable by using** "
             f"`{Config.CMD_TRIGGER}dev_mode true`**.**",
-            parse_mode=ParseMode.MARKDOWN
+            parse_mode=ParseMode.MARKDOWN,
         )
         return None
-    regex_ = re.search(fr"^({Config.CMD_TRIGGER}|{Config.SUDO_TRIGGER})(load)|(freeze)", message.text)
+    regex_ = re.search(
+        rf"^({Config.CMD_TRIGGER}|{Config.SUDO_TRIGGER})(load)|(freeze)", message.text
+    )
     print(regex_.group(1), regex_.group(2), sep="\n") if regex_ else None
     if not bool(regex_):
         cmd = message.filtered_input

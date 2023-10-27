@@ -12,8 +12,11 @@ from pyrogram import filters
 try:
     from os import geteuid
 except ImportError:
+
     def geteuid() -> int:
         return 1
+
+
 from getpass import getuser
 
 from pyrogram.enums import ParseMode
@@ -23,41 +26,36 @@ from venom.helpers import post_tg, plugin_name
 from . import init_func
 
 
-help_ = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
+help_ = Config.HELP[plugin_name(__name__)] = {"type": "tools", "commands": []}
 
 
 async def _init() -> None:
     found = await Collection.TOGGLES.find_one({"_id": "DEVELOPER_MODE"})
     if found:
-        SecureConfig().DEVELOPER_MODE = found['switch']
+        SecureConfig().DEVELOPER_MODE = found["switch"]
     else:
-        await Collection.TOGGLES.insert_one(
-            {
-                "_id": "DEVELOPER_MODE",
-                "switch": False
-            }
-        )
+        await Collection.TOGGLES.insert_one({"_id": "DEVELOPER_MODE", "switch": False})
 
 
 ########################################################################################################################
 
 
-help_['commands'].append(
+help_["commands"].append(
     {
-        'command': 'eval',
-        'flags': {
-            '-tg': 'telegraph',
-            '-m': 'markdown',
+        "command": "eval",
+        "flags": {
+            "-tg": "telegraph",
+            "-m": "markdown",
         },
-        'about': 'evaluate your code',
-        'sudo': False
+        "about": "evaluate your code",
+        "sudo": False,
     }
 )
 
 
-@venom.trigger('eval')
+@venom.trigger("eval")
 async def evaluate(_, message: MyMessage):
-    """ evaluate your code """
+    """evaluate your code"""
     cmd = await init_func(message)
     mono_ = True if "-m" not in message.flags else False
     tele_ = True if "-tg" in message.flags else False
@@ -71,9 +69,7 @@ async def evaluate(_, message: MyMessage):
     ret_val, stdout, stderr, exc = None, None, None, None
 
     async def aexec(code):
-        head = (
-            "async def __aexec(venom, message):\n "
-        )
+        head = "async def __aexec(venom, message):\n "
         if "\n" in code:
             rest_code = "\n ".join(iter(code.split("\n")))
         elif (
@@ -121,52 +117,27 @@ async def evaluate(_, message: MyMessage):
         if tele_:
             link_ = post_tg(f"Eval output with VenomX.", output)
             return await message.edit(f"Eval output is **[HERE]({link_})**.")
-        await message.edit_or_send_as_file(output, file_name="eval.txt", caption=cmd, parse_mode=parse_)
+        await message.edit_or_send_as_file(
+            output, file_name="eval.txt", caption=cmd, parse_mode=parse_
+        )
     else:
         await message.delete()
 
-########################################################################################################################
-
-
-@venom.trigger('exec')
-async def executor_(_, message: MyMessage):
-    code = message.input_str
-    if not code:
-        return await message.edit("`Code not found...`")
-    await message.edit("`Executing...`")
-    sys.stdout = codeOut = io.StringIO()
-    sys.stderr = codeErr = io.StringIO()
-    formatted_code = "".join(["\n    "+i for i in code.split("\n")])
-    try:
-        exec(f"async def exec_(venom, message):{formatted_code}")
-        func_out = await locals().get("exec_")(venom, message)
-    except Exception as e:
-        print(e)
-        func_out = str(traceback.format_exc())
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
-    output = codeOut.getvalue().strip() or codeErr.getvalue().strip() or func_out or ""
-    await message.edit(f"> `{code}`\n\n>> `{output}`", parse_mode=ParseMode.MARKDOWN)
 
 ########################################################################################################################
 
-
-help_['commands'].append(
-    {
-        'command': 'term',
-        'flags': None,
-        'about': 'run commands in shell',
-        'sudo': False
-    }
+help_["commands"].append(
+    {"command": "term", "flags": None, "about": "run commands in shell", "sudo": False}
 )
 
 
 @venom.trigger("term")
 async def term_(_, message: MyMessage):
-    """ run commands in shell (terminal with live update) """
+    """run commands in shell (terminal with live update)"""
     cmd = await init_func(message)
     if cmd is None:
         return
+    cmd = message.input_str
     await message.edit("`Executing terminal ...`")
     try:
         t_obj = await Term.execute(cmd)  # type: Term
@@ -192,29 +163,32 @@ async def term_(_, message: MyMessage):
         out_data, parse_mode=ParseMode.HTML, file_name="term.txt", caption=cmd
     )
 
+
 ########################################################################################################################
 
-help_['commands'].append(
+help_["commands"].append(
     {
-        'command': 'dev_mode',
-        'flags': {
-            '-c': 'check status'
-        },
-        'usage': 'Enable/disable developer mode',
-        'syntax': '{tr}dev_mode true/false',
-        'sudo': False
+        "command": "dev_mode",
+        "flags": {"-c": "check status"},
+        "usage": "Enable/disable developer mode",
+        "syntax": "{tr}dev_mode true/false",
+        "sudo": False,
     }
 )
 
 
-@venom.trigger('dev_mode')
+@venom.trigger("dev_mode")
 async def developer_mode(_, message: MyMessage):
-    """ toggle developer mode """
+    """toggle developer mode"""
     if message.from_user.id != Config.OWNER_ID:
-        return await message.edit("`Only the owner of the bot can use this command.`", del_in=5)
+        return await message.edit(
+            "`Only the owner of the bot can use this command.`", del_in=5
+        )
     flags_ = message.flags
     if "-c" in flags_:
-        return await message.edit("Developer mode is " + "**ON**" if Config.DEVELOPER_MODE else "**OFF**")
+        return await message.edit(
+            "Developer mode is " + "**ON**" if Config.DEVELOPER_MODE else "**OFF**"
+        )
     input_ = message.filtered_input
     warn_ = await message.edit(
         "**Are you sure...? You will be held responsible for future consequences in case your data is stolen.**\n"
@@ -225,19 +199,25 @@ async def developer_mode(_, message: MyMessage):
     except asyncio.TimeoutError:
         return await message.reply("`Response not found... Process aborted.`", del_in=5)
     if resp_.text != "Yes, I'm fully aware of the consequences.":
-        return await message.edit(f"Your response **{resp_.text}** does not match.\n`Aborting process...`", del_in=5)
+        return await message.edit(
+            f"Your response **{resp_.text}** does not match.\n`Aborting process...`",
+            del_in=5,
+        )
     if input_.lower() == "true":
-        Config.DEVELOPER_MODE = True
+        Config.DEVELOPER_MODE = SecureConfig().DEVELOPER_MODE = True
     elif input_.lower() == "false":
-        Config.DEVELOPER_MODE = False
+        Config.DEVELOPER_MODE = SecureConfig().DEVELOPER_MODE = False
     else:
         return await message.edit("`Invalid input...`", del_in=5)
-    await message.edit("Developer mode changed to " + "**ON**" if Config.DEVELOPER_MODE else "**OFF**")
+    await message.edit(
+        "Developer mode changed to " + "**ON**" if Config.DEVELOPER_MODE else "**OFF**"
+    )
     await Collection.TOGGLES.update_one(
         {"_id": "DEVELOPER_MODE"},
         {"$set": {"switch": Config.DEVELOPER_MODE}},
-        upsert=True
+        upsert=True,
     )
+
 
 ########################################################################################################################
 
@@ -287,7 +267,9 @@ class Term:
                 break
 
     async def worker(self) -> None:
-        await asyncio.wait([asyncio.Task(self._read_stdout()), asyncio.Task(self._read_stderr())])
+        await asyncio.wait(
+            [asyncio.Task(self._read_stdout()), asyncio.Task(self._read_stderr())]
+        )
         await self._process.wait()
         self._finished = True
 
