@@ -18,7 +18,6 @@ from pyrogram.types import InlineKeyboardMarkup, Message, User
 import venom
 from venom import Config, logging
 from .. import client as _client  # pylint:disable=E0402
-from venom.core.methods.message.conversation import Conversation
 
 _CANCEL_PROCESS: List[int] = []
 _LOG = logging.getLogger(__name__)
@@ -184,6 +183,7 @@ class MyMessage(Message):
             return [e, reason]
 
     async def get_response(self, filters: flt.Filter = None, timeout: int = 8):
+        from venom.core.methods.message.conversation import Conversation
         try:
             async with Conversation(
                 chat_id=self.chat.id,

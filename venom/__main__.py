@@ -1,11 +1,12 @@
 # main.py
 
+import logging
 import time
 
 from pyrogram.errors import AuthKeyDuplicated, FloodWait
 
 from init import ChangeInitMessage
-from venom import logging, venom
+from venom import venom
 from venom.core.database import _close_db
 
 _ERROR = "##### {} #####"

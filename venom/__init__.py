@@ -1,12 +1,12 @@
 # init
 import inspect
+import logging
 from sys import version_info as ver
 from typing import Any
 
 from .x import VenomX_
 from .config import Config, SecureConfig, get_devs
 from .db import Collection
-from .logger import logging
 from .core.types.message import MyMessage
 from .core.command_manager import manager
 from .core.client import Venom
@@ -23,3 +23,5 @@ def test_print(message: Any, **kwargs):
 
 
 venom = Venom()
+
+from venom.core.methods.message.conversation import Conversation

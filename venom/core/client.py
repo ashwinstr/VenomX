@@ -2,6 +2,7 @@
 
 import asyncio
 import importlib
+import logging
 import os
 import sys
 import time
@@ -15,7 +16,7 @@ from pyrogram.errors import AuthKeyDuplicated, BotResponseTimeout
 from pyrogram.raw.types.messages import BotResults
 
 from init import ChangeInitMessage
-from venom import Config, logging, SecureConfig
+from venom import Config, SecureConfig
 from venom.helpers import time_format, get_import_paths
 from .database import _close_db, get_collection
 from .methods import Methods
