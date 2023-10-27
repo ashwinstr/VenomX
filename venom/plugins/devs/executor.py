@@ -32,7 +32,8 @@ help_ = Config.HELP[plugin_name(__name__)] = {"type": "tools", "commands": []}
 async def _init() -> None:
     found = await Collection.TOGGLES.find_one({"_id": "DEVELOPER_MODE"})
     if found:
-        SecureConfig().DEVELOPER_MODE = found["switch"]
+        Config.DEVELOPER_MODE = SecureConfig().DEVELOPER_MODE = found["switch"]
+
     else:
         await Collection.TOGGLES.insert_one({"_id": "DEVELOPER_MODE", "switch": False})
 
