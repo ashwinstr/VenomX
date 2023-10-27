@@ -11,7 +11,7 @@ from venom.core.types import MyMessage
 async def init_func(message: MyMessage) -> str | bool | None:
     if not message:
         return None
-    if not SecureConfig().DEVELOPER_MODE and (
+    if not Config.DEVELOPER_MODE and (
         not message.from_user or message.from_user.id not in get_devs()
     ):
         await message.edit(
