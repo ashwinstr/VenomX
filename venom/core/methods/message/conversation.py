@@ -5,7 +5,8 @@
 import asyncio
 import json
 
-from pyrogram import filters, Client
+from pyrogram import Client, filters
+from pyrogram.handlers import EditedMessageHandler, MessageHandler
 from pyrogram.types import Message
 
 from venom import Config, venom
@@ -18,10 +19,6 @@ CONVO_FILTER: filters.Filter = filters.create(
 
 
 # Listener for convo filtered messages
-@venom.on_message(CONVO_FILTER, group=0)
-@venom.on_edited_message(CONVO_FILTER, group=0)
-@venom.bot.on_message(CONVO_FILTER, group=0)
-@venom.bot.on_edited_message(CONVO_FILTER, group=0)
 async def convo_handler(client: Client, message: Message):
     conv_dict: dict = Config.CONVO_DICT[message.chat.id]
 
@@ -40,6 +37,18 @@ async def convo_handler(client: Client, message: Message):
         message.continue_propagation()
     conv_dict["response"] = message
     message.continue_propagation()
+
+
+venom.add_handler(MessageHandler(callback=convo_handler, filters=CONVO_FILTER), group=0)
+venom.add_handler(
+    EditedMessageHandler(callback=convo_handler, filters=CONVO_FILTER), group=0
+)
+venom.bot.add_handler(
+    MessageHandler(callback=convo_handler, filters=CONVO_FILTER), group=0
+)
+venom.bot.add_handler(
+    EditedMessageHandler(callback=convo_handler, filters=CONVO_FILTER), group=0
+)
 
 
 class Conversation:
