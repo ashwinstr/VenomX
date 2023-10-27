@@ -39,13 +39,13 @@ async def convo_handler(client: Client, message: Message):
     message.continue_propagation()
 
 
-venom.add_handler(MessageHandler(callback=convo_handler, filters=CONVO_FILTER), group=0)
+#venom.add_handler(MessageHandler(callback=convo_handler, filters=CONVO_FILTER), group=0)
 venom.add_handler(
     EditedMessageHandler(callback=convo_handler, filters=CONVO_FILTER), group=0
 )
-venom.bot.add_handler(
-    MessageHandler(callback=convo_handler, filters=CONVO_FILTER), group=0
-)
+#venom.bot.add_handler(
+#    MessageHandler(callback=convo_handler, filters=CONVO_FILTER), group=0
+#)
 venom.bot.add_handler(
     EditedMessageHandler(callback=convo_handler, filters=CONVO_FILTER), group=0
 )
