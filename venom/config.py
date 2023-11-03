@@ -76,7 +76,7 @@ class Config:
     FBAN_LOG_CHANNEL = int(os.environ.get("FBAN_LOG_CHANNEL", 0))
     F_DEL: bool = False
 
-    ##### gdrive.py #####
+    ##### gdrive #####
     G_DRIVE_CLIENT_ID = os.environ.get("G_DRIVE_CLIENT_ID")
     G_DRIVE_CLIENT_SECRET = os.environ.get("G_DRIVE_CLIENT_SECRET")
     G_DRIVE_INDEX_LINK = os.environ.get("G_DRIVE_INDEX_LINK")

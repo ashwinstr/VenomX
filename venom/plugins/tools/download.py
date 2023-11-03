@@ -39,6 +39,8 @@ async def download_er(_, message: MyMessage):
         resource = message.input_str
     else:
         return await message.edit("`Reply to media or give input...`", del_in=5)
+    download_location, time_took = await handler_download(message, resource)
+    await message.edit(f"`Downloaded successfully...`\n<b>Downloaded to:</b> `{download_location}`\n<b>Time took:</b> {time_took}")
 
 
 async def handler_download(message: MyMessage, resource: Union[MyMessage, str]) -> Tuple[str, int]:
@@ -55,12 +57,13 @@ async def tg_download(message: MyMessage, to_download: MyMessage) -> Tuple[str, 
     custom_file_name = Config.DOWN_PATH
     if message.filtered_input:
         custom_file_name = os.path.join(custom_file_name, message.filtered_input.strip())
-    dl_loc = await venom.download_media(
-        message=to_download,
-        file_name=custom_file_name,
-        progress=progress,
-        progress_args=(message, "Trying to download...")
-    )
+    # dl_loc = await venom.download_media(
+    #     message=to_download,
+    #     file_name=custom_file_name,
+    #     progress=progress,
+    #     progress_args=(message, "Trying to download...")
+    # )
+    dl_loc = await to_download.download(custom_file_name)
     if message.process_is_cancelled:
         raise ProcessCancelled
     if not isinstance(dl_loc, str):
