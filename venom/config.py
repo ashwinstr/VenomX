@@ -1,4 +1,4 @@
-# config.py
+""" config.py """
 
 import asyncio
 import inspect

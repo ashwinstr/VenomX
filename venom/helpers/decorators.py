@@ -21,14 +21,13 @@ class VenomDecorators:
         def function(func):
             async def wrapper(venom, c_q: CallbackQuery):
                 """ callback query owner and tb checker """
-                if owner:
+                user_id = c_q.from_user.id
+                if owner and user_id != Config.OWNER_ID:
                     "owner check"
-                    user_id = c_q.from_user.id
                     if not sudo and (user_id in Config.SUDO_USERS or user_id in Config.TRUSTED_SUDO_USERS):
                         return await c_q.answer("Sudo is disabled for this function.", show_alert=True)
                     if not Config.SUDO \
-                            or (user_id != Config.OWNER_ID
-                                and user_id not in Config.SUDO_USERS
+                            or (user_id not in Config.SUDO_USERS
                                 and user_id not in Config.TRUSTED_SUDO_USERS):
                         " if not owner "
                         return await c_q.answer(
@@ -44,7 +43,7 @@ class VenomDecorators:
                                                   f"**PLUGIN:** `{func.__module__}`\n"
                                                   f"**FUNCTION:** `{func.__name__}`\n"
                                                   f"**ERROR:** `{e or None}`\n\n"
-                                                  f"```{traceback.format_exc().strip()}```")
+                                                  f"```python\n{traceback.format_exc().strip()}```")
 
             return wrapper
 
@@ -63,12 +62,11 @@ class VenomDecorators:
         def function(func):
             async def wrapper(venom, iq: InlineQuery):
                 """ inline query owner and tb checker """
-                if owner:
+                user_id = iq.from_user.id
+                if owner and user_id != Config.OWNER_ID:
                     " owner check "
-                    user_id = iq.from_user.id
                     if (
-                        user_id != Config.OWNER_ID
-                        and user_id not in Config.SUDO_USERS
+                        user_id not in Config.SUDO_USERS
                         and user_id not in Config.TRUSTED_SUDO_USERS
                     ):
                         " if not owner "
@@ -76,8 +74,7 @@ class VenomDecorators:
                             title="VenomX",
                             input_message_content=InputTextMessageContent(
                                 "Only the <b>owner and sudo users</b> can use this bot. Please deploy your own "
-                                "<b>VenomX</b>,"
-                                "thank you."
+                                "<b>VenomX</b>."
                             ),
                         )]
                         return await iq.answer(results=results, cache_time=5)
@@ -91,7 +88,7 @@ class VenomDecorators:
                                                   f"**PLUGIN:** `{func.__module__}`\n"
                                                   f"**FUNCTION:** `{func.__name__}`\n"
                                                   f"**ERROR:** `{e or None}`\n\n"
-                                                  f"```{traceback.format_exc().strip()}```")
+                                                  f"```python\n{traceback.format_exc().strip()}```")
 
             return wrapper
 
