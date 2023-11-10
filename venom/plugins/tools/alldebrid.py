@@ -21,13 +21,13 @@ HELP["commands"].extend(
             "flags": {"-s": "-s {id} for status", "-l": "limited number of results you want, defaults to 1"},
             "syntax": "\n{tr}torrents\n{tr}torrents -s 12345\n{tr}torrents -l 10",
         },
-        {   "command": "del_t",
+        {
+            "command": "del_t",
             "about": "Delete the previously unrestricted Torrent",
             "syntax": "{tr}del_t 123456\n{tr}del_t 123456 78806"
         },
     ]
 )
-
 
 # Your Alldbrid App token
 KEY = os.environ.get("DEBRID_TOKEN")
@@ -125,17 +125,19 @@ async def torrents(_, message: MyMessage):
         downloaded = ""
         uptobox = ""
         if status == "Downloading":
-            downloaded = f"""<i>{round(int(i.get("downloaded",0))/1000000)}</i>/"""
-        size = f"""{downloaded}<i>{round(int(i.get("size",0))/1000000)}</i> mb"""
+            downloaded = f"""<i>{round(int(i.get("downloaded", 0)) / 1000000)}</i>/"""
+        size = f"""{downloaded}<i>{round(int(i.get("size", 0)) / 1000000)}</i> mb"""
         if link := i.get("links"):
-            uptobox = "<i>UptoBox</i>: \n[ " + "\n".join([f"""<a href={z.get("link","")}>{z.get("filename","")}</a>""" for z in link]) + " ]"
+            uptobox = "<i>UptoBox</i>: \n[ " + "\n".join(
+                [f"""<a href={z.get("link", "")}>{z.get("filename", "")}</a>""" for z in link]) + " ]"
         ret_str_list.append(ret_val := TEMPLATE.format(name=name, status=status, id=id, size=size, uptobox=uptobox))
 
     ret_str = "<br>".join(ret_str_list)
     if len(ret_str) < 4096:
         await message.reply(ret_str, quote=True)
     else:
-        await message.reply(post_tg("Magnets", ret_str.replace("\n", "<br>")), disable_web_page_preview=True, quote=True)
+        await message.reply(post_tg("Magnets", ret_str.replace("\n", "<br>")), disable_web_page_preview=True,
+                            quote=True)
 
 
 # Delete a Magnet

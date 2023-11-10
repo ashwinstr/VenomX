@@ -139,7 +139,12 @@ def extract_id(mention):
     raise UserIdInvalid
 
 
-async def report_user(chat: int, user_id: int, msg_id: int, reason: str):
+async def report_user(
+        # chat: int,
+        user_id: int,
+        msg_id: int,
+        reason: str
+):
     if ("nsfw" or "NSFW" or "porn") in reason:
         reason_ = InputReportReasonPornography()
         for_ = "pornographic message"
@@ -153,7 +158,7 @@ async def report_user(chat: int, user_id: int, msg_id: int, reason: str):
     # if not isinstance(user_, User) or not isinstance(user_.access_hash, int):
     # return
     # input_peer_user = InputPeerUser(user_id=user_id, access_hash=user_.access_hash)
-    resolved_chat = await venom.venom.resolve_peer(chat)
+    resolved_chat = await venom.venom.resolve_peer(user_id)
     # chat_ = input_peer_chat.InputPeerChat(chat_id=resolved_chat.channel_id)
     reporting = Report(
         peer=resolved_chat,
@@ -161,7 +166,7 @@ async def report_user(chat: int, user_id: int, msg_id: int, reason: str):
         reason=reason_,
         message=for_
     )
-    reported = await venom.venom.invoke(reporting)
+    await venom.venom.invoke(reporting)
     return for_
 
 

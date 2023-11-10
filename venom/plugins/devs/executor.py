@@ -56,7 +56,7 @@ help_["commands"].append(
 
 @venom.trigger("eval")
 async def evaluate(_, message: MyMessage):
-    """evaluate your code"""
+    """ evaluate your code """
     cmd = await init_func(message)
     mono_ = True if "-m" not in message.flags else False
     tele_ = True if "-tg" in message.flags else False
@@ -159,7 +159,7 @@ async def term_(_, message: MyMessage):
             count = 0
             out_data = f"<pre language=shell>{output}{t_obj.read_line}</pre>"
             await message.try_to_edit(out_data, parse_mode=ParseMode.HTML)
-    out_data = f"<pre>{output}{t_obj.get_output}</pre>"
+    out_data = f"<pre language=shell>{output}{t_obj.get_output}</pre>"
     await message.edit_or_send_as_file(
         out_data, parse_mode=ParseMode.HTML, file_name="term.txt", caption=cmd
     )
