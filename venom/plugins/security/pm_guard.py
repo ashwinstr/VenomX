@@ -47,6 +47,7 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger('pmguard')
 async def pm_guard(_, message: MyMessage):
     """ secure your PMs """
@@ -84,7 +85,8 @@ async def allow_pm(_, message: MyMessage):
         Config.ALLOWED_TO_PM.append(reply_.from_user.id)
         await asyncio.gather(
             Collection.ALLOWED_TO_PM.insert_one({'_id': reply_.from_user.id}),
-            message.edit(f"User <b>{reply_.from_user.first_name}</b> is now allowed to PM.")
+            message.edit(f"User <b>{reply_.from_user.first_name}</b> is now allowed to PM."),
+            CHANNEL.log(f"User **{reply_.from_user.first_name}** is now **allowed** to PM.")
         )
     elif message.chat.type == ChatType.BOT:
         return
@@ -96,11 +98,12 @@ async def allow_pm(_, message: MyMessage):
         Config.ALLOWED_TO_PM.append(user_id)
         return await asyncio.gather(
             Collection.ALLOWED_TO_PM.insert_one({'_id': user_id}),
-            message.edit(f"User <b>{user_name}</b> is now <b>allowed</b> to PM.")
+            message.edit(f"User <b>{user_name}</b> is now <b>allowed</b> to PM."),
+            CHANNEL.log(f"User **{user_name}** is now **allowed** to PM.")
         )
     Config.DISALLOWED_PM_COUNT[message.from_user.id] = 0
 
-########################################################################################################################################################
+########################################################################################################################
 
 HELP_['commands'].append(
     {
@@ -143,6 +146,7 @@ async def dis_allow_pm(_, message: MyMessage):
 
 PM_GUARD = filters.create(lambda _, __, ___: Config.PM_GUARD)
 NOT_ALLOWED = filters.create(lambda _, __, m: (m.from_user and m.from_user.id not in Config.ALLOWED_TO_PM))
+
 
 @venom.on_message(
     PM_GUARD
