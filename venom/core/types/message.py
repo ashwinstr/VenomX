@@ -1,9 +1,11 @@
 """ message.py """
-
+import asyncio
 import os
 import re
-from typing import List, Union, Dict
+import time
 from functools import cached_property
+from typing import List, Union, Dict
+
 from pyrogram import filters as flt, Client
 from pyrogram.enums import ParseMode, ChatType
 from pyrogram.errors import (
@@ -13,6 +15,8 @@ from pyrogram.errors import (
     MessageTooLong,
     MessageNotModified,
 )
+from pyrogram.filters import Filter
+from pyrogram.handlers import MessageHandler
 from pyrogram.types import InlineKeyboardMarkup, Message, User
 
 import venom
@@ -21,7 +25,7 @@ from .. import client as _client  # pylint:disable=E0402
 
 _CANCEL_PROCESS: List[int] = []
 _LOG = logging.getLogger(__name__)
-
+loop = asyncio.get_event_loop()
 
 class MyMessage(Message):
     """Custom Message object"""
@@ -33,6 +37,8 @@ class MyMessage(Message):
         **kwargs: Union[str, bool],
     ) -> None:
         """Modified Message"""
+        # self._listener = None
+        # self._responses: Dict[str, Dict[str, Union['MyMessage', tuple, bool]]] = {}
         self._flags = []
         self._digital_flags = {}
         self._filtered_input = ""
@@ -59,6 +65,7 @@ class MyMessage(Message):
             "_filtered_input",
             "_kwargs",
             "_module",
+            "_listener"
         ]:
             if one in vars_:
                 del vars_[one]
@@ -163,13 +170,13 @@ class MyMessage(Message):
     async def extract_user_n_reason(self) -> list[User | str | Exception, str | None]:
         if self.replied:
             return [self.replied.from_user, self.filtered_input]
-        inp_list = self.filtered_input.split(maxsplit=1)
         if not inp_list:
             return [
                 "Unable to Extract User info.\nReply to a user or input @ | id.",
                 "",
             ]
         user = inp_list[0]
+        inp_list = self.filtered_input.split(maxsplit=1)
         reason = None
         if len(inp_list) >= 2:
             reason = inp_list[1]
@@ -182,19 +189,19 @@ class MyMessage(Message):
         except Exception as e:
             return [e, reason]
 
-    async def get_response(self, filters: flt.Filter = None, timeout: int = 8):
-        from venom.core.methods.message.conversation import Conversation
-        try:
-            async with Conversation(
-                chat_id=self.chat.id,
-                client=self._client,
-                filters=filters,
-                timeout=timeout,
-            ) as convo:
-                response: Message | None = await convo.get_response()
-                return response
-        except Conversation.TimeOutError:
-            return
+    # async def get_response(self, filters: flt.Filter = None, timeout: int = 8):
+    #     from venom.core.methods.message.conversation import Conversation
+    #     try:
+    #         async with Conversation(
+    #             chat_id=self.chat.id,
+    #             client=self._client,
+    #             filters=filters,
+    #             timeout=timeout,
+    #         ) as convo:
+    #             response: Message | None = await convo.get_response()
+    #             return response
+    #     except Conversation.TimeOutError:
+    #         return
 
     async def send_as_file(
         self,
@@ -366,19 +373,18 @@ class MyMessage(Message):
         except MessageAuthorRequired:
             return False
 
-    async def ask(
-        self, text: str, timeout: int = 15, filters: flt.Filter = None
-    ) -> "MyMessage":
-        """monkey patching to MyMessage using pyromod.ask"""
-        return await self._client.ask(
-            chat_id=self.chat.id, text=text, timeout=timeout, filters=filters
-        )
+    # async def ask(
+    #     self, text: str, timeout: int = 15, filters: flt.Filter = None
+    # ) -> "MyMessage":
+    #     """monkey patching to MyMessage using pyromod.ask"""
+    #     return await self._client.ask(
+    #         chat_id=self.chat.id, text=text, timeout=timeout, filters=filters
+    #     )
 
-    async def wait(self, timeout: int = 15, filters: flt.Filter = None) -> "MyMessage":
+    async def wait_for(self, timeout: int = 15, filters: flt.Filter = None) -> "MyMessage":
         """monkey patching to MyMessage using pyromod.listen"""
-        response = await self._client.listen(
-            self.chat.id, timeout=timeout, filters=filters
-        )
+        async with self._client.Wait(self.chat.id, filters) as w:
+            response = await w.wait_for(timeout=timeout)
         return self.parse(self._client, response)
 
     async def copy_content(self, chat_id: Union[int, str] = "me") -> "MyMessage":
@@ -395,3 +401,85 @@ class MyMessage(Message):
         content_ = (await self._client.get_messages(from_chat, [int(msg_id)]))[0]
         un_parsed_ = await content_.copy(chat_id=chat_id)
         return self.parse(self._client, un_parsed_)
+
+    # async def get_response(
+    #         self,
+    #         filters: Filter = None,
+    #         at: int = 1,
+    #         timeout: int = 15
+    #         # globally: bool = False
+    # ) -> 'MyMessage':
+    #     """ custom response handler """
+    #     response_ = {'now_at': 1}
+    #     time_ = time.time()
+    #     if filters is None:
+    #         filters = flt.chat(self.chat.id)
+    #
+    #     async def responser(_, m):
+    #         if response_['now_at'] == at:
+    #             print(m.chat.title or m.chat.first_name)
+    #             response_[self.unique_id] = m
+    #             done = True
+    #         else:
+    #             print("Error here...")
+    #             response_['now_at'] += 1
+    #             done = False
+    #         if "handler" in response_.keys() and done:
+    #             venom.venom.remove_handler(*response_['handler'])
+    #
+    #     message_handler = MessageHandler(callback=responser, filters=filters)
+    #     handler_ = venom.venom.add_handler(message_handler, -11)
+    #     response_['handler'] = handler_
+    #
+    #     async def loop():
+    #         diff = time.time() - time_
+    #         while diff < timeout:
+    #             if self.unique_id in response_.keys():
+    #                 break
+    #             await asyncio.sleep(0.1)
+    #             print(diff)
+    #             diff = time.time() - time_
+    #
+    #     await loop()
+    #
+    #     if self.unique_id in response_.keys():
+    #         msg = response_[self.unique_id]
+    #         del response_[self.unique_id]
+    #     else:
+    #         venom.venom.remove_handler(*handler_)
+    #         msg = None
+    #     if msg is None:
+    #         raise TimeoutError
+    #     return self.parse(venom.venom, msg)
+
+    def _cancel_listener(self) -> None:
+        if 'h' in self._r.keys():
+            self._client.remove_handler(*self._r['h'])
+            self._r['cancelled'] = True
+            del self._r['h']
+
+    # async def wait_for(self, filters: Filter = None, timeout: int = 15):
+    #     self._r = self._responses[self.unique_id] = {'cancelled': False}
+    #
+    #     async def message_handler(_, m):
+    #         self._cancel_listener()
+    #         print("YES")
+    #         self._r['m'] = m
+    #     self._r['h'] = self._client.remove_handler(MessageHandler(message_handler, filters), group=-3)
+    #
+    #     async def sleeper():
+    #         await asyncio.sleep(timeout)
+    #         if 'h' in self._r.keys():
+    #             print("Timeout for response...")
+    #         self._cancel_listener()
+    #     asyncio.create_task(sleeper())
+    #
+    #     return await self._get_response()
+
+    async def _get_response(self) -> Union['MyMessage', None]:
+        """ custom listener for messages """
+        while 'm' not in self._r.keys() and not self._r['cancelled']:
+            pass
+
+        resp_message = self.parse(self._client, self._r['m']) if 'm' in self._r.keys() else None
+        return resp_message

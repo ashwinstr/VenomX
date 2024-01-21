@@ -38,7 +38,7 @@ _editable_message = _EditableMessageDict()
 
 def reactions_not_found(msg: Union['message.MyMessage', 'Message']) -> bool:
     """ reactions filtered out """
-    if not _client_check(msg._client):
+    if hasattr(msg, "_client") and not _client_check(msg._client):
         return False
     dicts_ = _editable_message.dicts_
     chats_ = dicts_.keys()
@@ -217,14 +217,3 @@ class MyDecorator(Client):
             return func
 
         return inner
-
-
-def _add_handler(client: Client, template: Callable, filter_: RawFilter, group: int = 0):
-    """ adds handler """
-    # message_handler = pyrogram.handlers.MessageHandler(template, filter_)
-    # edited_message_handler = pyrogram.handlers.EditedMessageHandler(template, filter_)
-    # client.add_handler(message_handler, group)
-    # client.add_handler(edited_message_handler, group)
-    # client.bot.add_handler(message_handler, group)
-    # client.bot.add_handler(edited_message_handler, group)
-    # Config.HA

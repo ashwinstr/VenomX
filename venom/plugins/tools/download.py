@@ -57,19 +57,19 @@ async def tg_download(message: MyMessage, to_download: MyMessage) -> Tuple[str, 
     custom_file_name = Config.DOWN_PATH
     if message.filtered_input:
         custom_file_name = os.path.join(custom_file_name, message.filtered_input.strip())
-    # dl_loc = await venom.download_media(
-    #     message=to_download,
-    #     file_name=custom_file_name,
-    #     progress=progress,
-    #     progress_args=(message, "Trying to download...")
-    # )
-    dl_loc = await to_download.download(custom_file_name)
-    if message.process_is_cancelled:
+    dl_loc = await venom.download_media(
+        message=to_download,
+        file_name=custom_file_name,
+        progress=progress,
+        progress_args=(message, "Trying to download...")
+    )
+    # dl_loc = await to_download.download(custom_file_name)
+    if message.process_is_cancealled:
         raise ProcessCancelled
     if not isinstance(dl_loc, str):
         raise TypeError("File corrupted!")
-    dl_loc = os.path.join(custom_file_name, os.path.basename(dl_loc))
-    return dl_loc, (datetime.now() - start).seconds
+    # dl_loc = os.path.join(Config.DOWN_PATH, os.path.basename(dl_loc))
+    return custom_file_name, (datetime.now() - start).seconds
 
 
 async def url_download(message: MyMessage, url: str) -> Tuple[str, int]:

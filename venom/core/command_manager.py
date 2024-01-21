@@ -57,11 +57,14 @@ class Manager:
             list_.append(one.split(".")[-1])
         return sorted(list_)
 
-    def cmd_plugin_loc(self, cmd_name: str) -> str | None:
+    def cmd_plugin_loc(self, cmd_name: str, as_module: bool = False) -> str | None:
         loc_ = None
         for one in self.commands:
             if one.endswith(cmd_name):
-                loc_ = "/".join(one.split(".")[:-1])
+                if not as_module:
+                    loc_ = "/".join(one.split(".")[:-1])
+                else:
+                    loc_ = ".".join(one.split(".")[:-1])
                 break
         return loc_
     

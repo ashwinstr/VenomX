@@ -124,7 +124,8 @@ async def inline_bot_mode(_, cq: CallbackQuery):
     )
 
 
-@venom.bot.on_callback_query(filters.regex(r"^ihelp_([A-Z_a-z]+)(\d{1,2})_(start|back|next|previous|[A-Z_a-z]+)_(\d{1,2})"), group=6)
+@venom.bot.on_callback_query(filters.regex(r"^ihelp_([A-Z_a-z]+)(\d{1,2})_(start|back|next|previous|[A-Z_a-z]+)_(\d{"
+                                           r"1,2})"), group=6)
 @VenomDecorators.callback_checker(owner=True)
 async def ihelp_callback(_, cq: CallbackQuery):
     """ callback data for ihelp plugin """
@@ -286,6 +287,7 @@ def cmd_buttons(folder: str, plugin: str, index: int) -> InlineKeyboardMarkup | 
     try:
         cmd_dicts = help_structure[folder][plugin]
     except KeyError:
+        print(folder, plugin, index, sep="\n")
         return False
     cmd_list = [one['command'] for one in cmd_dicts]
     cmd_list = sorted(cmd_list)

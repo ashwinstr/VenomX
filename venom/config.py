@@ -2,6 +2,7 @@
 
 import asyncio
 import inspect
+import logging
 import os
 from typing import Dict, List, Union, Tuple
 
@@ -12,6 +13,10 @@ from pyrogram.types import User, Message
 from pyrogram.filters import Filter
 from pyrogram.handlers import MessageHandler, EditedMessageHandler
 
+from venom import logger
+
+_LOG = logging.getLogger(__name__)
+
 
 if os.path.isfile("config.env"):
     load_dotenv("config.env")
@@ -21,12 +26,16 @@ class Config:
     """Configs"""
 
     ##### Must have configs #####
-    LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID"))
-    OWNER_ID = int(os.environ.get("OWNER_ID"))
+    try:
+        LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID"))
+        OWNER_ID = int(os.environ.get("OWNER_ID"))
+    except TypeError as e:
+        _LOG.error(f"Var {e.args} not found...")
 
     ##### basic configs #####
     _INIT: List[asyncio.Task] = []
     _TASKS: Dict[str, asyncio.Task] = {}
+    _RESPONSE: Dict[str, Message] = {}
     BOT: User | None = None
     CACHE_PATH = "venom/xcache"
     CMD_LIST: List[str] = []
@@ -49,10 +58,11 @@ class Config:
     HANDLERS: Dict[
         str,
         Tuple[
-            Tuple[MessageHandler, EditedMessageHandler],
-            Tuple[MessageHandler, EditedMessageHandler],
+            Tuple[tuple, tuple],
+            Tuple[tuple, tuple],
         ],
     ] = {}
+    RESTART_BOT = True
     THUMB_PATH = DOWN_PATH + "thumb_image.jpg"
     TRACEBACK = {"id": int}
     EXECUTOR_TB = {"id": int}
@@ -134,6 +144,30 @@ class Config:
     ##### tokens #####
     ### github token
     GH_TOKEN = os.environ.get("GH_TOKEN")
+    # openai
+    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
+    # help helper
+    def help_formatter(
+            self,
+            name: str,
+            command: str,
+            flags: dict | None = None,
+            usage: str = "",
+            syntax: str = "",
+            sudo: bool = False
+    ) -> None:
+        plugin_name = name.split(".")[-1]
+        self.HELP[plugin_name] = {'type': name.split(".")[-2], 'commands': []}
+        self.HELP[plugin_name]['commands'].append(
+            {
+                'command': command,
+                'flags': flags,
+                'usage': usage,
+                'syntax': syntax,
+                'sudo': sudo
+            }
+        )
 
 
 class SecureConfig:
