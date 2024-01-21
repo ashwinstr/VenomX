@@ -31,7 +31,7 @@ async def _init() -> None:
 
 # about={"header": "Save thumbnail", "usage": "{tr}sthumb [reply to any photo]"}
 @venom.trigger("sthumb")
-async def save_thumb_nail(message: MyMessage):
+async def save_thumb_nail(_, message: MyMessage):
     """setup thumbnail"""
     await message.edit("processing ...")
     replied = message.reply_to_message
@@ -66,7 +66,7 @@ async def save_thumb_nail(message: MyMessage):
 
 @venom.trigger("dthumb")
 # about={"header": "Delete thumbnail"}
-async def clear_thumb_nail(message: MyMessage):
+async def clear_thumb_nail(_, message: MyMessage):
     """delete thumbnail"""
     await message.edit("`processing ...`")
     if os.path.exists(Config.THUMB_PATH):
@@ -82,7 +82,7 @@ async def clear_thumb_nail(message: MyMessage):
 
 @venom.trigger("vthumb")
 # about={"header": "View thumbnail"}
-async def get_thumb_nail(message: MyMessage):
+async def get_thumb_nail(_, message: MyMessage):
     """view current thumbnail"""
     await message.edit("processing ...")
     if os.path.exists(Config.THUMB_PATH):
