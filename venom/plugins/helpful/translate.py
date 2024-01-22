@@ -1,6 +1,6 @@
 """ translate.py """
 
-import openai
+# import openai
 from venom import venom, MyMessage, Config
 
 
