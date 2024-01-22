@@ -5,7 +5,7 @@ import os
 import traceback
 import sys
 
-from venom import venom, MyMessage, Config, Collection
+from venom import venom, MyMessage, Config, Collection, manager
 from venom.helpers import plugin_name
 from . import init_func
 
@@ -53,7 +53,9 @@ async def text_load(_, message: MyMessage):
 HELP['commands'].append(
     {
         'command': 'load',
-        'flags': None,
+        'flags': {
+            '-r': 'reload as permanent plugin if it exists instead of temp'
+        },
         'usage': 'new plugin loader',
         'syntax': '{tr}load [reply to plugin file]',
         'sudo': False
@@ -67,6 +69,31 @@ async def loader(_, message: MyMessage):
     secure_ = await init_func(message)
     if not secure_:
         return await message.edit("**DANGEROUS PLUGIN...** `ABORTING.`", del_in=5)
+    flags_ = message.flags
+    if '-r' in flags_:
+        cmd_ = message.filtered_input
+        await message.edit(f"Trying to reload command `{cmd_}` module...")
+        path_ = manager.cmd_plugin_loc(cmd_, as_module=True)
+        if not path_:
+            return await message.edit(f"No command named {cmd_}...", del_in=5)
+        try:
+            sys.modules.pop(path_, None)
+            module_ = importlib.import_module(path_)
+            importlib.reload(module_)
+            msg = f"Plugin **{path_}** loaded successfully."
+        except Exception as e:
+            msg = str(e)
+        return await message.edit(msg)
+    elif "-m" in message.flags:
+        module = message.filtered_input
+        await message.edit(f"Trying to reload module {module}...")
+        try:
+            sys.modules.pop(module, None)
+            module_ = importlib.import_module(module)
+            importlib.reload(module_)
+        except ImportError as e:
+            return await message.edit(str(e))
+        return await message.edit(f"Module **{module}** loaded successfully.")
     reply_ = message.replied
     if not reply_ \
         or not reply_.document \
@@ -91,3 +118,8 @@ async def loader(_, message: MyMessage):
         print(i_e)
         return await message.edit(traceback.format_exc())
     await message.edit(f"Temp plugin **{file_name.split('.')[0]}** {action}.")
+
+
+@venom.trigger('reload')
+async def reload_cache(_, message: MyMessage):
+    """"""

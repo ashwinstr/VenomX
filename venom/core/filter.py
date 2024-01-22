@@ -5,7 +5,7 @@ import bisect
 from pyrogram.filters import Filter
 
 from venom import Config
-from .command_manager import manager # pylint:disable=E0402
+from .command_manager import manager
 
 
 class Filtered:

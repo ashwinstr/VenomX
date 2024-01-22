@@ -320,6 +320,28 @@ class CurrentTime:
         """ default format """
         return f"{self.h}:{self.m}:{self.s} {self.stamp}"
 
+    @staticmethod
+    def in_format(formats: str, hour_diff: float) -> str:
+        """ send date and time in full format using time module | DD - date | MM - month in digit | M - month in string |
+        YYYY - 4 digit year | YY - 2 digit year | hh-24 - hour in 24 format | hh-12 - hour in 12 format | mm - minutes |
+        AP - include AM/PM """
+
+        diff_in_sec = hour_diff * 3600
+        time_in_sec = time.time() + diff_in_sec
+        format_ = (
+            formats.replace("DD", "%d")
+            .replace("MM", "%m")
+            .replace("M", "%h")
+            .replace("YYYY", "%Y")
+            .replace("YY", "y")
+            .replace("hh-24", "%H")
+            .replace("hh-12", "%I")
+            .replace("mm", "%M")
+            .replace("AP", "%p")
+        )
+        date_time_ = time.strftime(format_, time.gmtime(time_in_sec))
+        return date_time_
+
 
 def userfriendly(id: int) -> bool:
     """ check user is owner or sudo user """

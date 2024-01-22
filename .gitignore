@@ -38,3 +38,6 @@ venom/plugins/test
 
 # incomplete plugins
 venom/plugins/security/vars
+
+# error files
+unknown_errors.txt

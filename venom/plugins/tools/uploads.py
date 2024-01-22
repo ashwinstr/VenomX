@@ -22,9 +22,10 @@ HELP_['commands'].append(
     }
 )
 
+
 @venom.trigger("upload")
 async def up_load(_, message: MyMessage):
-    " upload files from local "
+    """ upload files from local """
     flags = message.flags
     cmd_name = message.filtered_input
     if not cmd_name:

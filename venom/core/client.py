@@ -1,26 +1,26 @@
 # client.py
 
 import asyncio
+import glob
 import importlib
+import inspect
 import logging
 import os
 import sys
 import time
 import traceback
-from typing import Optional, Union
-import inspect
-import glob
+from asyncio import Future
+from typing import Optional, Union, Dict
 
 from pyrogram import Client
-from pyrogram.errors import AuthKeyDuplicated, BotResponseTimeout
-from pyrogram.raw.types.messages import BotResults
+from pyrogram.errors import AuthKeyDuplicated
+from pyrogram.filters import Filter
 
 from init import ChangeInitMessage
 from venom import Config, SecureConfig
 from venom.helpers import time_format, get_import_paths
 from .database import _close_db, get_collection
 from .methods import Methods
-from .ext import pool
 from ..plugins import all_plugins, ROOT
 
 _LOG = logging.getLogger(__name__)
@@ -28,6 +28,11 @@ _LOG_STR = "### %s ###"
 
 _START = time.time()
 TOGGLES = get_collection("TOGGLES")
+l = asyncio.get_event_loop()
+
+
+class ListenerCancelled(BaseException):
+    pass
 
 
 async def _init_tasks():
@@ -77,6 +82,7 @@ class VenomBot(CustomVenom):
         self, bot: Optional[Union["VenomBot", "Venom"]] = None, *args, **kwargs
     ) -> None:
         self.bot = bot
+        self.listening = {}
         super().__init__(in_memory=True, *args, **kwargs)
 
     @classmethod
@@ -96,6 +102,8 @@ class Venom(CustomVenom):
     failed_imports = ""
 
     def __init__(self):
+        self.listener = None
+        self.listening: Dict[int, Dict[str, Union[Filter, Future]]] = {}
         sc = SecureConfig()
         kwargs = {"name": "VenomX", "api_id": sc.API_ID, "api_hash": sc.API_HASH}
         self.DUAL_MODE = False
@@ -160,6 +168,24 @@ class Venom(CustomVenom):
                 print(e)
         _LOG.info(self.failed_imports)
 
+    def reload_plugins(self):
+        modules = glob.glob("venom/**/*.py", recursive=True)
+        self.failed_imports = ""
+        for module in modules:
+            try:
+                import_path = "".join(module[:-3]).replace("/", ".")
+                sys.modules.pop(import_path)
+                one = importlib.import_module(import_path)
+                importlib.reload(one)
+            except ImportError as i_e:
+                self.failed_imports += f"[{i_e.name}] - {i_e.msg}\n"
+            except BaseException as e:
+                print(e)
+        _LOG.info(self.failed_imports)
+
+    def initiate_listener(self):
+        self.listener = self.Wait.add_listener()
+
     async def start(self):
         try:
             await super().start()
@@ -168,6 +194,7 @@ class Venom(CustomVenom):
                 _LOG.info(_LOG_STR, "Starting bot")
                 await self.bot.start()
             self.import_plugins()
+            self.initiate_listener()
         except AuthKeyDuplicated:
             _LOG.info(
                 _LOG_STR,

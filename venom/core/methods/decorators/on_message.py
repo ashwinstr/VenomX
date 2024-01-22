@@ -16,7 +16,7 @@ from venom.helpers import paste_it
 
 class NewOnMessage(RClient):
 
-    def new_on_message(self, filters: flt.Filter = None, group: int = 0):
+    def new_on_message(self, filters: flt.Filter = None, group: int = -1):
         """ custom on message decorator """
 
         def wrapper(func):

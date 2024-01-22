@@ -2,7 +2,7 @@
 
 import os
 import re
-from typing import List
+from typing import List, Dict, Union, Callable
 
 import venom
 from venom.helpers import get_import_paths
@@ -28,10 +28,26 @@ def plugin_parent(plugin: str) -> str:
             return parent
 
 
+class Command:
+
+    commander: Dict[str, Dict[str, Union[str, Callable, bool, dict]]] = {}
+
+    def __init__(self, cmd: str, func: Callable, path: str, sudo: bool):
+        self.cmd = cmd
+        self.func = func
+        self.path = path
+        self.parent = os.path.basename(os.path.dirname(path))
+        self.sudo = sudo
+
+
 class Manager:
 
     plugins: List[str] = []
     commands: List[str] = []
+    # commands: Dict[str, Dict[str, Union[str, bool, Callable]]] = []
+
+    # def add_cmd(self, cmd: str, path: str, parent: str):
+    #     pass
 
     def plugin_loc(self, plug_name: str) -> str | None:
         found = False
@@ -57,11 +73,14 @@ class Manager:
             list_.append(one.split(".")[-1])
         return sorted(list_)
 
-    def cmd_plugin_loc(self, cmd_name: str) -> str | None:
+    def cmd_plugin_loc(self, cmd_name: str, as_module: bool = False) -> str | None:
         loc_ = None
         for one in self.commands:
             if one.endswith(cmd_name):
-                loc_ = "/".join(one.split(".")[:-1])
+                if not as_module:
+                    loc_ = "/".join(one.split(".")[:-1])
+                else:
+                    loc_ = ".".join(one.split(".")[:-1])
                 break
         return loc_
     
