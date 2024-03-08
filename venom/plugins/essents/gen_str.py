@@ -43,7 +43,7 @@ async def generate_str(_, message: MyMessage):
     """ generate session string in bot mode """
     await message.reply("Are you certain you want to generate session_string?\nReply `y` to continue.")
     try:
-        resp = await message.wait()
+        resp = await message.wait_for()
     except asyncio.TimeoutError:
         return await message.reply("`Response not found !!!\nTerminating process...`")
     if resp.text.upper() != 'YES' and resp.text.upper() != 'Y':
@@ -82,7 +82,7 @@ async def generate_str(_, message: MyMessage):
             "Please enter otp in `1 2 3 4 5` format."
         )
         ask_otp = await process_.reply(msg_)
-        otp = await ask_otp.wait(timeout=300)
+        otp = await ask_otp.wait_for(timeout=300)
     except TimeoutError:
         return await process_.edit("`Time limit reached of 5 min.\nPlease try again later.`", del_in=5)
     if otp.text == f"{Config.CMD_TRIGGER}cancel":
@@ -100,7 +100,7 @@ async def generate_str(_, message: MyMessage):
                 f"`This account have two-step verification code.\nPlease enter your second factor authentication code.`"
                 f"\nPress {Config.CMD_TRIGGER}cancel to cancel."
             )
-            two_step_code = await ask_two_step_code.wait(300)
+            two_step_code = await ask_two_step_code.wait_for(300)
         except TimeoutError:
             return await otp.reply("`Time limit reached of 5 min.\nTry again.`")
         if two_step_code.text == f"{Config.CMD_TRIGGER}cancel":
@@ -114,7 +114,7 @@ async def generate_str(_, message: MyMessage):
     except BaseException:
         return await otp.reply(f"**ERROR:** `{traceback.format_exc()}`")
     session_string = await client.export_session_string()
-    await client.send_message("me", f"#PYROGRAM #STRING_SESSION @UX_xplugin_support\n\n`{session_string}`")
+    await client.send_message("me", f"#PYROGRAM #STRING_SESSION @VenomX_support\n\n`{session_string}`")
 
     text = "`String session is successfully generated.\nClick on button Below.`"
     reply_markup = InlineKeyboardMarkup(

@@ -184,7 +184,8 @@ class Venom(CustomVenom):
         _LOG.info(self.failed_imports)
 
     def initiate_listener(self):
-        self.listener = self.Wait.add_listener()
+        self.listener = self.Wait.add_listener(self)
+        # self.bot_listener = self.bot.Wait.add_listener(self.bot)
 
     async def start(self):
         try:

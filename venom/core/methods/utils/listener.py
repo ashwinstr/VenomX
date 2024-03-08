@@ -1,19 +1,28 @@
 """ new listener """
 
 import asyncio
+from typing import Union
 
-from pyrogram import filters, Client
+from pyrogram import filters as f, Client
+from pyrogram.enums import ParseMode
 from pyrogram.filters import Filter
 from pyrogram.handlers import MessageHandler
 
 import venom
 from venom.core.types import message as mess
+from venom.core import client as _c
 
 
 class Listener(Client):
     class Wait:
         """ Initiate with chat_id and filters to wait with """
-        def __init__(self, chat_id: int, filters: Filter = None):
+        def __init__(
+                self,
+                # client: Union['_c.Venom', '_c.VenomBot'],
+                chat_id: int,
+                filters: Filter = None
+        ):
+            # self.client = client
             self.chat_id = chat_id
             self.filters = filters
             self.future = asyncio.get_event_loop().create_future()
@@ -22,7 +31,7 @@ class Listener(Client):
             try:
                 response = await asyncio.wait_for(self.future, timeout)
             except (asyncio.TimeoutError, TimeoutError):
-                raise self.NoResponse(self.chat_id, timeout)
+                raise self.NoResponse(self.chat_id, timeout)  
             return response
 
         @staticmethod
@@ -32,7 +41,7 @@ class Listener(Client):
                 if rc != m._client:
                     print("Wrong client...")
                     return
-                dict_ = m._client.listening.get(m.chat.id)
+                dict_ = venom.venom.listening.get(m.chat.id)
                 if dict_ and dict_['filters']:
                     allow = await dict_['filters'](rc, m)
                     if not allow:
@@ -44,9 +53,10 @@ class Listener(Client):
             return message_handler
 
         @staticmethod
-        def add_listener() -> tuple:
-            h = venom.venom.add_handler(MessageHandler(DefaultListener.callback, DefaultListener.filters), group=-3)
-            return h
+        def add_listener(client: Union['_c.Venom', '_c.VenomBot']) -> tuple:
+            mh = venom.venom.add_handler(MessageHandler(DefaultListener.callback, DefaultListener.filters), group=-3)
+            bmh = venom.venom.bot.add_handler(MessageHandler(DefaultListener.callback, DefaultListener.filters), group=-3)
+            return mh, bmh
 
         class NoResponse(Exception):
             def __init__(self, chat_id: int, timeout: int):
@@ -57,6 +67,7 @@ class Listener(Client):
                 super().__init__(msg)
 
         async def __aenter__(self):
+            # if venom.Config.USER_MODE:
             venom.venom.listening[self.chat_id] = {'future': self.future, 'filters': self.filters}
             return self
 
@@ -66,4 +77,4 @@ class Listener(Client):
 
 class DefaultListener:
     callback = Listener.Wait.handle()
-    filters = filters.create(lambda _, __, m: m.chat.id in venom.venom.listening.keys())
+    filters = f.create(lambda _, __, m: m.chat.id in venom.venom.listening.keys())

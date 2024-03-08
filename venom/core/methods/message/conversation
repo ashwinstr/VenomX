@@ -103,7 +103,7 @@ class Conversation:
         """
         try:
             async with asyncio.timeout(timeout or self.timeout):
-                while not Config.CONVO_DICT[self.chat_id]["response"]:
+                while not (Config.CONVO_DICT[self.chat_id]["response"]):
                     await asyncio.sleep(0)
             return Config.CONVO_DICT[self.chat_id]["response"]
         except asyncio.TimeoutError:
