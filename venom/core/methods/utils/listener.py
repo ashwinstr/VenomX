@@ -38,8 +38,8 @@ class Listener(Client):
         def handle():
             async def message_handler(rc, rm):
                 m = mess.MyMessage.parse(rc, rm)
-                if rc != m._client:
-                    print("Wrong client...")
+                if (venom.Config.USER_MODE and isinstance(m._client, _c.VenomBot))\
+                        or (not venom.Config.USER_MODE and isinstance(m._client, _c.Venom)):
                     return
                 dict_ = venom.venom.listening.get(m.chat.id)
                 if dict_ and dict_['filters']:
@@ -49,7 +49,7 @@ class Listener(Client):
                 if dict_ and not dict_['future'].done():
                     dict_['future'].set_result(m)
                 elif dict_ and dict_['future'].done:
-                    m._client.listening.pop(m.chat.id, None)
+                    venom.venom.listening.pop(m.chat.id, None)
             return message_handler
 
         @staticmethod
