@@ -196,7 +196,7 @@ async def developer_mode(_, message: MyMessage):
         "Reply `Yes, I'm fully aware of the consequences.` to continue."
     )
     try:
-        resp_ = await warn_.wait(filters=filters.user(Config.OWNER_ID))
+        resp_ = await warn_.wait_for(filters=filters.user(Config.OWNER_ID))
     except asyncio.TimeoutError:
         return await message.reply("`Response not found... Process aborted.`", del_in=5)
     if resp_.text.upper() != "YES, I'M FULLY AWARE OF THE CONSEQUENCES.":
