@@ -343,7 +343,7 @@ class CurrentTime:
         return date_time_
 
 
-def userfriendly(id: int) -> bool:
+def user_friendly(id: int) -> bool:
     """ check user is owner or sudo user """
     if id == Config.OWNER_ID:
         return True

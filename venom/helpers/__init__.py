@@ -22,7 +22,7 @@ from .venom_tools import (
     time_stamp,
     current_time,
     CurrentTime,
-    userfriendly,
+    user_friendly,
     check_none
 )
 
@@ -31,3 +31,5 @@ from .decorators import VenomDecorators
 from .filters import MyFilters
 
 from .raw_functions import create_topic, get_topics, lock_topic
+
+from plain_tools import run_shell_cmd

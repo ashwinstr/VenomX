@@ -9,7 +9,7 @@ from pyrogram.enums import ChatType
 from pyrogram.errors import FloodWait, PeerIdInvalid, UserBannedInChannel, UsernameInvalid, MessageIdInvalid
 
 from venom import venom, MyMessage, Config, Collection
-from venom.helpers import plugin_name, extract_id, report_user, userfriendly
+from venom.helpers import plugin_name, extract_id, report_user, user_friendly
 
 HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'security', 'commands': []}
 CHANNEL = venom.getCLogger(__name__)
@@ -410,7 +410,7 @@ async def fban_p(_, message: MyMessage):
         proof = msg_en.id
     fps = True
     if (
-        userfriendly(user)
+        user_friendly(user)
         or user == (await venom.get_me()).id
     ):
         fps = False
@@ -436,7 +436,7 @@ async def fban_p(_, message: MyMessage):
         except IndexError:
             reason = "not specified"
         if (
-            userfriendly(user)
+            user_friendly(user)
             or user == (await venom.get_me()).id
         ):
             return await message.edit(
