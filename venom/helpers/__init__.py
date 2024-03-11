@@ -32,4 +32,4 @@ from .filters import MyFilters
 
 from .raw_functions import create_topic, get_topics, lock_topic
 
-from plain_tools import run_shell_cmd
+from .plain_tools import run_shell_cmd
