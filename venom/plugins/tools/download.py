@@ -64,7 +64,7 @@ async def tg_download(message: MyMessage, to_download: MyMessage) -> Tuple[str, 
         progress_args=(message, "Trying to download...")
     )
     # dl_loc = await to_download.download(custom_file_name)
-    if message.process_is_cancealled:
+    if message.process_is_cancelled:
         raise ProcessCancelled
     if not isinstance(dl_loc, str):
         raise TypeError("File corrupted!")
