@@ -98,7 +98,7 @@ class Config:
     ALIVE_PIC = ""
     DEFAULT_ALIVE_PIC = "https://telegra.ph/file/34c891bbd8d21c0564cbc.jpg"
     ALIVE_PIC_TYPE: MessageMediaType = MessageMediaType.PHOTO
-
+    GEMINI_API_KEY: str = os.environ.get("GEMINI_API_KEY")
     ### Your Alldbrid App token
     DEBRID_TOKEN = os.environ.get("DEBRID_TOKEN")
     ### Optional Vars for advance users WebDav

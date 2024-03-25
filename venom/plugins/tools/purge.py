@@ -1,8 +1,7 @@
-# Ported from UX to VenomX by Ryuk.
+# PurgeME Ported from UX to VenomX by Ryuk.
+# Purge taken from Plain-UB
 
 import datetime
-
-from pyrogram.errors import MessageDeleteForbidden
 
 from venom import Config, MyMessage, venom
 
@@ -11,93 +10,21 @@ from venom.helpers import plugin_name
 help_ = Config.HELP[plugin_name(__name__)] = {'type': 'help', 'commands': []}
 
 
-help_['commands'].append(
-    {
-        "command":"purge",
-        "about": "purge messages",
-        "flags": {
-            "-u": "get user_id from replied message",
-            "-l": "message limit : max 100",
-        },
-        "syntax": "\n   reply {tr}purge to the start message to purge.\n"
-            "\n   use {tr}purge [user_id | user_name] to purge messages from that user or use flags\n"
-            "\n   {tr}purge {tr}purge -u\n",
-        "sudo": True,
-    },
-)
-
-@venom.trigger(
-    "purge"
-)
-async def purge_(_,message: MyMessage):
-    """purge from replied message"""
-    await message.edit("`purging ...`")
-    start_m = message.id
-    from_user_id = None
-    end_message = 0
-    if "l" in message.flags:
-        limit = int(message.flags["l"])
-        limit = min(limit, 100)
-        end_message = message.id - limit
+@venom.trigger(cmd="purge")
+async def purge_(_, message: MyMessage):
+    start_message: int = 0
     if message.reply_to_message:
-        end_message = message.reply_to_message.id
-        if "u" in message.flags:
-            from_user_id = message.reply_to_message.from_user.id
-    if not end_message:
-        await message.edit("invalid start message!")
-        return
-    list_of_messages = []
-    purged_messages_count = 0
-
-    async def handle_msg(a_message):
-        nonlocal list_of_messages, purged_messages_count
-        if (
-            from_user_id
-            and a_message
-            and a_message.from_user
-            and a_message.from_user.id == from_user_id
-        ):
-            list_of_messages.append(a_message.id)
-        if not from_user_id:
-            list_of_messages.append(a_message.id)
-        if len(list_of_messages) >= 100:
-            try:
-                await message._client.delete_messages(
-                    chat_id=message.chat.id, message_ids=list_of_messages
-                )
-            except MessageDeleteForbidden:
-                return
-            purged_messages_count += len(list_of_messages)
-            list_of_messages = []
-
-    start_t = datetime.datetime.now()
-    if message._client.isbot:
-        for a_message in await message._client.get_messages(
-            chat_id=message.chat.id,
-            replies=0,
-            message_ids=range(start_message, message.message_id),
-        ):
-            await handle_msg(a_message)
-    else:
-        async for a_message in message._client.get_chat_history(
-            chat_id=message.chat.id, limit=None, offset_id=start_m
-        ):
-            if end_message == a_message.id:
-                await handle_msg(a_message)
-                break
-            await handle_msg(a_message)
-    if list_of_messages:
-        try:
-            await message._client.delete_messages(
-                chat_id=message.chat.id, message_ids=list_of_messages
-            )
-        except MessageDeleteForbidden:
-            return
-        purged_messages_count += len(list_of_messages)
-    end_t = datetime.datetime.now()
-    time_taken_s = (end_t - start_t).seconds
-    out = f"<u>purged</u> {purged_messages_count} messages in {time_taken_s} seconds."
-    await message.edit(out, del_in=3)
+        start_message = message.replied.id
+    if not start_message:
+        return await message.reply("reply to a message")
+    end_message: int = message.id
+    messages: list[int] = [
+        end_message,
+        *[i for i in range(int(start_message), int(end_message))],
+    ]
+    await venom.delete_messages(
+        chat_id=message.chat.id, message_ids=messages, revoke=True
+    )
 
 
 

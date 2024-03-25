@@ -12,7 +12,7 @@ HELP_ = Config.HELP[plugin_name(__name__)] = {'type': 'tools', 'commands': []}
 
 HELP_['commands'].append(
     {
-        'command': 'upload',
+        'command': 'pupload',
         'flags': {
             '-p': 'paste to pasty'
         },
@@ -23,7 +23,7 @@ HELP_['commands'].append(
 )
 
 
-@venom.trigger("upload")
+@venom.trigger("pupload")
 async def up_load(_, message: MyMessage):
     """ upload files from local """
     flags = message.flags
