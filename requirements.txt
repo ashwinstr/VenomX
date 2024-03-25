@@ -7,7 +7,6 @@ dnspython==2.3.0
 futures==3.0.5
 gitpython==3.1.41
 #google-api-python-client
-googletrans==4.0.0-rc1
 google-generativeai
 httpcore==0.9.*
 httpx==0.25.0
