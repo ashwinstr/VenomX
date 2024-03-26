@@ -8,7 +8,6 @@ futures==3.0.5
 gitpython==3.1.41
 #google-api-python-client
 google-generativeai
-httpcore==0.9.*
 httpx==0.25.0
 httplib2
 motor==3.2.0
