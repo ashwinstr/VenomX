@@ -19,7 +19,7 @@ PyDictionary
 pymediainfo
 pymongo==4.4.0
 pyrogram>=2.0.0
-pyromod==1.5.0
+#pyromod==1.5.0
 pySmartDL
 python-dotenv==0.21.0
 pytz
