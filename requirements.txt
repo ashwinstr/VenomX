@@ -15,7 +15,6 @@ oauth2client
 pastypy
 Pillow
 psutil>=5.7.3
-PyDictionary
 pymediainfo
 pymongo==4.4.0
 pyrogram>=2.0.106
@@ -31,5 +30,5 @@ tgcrypto>=1.2.3
 wget
 yt_dlp>=2022.8.19
 
-
+PyDictionary
 git+https://github.com/thedragonsinn/ub-core.git
