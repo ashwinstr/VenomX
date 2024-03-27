@@ -23,11 +23,11 @@ pyrogram>=2.0.106
 pySmartDL
 python-dotenv==0.21.0
 pytz
-requests==2.31.0
+requests>=2.27.0
 selenium
 setuptools>=60.0.4
-telegraph==2.2.0
-tgcrypto==1.2.3
+telegraph>=2.2.0
+tgcrypto>=1.2.3
 wget
 yt_dlp>=2022.8.19
 
