@@ -138,6 +138,8 @@ class Venom(CustomVenom):
         formatted_ = time_format(time_)
         return formatted_
 
+    has_bot = hasbot
+
     @property
     def hasbot(self):
         if SecureConfig().BOT_TOKEN:
